@@ -2,21 +2,18 @@ require("dotenv").config()
 const cookieSession = require("cookie-session")
 const path = require("path")
 const express = require("express")
+const multer = require('multer')
 const app = express()
 const PORT = process.env.PORT || 8000 // express
-const passport = require("passport")
+//const passport = require("passport")
 const bodyParser = require('body-parser')
 const mongoose = require("mongoose")
 const cors = require("cors")
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
 
-const passportSetup = require("./config/passport-setup")
-const authRouter = require("./routes/auth-router-ctrl")
-const barRouter = require('./routes/bar-router')
-const findRouter = require('./routes/find-router')
-const userRouter = require('./routes/user-router')
-const yelpRouter = require('./routes/yelp-router')
+const submitRouter = require('./routes/submit-router')
+const uploadRouter = require('./routes/upload-router')
 const db = require('./db')
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
@@ -30,8 +27,8 @@ app.use(
 )
 
 app.use(cookieParser())
-app.use(passport.initialize())
-app.use(passport.session())
+//app.use(passport.initialize())
+//app.use(passport.session())
 
 app.use(
   cors(
@@ -46,11 +43,33 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.use('/api', barRouter)
-app.use('/api', findRouter)
-app.use('/api', userRouter)
-app.use('/api', authRouter)
-app.use('/api', yelpRouter)
+app.use('/api', submitRouter)
+app.use('/api', uploadRouter)
+
+const uploadFileDir = path.join(__dirname, "client/public/files_uploaded")
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadFileDir)
+  },
+  filename: function (req, file, cb) {
+    cb(null, 'File-' + Date.now() + '-' + file.originalname)
+  }
+})
+
+var upload = multer({ storage: storage })
+
+app.post('/api/2uploadfile', upload.single('myFile'), (req, res, next) => {
+  const file = req.file
+  console.log(file)
+  if (!file) {
+    const error = new Error('Please upload a file')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+    res.send(file)
+
+})
 
 if (process.env.NODE_ENV = "production") {
   app.use(express.static(path.join(__dirname, "client/build")))

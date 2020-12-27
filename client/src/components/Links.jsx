@@ -42,7 +42,7 @@ class Links extends Component {
                   }}
           className="navbar-brand"
         >
-          <Log>NightLife Coordination App</Log>
+          <Log>Fish Counting</Log>
         </Link>
         <Collapse>
           <List>
@@ -57,7 +57,7 @@ class Links extends Component {
                       }}
               className="nav-link"
             >
-              <Item>Find Bars</Item>
+              <Item>Submit Image/Video</Item>
             </Link>
 
             {
@@ -82,12 +82,12 @@ class Links extends Component {
           </List>
           {
             authenticated ? (
-              <Log onClick={this._handleLogoutClick}>
-                Logout Twitter
+              <Log onClick={true ? null : this._handleLogoutClick}>
+                Logout
               </Log>
             ) : (
-              <Log onClick={this._handleLoginClick}>
-                Login Twitter
+              <Log onClick={true ? null : this._handleLoginClick}>
+                Login
               </Log>
             )
           }

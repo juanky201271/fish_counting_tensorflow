@@ -1,4 +1,3 @@
-import BarsFind from './BarsFind'
-import MyBarsList from './MyBarsList'
+import SubmitFile from './SubmitFile'
 
-export { BarsFind, MyBarsList, }
+export { SubmitFile }
