@@ -28,7 +28,13 @@ const LabelBold = styled.label`
 const InputText = styled.input.attrs({ className: 'form-control', })`
     margin: 5px;
 `
-const Button = styled.button.attrs({ className: `btn btn-primary`, })`
+const ButtonUpload = styled.button.attrs({ className: `btn btn-primary`, })`
+    margin: 15px 15px 15px 5px;
+`
+const ButtonProcess = styled.button.attrs({ className: `btn btn-success`, })`
+    margin: 15px 15px 15px 5px;
+`
+const ButtonCancel = styled.button.attrs({ className: `btn btn-danger`, })`
     margin: 15px 15px 15px 5px;
 `
 const Join = styled.div.attrs({ className: `btn btn-primary`, })`
@@ -53,8 +59,6 @@ class SubmitFile extends Component {
             user: '',
         }
         this.uploadInputRef = React.createRef()
-        this.uploadButtonRef = React.createRef()
-        this.processButtonRef = React.createRef()
     }
     componentDidMount = async () => {
         this.setState({ isLoading: true })
@@ -64,7 +68,7 @@ class SubmitFile extends Component {
     handleChangeInputUpload = (event) => {
       this.setState({ selectedFile: event.target.files[0] })
     }
-    handleUpload = async () => {
+    handleUpload = async e => {
 
       // Create an object of formData
       const formData = new FormData()
@@ -88,19 +92,23 @@ class SubmitFile extends Component {
         })
         .catch(e => console.log(e))
     }
-    handleProcess = async () => {
+    handleProcess = async e => {
       const { uploadedFile } = this.state
 
       console.log(uploadedFile)
     }
+    handleCancel = e => {
+      this.setState({ uploadedFile: '', selectedFile: '' })
+      this.uploadInputRef.current.value = ''
+    }
     fileData = () => {
-
       if (this.state.selectedFile) {
         return (
           <div>
             <h2>File Details:</h2>
             <p>File Name: {this.state.selectedFile.name}</p>
             <p>File Type: {this.state.selectedFile.type}</p>
+            <p>File Size: {this.state.selectedFile.size}</p>
           </div>
         )
       } else {
@@ -114,7 +122,7 @@ class SubmitFile extends Component {
     }
     render() {
       console.log('finds', this.state)
-        const { isLoading } = this.state
+        const { isLoading, selectedFile, uploadedFile } = this.state
         const columns = [
             {
                 Header: 'Bar',
@@ -298,10 +306,12 @@ class SubmitFile extends Component {
                     id="selectedFileInput"
                     type="file"
                     onChange={this.handleChangeInputUpload}
+                    ref={this.uploadInputRef}
                 />
-                <Button id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef}>Upload!</Button>
+                <ButtonUpload id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={selectedFile && !uploadedFile ? false : true} >Upload!</ButtonUpload>
                 <Label>{'When the file is uploaded, you can Process/Count it.'}</Label>
-                <Button id="processButton" onClick={this.handleProcess} ref={this.processButtonRef}>Count Fish!</Button>
+                <ButtonProcess id="processButton" onClick={this.handleProcess} disabled={uploadedFile ? false : true} >Count Fish!</ButtonProcess>
+                <ButtonCancel id="processButton" onClick={this.handleCancel} >Cancel</ButtonCancel>
               </WrapperHeader>
               <WrapperFooter>
                 {this.fileData()}
