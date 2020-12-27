@@ -46,31 +46,6 @@ app.use(bodyParser.json())
 app.use('/api', submitRouter)
 app.use('/api', uploadRouter)
 
-const uploadFileDir = path.join(__dirname, "client/public/files_uploaded")
-
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadFileDir)
-  },
-  filename: function (req, file, cb) {
-    cb(null, 'File-' + Date.now() + '-' + file.originalname)
-  }
-})
-
-var upload = multer({ storage: storage })
-
-app.post('/api/2uploadfile', upload.single('myFile'), (req, res, next) => {
-  const file = req.file
-  console.log(file)
-  if (!file) {
-    const error = new Error('Please upload a file')
-    error.httpStatusCode = 400
-    return next(error)
-  }
-    res.send(file)
-
-})
-
 if (process.env.NODE_ENV = "production") {
   app.use(express.static(path.join(__dirname, "client/build")))
 

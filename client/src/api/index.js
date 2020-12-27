@@ -10,7 +10,6 @@ export const deleteSubmit = _id => api.delete(`/submit/${_id}`)
 export const getSubmit = _id => api.get(`/submit/id/${_id}`)
 export const getSubmits = () => api.get(`/submits`)
 export const createUploadFile = payload => api.post(`/uploadfile`, payload)
-export const createUploadFile2 = payload => api.post(`/2uploadfile`, payload)
 export const createUploadResult = payload => api.post(`uploadresult`, payload)
 
 const apis = {
@@ -21,7 +20,6 @@ const apis = {
   getSubmits,
 
   createUploadFile,
-  createUploadFile2,
   createUploadResult,
 }
 
