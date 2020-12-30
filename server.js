@@ -46,7 +46,7 @@ app.use(bodyParser.json())
 app.use('/api', submitRouter)
 app.use('/api', uploadRouter)
 
-if (process.env.NODE_ENV = "production") {
+if (process.env.NODE_ENV == "production") {
   app.use(express.static(path.join(__dirname, "client/build")))
 
   app.use(function(req, res) {

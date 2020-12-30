@@ -4,7 +4,6 @@ import styled from 'styled-components'
 
 import { NavBar } from '../components'
 import { SubmitFile } from '../pages'
-import api from '../api'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 

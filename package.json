@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon server.js",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
-    "start-api": "cd api_flask && venv/bin/flask run --no-debugger"
+    "start-api": "cd api_flask && venv\\Scripts\\flask run --no-debugger"
   },
   "keywords": [],
   "author": "juanky201271",
@@ -26,10 +26,9 @@
     "http-proxy-middleware": "^1.0.5",
     "mongoose": "^5.10.3",
     "multer": "^1.4.2",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.6",
     "passport": "^0.4.1",
     "passport-twitter": "^1.0.4",
-    "path": "^0.12.7",
-  },
-  "proxy": "http://localhost:5000"
+    "path": "^0.12.7"
+  }
 }

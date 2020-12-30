@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import axios from 'axios'
-import ReactTable from 'react-table-6'
+//import axios from 'axios'
+//import ReactTable from 'react-table-6'
 import styled from 'styled-components'
 import 'react-table-6/react-table.css'
 import api from '../api'
@@ -37,13 +37,13 @@ const ButtonProcess = styled.button.attrs({ className: `btn btn-success`, })`
 const ButtonCancel = styled.button.attrs({ className: `btn btn-danger`, })`
     margin: 15px 15px 15px 5px;
 `
-const Join = styled.div.attrs({ className: `btn btn-primary`, })`
-  cursor: pointer;
-`
+//const Join = styled.div.attrs({ className: `btn btn-primary`, })`
+//  cursor: pointer;
+//`
 
-const CancelJoin = styled.div.attrs({ className: `btn btn-warning`, })`
-  cursor: pointer;
-`
+//const CancelJoin = styled.div.attrs({ className: `btn btn-warning`, })`
+//  cursor: pointer;
+//`
 
 class SubmitFile extends Component {
     constructor(props) {
@@ -57,12 +57,17 @@ class SubmitFile extends Component {
             twitterId: '',
             ip: '',
             user: '',
+            currentTime: 0,
         }
         this.uploadInputRef = React.createRef()
     }
     componentDidMount = async () => {
         this.setState({ isLoading: true })
-
+        api.getTime()
+          .then(res => {
+            this.setState({ currentTime: res.data.time })
+          })
+          .catch(e => console.log(e))
         this.setState({ isLoading: false })
     }
     handleChangeInputUpload = (event) => {
@@ -122,7 +127,7 @@ class SubmitFile extends Component {
     }
     render() {
       console.log('finds', this.state)
-        const { isLoading, selectedFile, uploadedFile } = this.state
+        const { isLoading, selectedFile, uploadedFile, currentTime } = this.state
         const columns = [
             {
                 Header: 'Bar',
@@ -315,6 +320,7 @@ class SubmitFile extends Component {
               </WrapperHeader>
               <WrapperFooter>
                 {this.fileData()}
+                {currentTime}
                 {isLoading && (
                     <h3>Loading Data</h3>
                 )}
