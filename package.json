@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
+    "start-api": "cd api_flask && venv/bin/flask run --no-debugger"
   },
   "keywords": [],
   "author": "juanky201271",
@@ -29,6 +30,6 @@
     "passport": "^0.4.1",
     "passport-twitter": "^1.0.4",
     "path": "^0.12.7",
-    "yelp-fusion": "^3.0.0"
-  }
+  },
+  "proxy": "http://localhost:5000"
 }
