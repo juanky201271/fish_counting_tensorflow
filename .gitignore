@@ -7,3 +7,6 @@
 .vscode/
 venv
 __pycache__
+files_csv_results
+files_uploaded
+files_video_results
