@@ -1,0 +1,14 @@
+item {
+  id: 1
+  name: 'SKJ'
+}
+
+item {
+  id: 2
+  name: 'YFT'
+}
+
+item {
+  id: 3
+  name: 'BET'
+}
