@@ -31,13 +31,7 @@ app.use(cookieParser())
 //app.use(passport.session())
 
 app.use(
-  cors(
-    //{
-    //origin: ["https://bva-jccc-fcc.herokuapp.com", "https://api.twitter.com", "http://localhost:3000", "http://localhost:8000"], // "http://localhost:3000",  // allow to server to accept request from different origin (React)
-    //methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    //credentials: true // allow session cookie from browser to pass through
-    //}
-  )
+  cors()
 )
 
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -45,6 +39,10 @@ app.use(bodyParser.json())
 
 app.use('/api', submitRouter)
 app.use('/api', uploadRouter)
+
+app.use("/files_csv_results", express.static(path.join(__dirname, "client/public/files_csv_results")))
+app.use("/files_video_results", express.static(path.join(__dirname, "client/public/files_video_results")))
+app.use("/files_uploaded", express.static(path.join(__dirname, "client/public/files_uploaded")))
 
 if (process.env.NODE_ENV == "production") {
   app.use(express.static(path.join(__dirname, "client/build")))
