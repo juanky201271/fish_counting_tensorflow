@@ -1,8 +1,22 @@
 import time
+import os
 from flask import Flask
 from flask import request
 from flask_cors import CORS
 import purseiner_roi
+
+uploaded = 'client/public/files_uploaded'
+csv = 'client/public/files_csv_results'
+video = 'client/public/files_video_results'
+
+if os.path.isdir(uploaded) == False:
+    os.mkdir(uploaded)
+
+if os.path.isdir(csv) == False:
+    os.mkdir(csv)
+
+if os.path.isdir(video) == False:
+    os.mkdir(video)
 
 app = Flask(__name__)
 CORS(app)
