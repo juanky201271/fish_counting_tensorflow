@@ -8,12 +8,15 @@ import api from '../api'
 const FullName = styled.h1.attrs({ className: 'h1', })``
 const Wrapper = styled.div.attrs({ className: 'form-group', })`
     margin: 0 30px;
+    padding: 30px;
 `
 const WrapperHeader = styled.div.attrs({ className: 'form-group', })`
     margin: 0 30px;
+    padding: 30px;
 `
 const WrapperFooter = styled.div.attrs({ className: 'form-group bg-white', })`
     margin: 0 30px;
+    padding: 30px;
 `
 const WrapperUrl = styled.a.attrs({ className: 'navbar-brand' })`
   display: 'flex';
@@ -57,17 +60,13 @@ class SubmitFile extends Component {
             twitterId: '',
             ip: '',
             user: '',
-            currentTime: 0,
+            total_fish: null,
         }
         this.uploadInputRef = React.createRef()
     }
     componentDidMount = async () => {
         this.setState({ isLoading: true })
-        api.getTime()
-          .then(res => {
-            this.setState({ currentTime: res.data.time })
-          })
-          .catch(e => console.log(e))
+
         this.setState({ isLoading: false })
     }
     handleChangeInputUpload = (event) => {
@@ -98,12 +97,18 @@ class SubmitFile extends Component {
         .catch(e => console.log(e))
     }
     handleProcess = async e => {
+      this.setState({ isLoading: true })
       const { uploadedFile } = this.state
-
-      console.log(uploadedFile)
+      await api.getCSV(uploadedFile)
+        .then(res => {
+          console.log(res.data)
+          this.setState({ total_fish: res.data.total_fish })
+        })
+        .catch(e => console.log(e))
+      this.setState({ isLoading: false })
     }
     handleCancel = e => {
-      this.setState({ uploadedFile: '', selectedFile: '' })
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, })
       this.uploadInputRef.current.value = ''
     }
     fileData = () => {
@@ -114,6 +119,7 @@ class SubmitFile extends Component {
             <p>File Name: {this.state.selectedFile.name}</p>
             <p>File Type: {this.state.selectedFile.type}</p>
             <p>File Size: {this.state.selectedFile.size}</p>
+            <p><strong>Total Fish: {this.state.total_fish}</strong></p>
           </div>
         )
       } else {
@@ -126,8 +132,9 @@ class SubmitFile extends Component {
       }
     }
     render() {
-      console.log('finds', this.state)
-        const { isLoading, selectedFile, uploadedFile, currentTime } = this.state
+      console.log('submit file', this.state)
+        const { isLoading, selectedFile, uploadedFile, total_fish } = this.state
+        const imageData = this.fileData()
         const columns = [
             {
                 Header: 'Bar',
@@ -312,18 +319,20 @@ class SubmitFile extends Component {
                     type="file"
                     onChange={this.handleChangeInputUpload}
                     ref={this.uploadInputRef}
+                    disabled={isLoading ? true : uploadedFile ? true : false}
                 />
-                <ButtonUpload id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={selectedFile && !uploadedFile ? false : true} >Upload!</ButtonUpload>
+                <ButtonUpload id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading ? true : selectedFile && !uploadedFile ? false : true} >Upload!</ButtonUpload>
                 <Label>{'When the file is uploaded, you can Process/Count it.'}</Label>
-                <ButtonProcess id="processButton" onClick={this.handleProcess} disabled={uploadedFile ? false : true} >Count Fish!</ButtonProcess>
-                <ButtonCancel id="processButton" onClick={this.handleCancel} >Cancel</ButtonCancel>
+                <ButtonProcess id="processButton" onClick={this.handleProcess} disabled={isLoading || total_fish !== null ? true : uploadedFile ? false : true} >Count Fish!</ButtonProcess>
+                <ButtonCancel id="processButton" onClick={this.handleCancel} disabled={isLoading} >{total_fish !== null ? 'Another File' : 'Cancel'}</ButtonCancel>
               </WrapperHeader>
               <WrapperFooter>
-                {this.fileData()}
-                {currentTime}
-                {isLoading && (
-                    <h3>Loading Data</h3>
-                )}
+                {isLoading ?
+                  (
+                    <h3>Counting Fish...</h3>
+                  ) : (
+                    <>{imageData}</>
+                  )}
               </WrapperFooter>
             </Wrapper>
         )
