@@ -50,3 +50,10 @@ Clonar el proyecto (git clone ....)
 
 ## MongoDB User & Password
 Si te he invitado tendras usuario y clave, de lo contrario puedes usar tu propia MongoDB URI en la variable de entorno.
+
+## Archivos muy grandes
+En el modelo de tensroflow que usamos hay 3 archivos por encima de los `100 Mb`. GitHub no los aloja directamente en el Repo, son:
+### `frozen_inference_graph.pb`
+### `saved_model.pb`
+### `model.ckpt.data-00000-of-00001`
+Estoy seguro de que puedes copiarlos si no estan, sin problemas.
