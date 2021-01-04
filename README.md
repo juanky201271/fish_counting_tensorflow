@@ -16,7 +16,7 @@ Clonar el proyecto (git clone ....)
 (instalamos los paquetes del servidor)
 ### `npx nodemon`
 
-(creamos un servidor de express en el puerto 8000 - http://localhost:8000)<br />
+(arrancamos un servidor de express en el puerto 8000 - http://localhost:8000)<br />
 (en esta URL la aplicacion deberia arrancar sin problemas)
 
 ## Flask API (python 3.8)
@@ -38,10 +38,12 @@ Clonar el proyecto (git clone ....)
 ### `venv\Scripts\deactivate`
 ### `cd..`
 ### `npm run start-api`
+(arrancamos un servidor de flask en el puerto 5000 - http://localhost:5000)<br />
+(puedes probar el API con esta llamada: http://localhost:5000/flask_api/time recibes un archivo JSON con un numerajo del tipo `1609732886.7396224`)
 
 ## Archivo de Variables de entorno (.env)
 ### COOKIE_KEY="thisappisforcountingfish"
-### MONGODB_URI="mongodb://USER:PASSWORD@cluster0-shard-00-00-0ibmb.mongodb.net:27017,cluster0-shard-00-01-0ibmb.mongodb.net:27017,cluster0-shard-00-02-0ibmb.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
+### MONGODB_URI="mongodb://`USER`:`PASSWORD`@cluster0-shard-00-00-0ibmb.mongodb.net:27017,cluster0-shard-00-01-0ibmb.mongodb.net:27017,cluster0-shard-00-02-0ibmb.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
 ### NODE_ENV="production"
 ### PORT=8000
 ### PUBLIC_URL="http://localhost:8000"
