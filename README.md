@@ -2,7 +2,8 @@
 ### Fish Counting - MERN with Flask
 
 ## Directions
-Clonar el proyecto (git clone ....)
+Clonar el proyecto (git clone ....)<br />
+Instalar nodejs + npm.
 
 ## Client React / Server Express
 ### `cd fish_counting_tensorflow`
