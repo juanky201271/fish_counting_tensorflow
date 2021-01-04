@@ -99,12 +99,36 @@ class SubmitFile extends Component {
     handleProcess = async e => {
       this.setState({ isLoading: true })
       const { uploadedFile } = this.state
+      let saveDB = false
       await api.getCSV(uploadedFile)
         .then(res => {
           console.log(res.data)
           this.setState({ total_fish: res.data.total_fish })
+          saveDB = true
         })
         .catch(e => console.log(e))
+      if (saveDB) {
+        const file_arr = this.state.uploadedFile.split('\\')
+        const payload = {
+          file: file_arr[file_arr.length - 1],
+          file_url_local: this.state.uploadedFile,
+          file_url_remote: '/' + [file_arr[file_arr.length - 2], file_arr[file_arr.length - 1]].join('/'),
+
+          file_csv_result: file_arr[file_arr.length - 1] + '_csv_result.csv',
+          file_csv_result_url_local: (this.state.uploadedFile + '_csv_result.csv').replace('files_uploaded','files_csv_results'),
+          file_csv_result_url_remote: '/files_csv_results/' + file_arr[file_arr.length - 1] + '_csv_result.csv',
+
+          file_video_result: file_arr[file_arr.length - 1] + '_video_result.avi',
+          file_video_result_url_local: (this.state.uploadedFile + '_video_result.avi').replace('files_uploaded','files_video_results'),
+          file_video_result_url_remote: '/files_video_results/' + file_arr[file_arr.length - 1] + '_video_result.avi',
+        }
+        await api.createSubmit(payload)
+          .then(res => {
+            console.log(res.data)
+            //this.setState({ total_fish: res.data.total_fish })
+          })
+          .catch(e => console.log(e))
+      }
       this.setState({ isLoading: false })
     }
     handleCancel = e => {
@@ -112,14 +136,27 @@ class SubmitFile extends Component {
       this.uploadInputRef.current.value = ''
     }
     fileData = () => {
+      const file_arr = this.state.uploadedFile.split('\\')
+      const csv = '/files_csv_results/' + file_arr[file_arr.length - 1] + '_csv_result.csv'
+      const video = '/files_video_results/' + file_arr[file_arr.length - 1] + '_video_result.avi'
       if (this.state.selectedFile) {
         return (
           <div>
             <h2>File Details:</h2>
+            <hr />
             <p>File Name: {this.state.selectedFile.name}</p>
             <p>File Type: {this.state.selectedFile.type}</p>
             <p>File Size: {this.state.selectedFile.size}</p>
-            <p><strong>Total Fish: {this.state.total_fish}</strong></p>
+            {this.state.total_fish !== null && (
+              <>
+              <hr />
+              <p><strong>Total Fish: {this.state.total_fish}</strong></p>
+              <hr />
+              <a href={csv} rel="noopener noreferrer">CSV Result File</a>
+              <br />
+              <a href={video} rel="noopener noreferrer">Video AVI Result File</a>
+              </>
+            )}
           </div>
         )
       } else {
