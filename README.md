@@ -19,14 +19,14 @@ Instalar Python 3.8.
 ### `npx nodemon`
 
 ## Archivo de Variables de entorno (`.env` crearlo en el raiz del repo)
-`COOKIE_KEY="thisappisforcountingfish"
-MONGODB_URI="mongodb://USER:PASSWORD@cluster0-shard-00-00-0ibmb.mongodb.net:27017,cluster0-shard-00-01-0ibmb.mongodb.net:27017,cluster0-shard-00-02-0ibmb.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
-NODE_ENV="production"
-PORT=8000
-PUBLIC_URL="http://localhost:8000"`
+`COOKIE_KEY="thisappisforcountingfish"`<br />
+`MONGODB_URI="mongodb://USER:PASSWORD@cluster0-shard-00-00-0ibmb.mongodb.net:27017,cluster0-shard-00-01-0ibmb.mongodb.net:27017,cluster0-shard-00-02-0ibmb.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"`<br />
+`NODE_ENV="production"`<br />
+`PORT=8000`<br />
+`PUBLIC_URL="http://localhost:8000"`
 
 ## MongoDB User & Password
-Si te he invitado tendras usuario y clave, de lo contrario puedes usar tu propia MongoDB URI en la variable de entorno.
+Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PASSWORD en la variable MONGODB_URI), de lo contrario puedes usar tu propia MongoDB URI en la variable de entorno.
 
 ## React app ready to go
 (arrancamos un servidor de express en el puerto 8000 - http://localhost:8000)<br />
