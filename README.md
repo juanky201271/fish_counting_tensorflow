@@ -18,6 +18,17 @@ Instalar Python 3.8.
 (instalamos los paquetes del servidor)
 ### `npx nodemon`
 
+## Archivo de Variables de entorno (`.env` crearlo en el raiz del repo)
+`COOKIE_KEY="thisappisforcountingfish"
+MONGODB_URI="mongodb://USER:PASSWORD@cluster0-shard-00-00-0ibmb.mongodb.net:27017,cluster0-shard-00-01-0ibmb.mongodb.net:27017,cluster0-shard-00-02-0ibmb.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
+NODE_ENV="production"
+PORT=8000
+PUBLIC_URL="http://localhost:8000"`
+
+## MongoDB User & Password
+Si te he invitado tendras usuario y clave, de lo contrario puedes usar tu propia MongoDB URI en la variable de entorno.
+
+## React app ready to go
 (arrancamos un servidor de express en el puerto 8000 - http://localhost:8000)<br />
 (en esta URL la aplicacion deberia arrancar sin problemas)
 
@@ -42,16 +53,6 @@ Instalar Python 3.8.
 ### `npm run start-api`
 (arrancamos un servidor de flask en el puerto 5000 - http://localhost:5000)<br />
 (puedes probar el API con esta llamada: http://localhost:5000/flask_api/time recibes un archivo JSON con un numerajo del tipo `1609732886.7396224`)
-
-## Archivo de Variables de entorno (.env)
-### COOKIE_KEY="thisappisforcountingfish"
-### MONGODB_URI="mongodb://`USER`:`PASSWORD`@cluster0-shard-00-00-0ibmb.mongodb.net:27017,cluster0-shard-00-01-0ibmb.mongodb.net:27017,cluster0-shard-00-02-0ibmb.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
-### NODE_ENV="production"
-### PORT=8000
-### PUBLIC_URL="http://localhost:8000"
-
-## MongoDB User & Password
-Si te he invitado tendras usuario y clave, de lo contrario puedes usar tu propia MongoDB URI en la variable de entorno.
 
 ## Archivos muy grandes
 En el modelo de tensroflow que usamos hay 3 archivos por encima de los `100 Mb`. GitHub no los aloja directamente en el Repo, son:
