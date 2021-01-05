@@ -3,7 +3,7 @@
 
 ## Directions
 Clonar el proyecto (git clone ....)<br />
-Instalar nodejs + npm.
+Instalar nodejs + npm.<br />
 Instalar Python 3.8.
 
 ## Client React / Server Express
