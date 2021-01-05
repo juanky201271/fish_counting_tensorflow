@@ -4,6 +4,7 @@
 ## Directions
 Clonar el proyecto (git clone ....)<br />
 Instalar nodejs + npm.
+Instalar Python 3.8.
 
 ## Client React / Server Express
 ### `cd fish_counting_tensorflow`
