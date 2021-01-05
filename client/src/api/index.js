@@ -17,7 +17,8 @@ export const createUploadFile = payload => api.post(`/uploadfile`, payload)
 export const createUploadResult = payload => api.post(`/uploadresult`, payload)
 
 export const getTime = () => flask_api.get(`/time`)
-export const getCSV = url_input_video => flask_api.post(`/countfish`, { url_input_video })
+export const videoRoiCountFish = url_input_video => flask_api.post(`/videoroicountfish`, { url_input_video })
+export const videoCountFish = url_input_video => flask_api.post(`/videocountfish`, { url_input_video })
 
 const apis = {
   createSubmit,
@@ -30,7 +31,8 @@ const apis = {
   createUploadResult,
 
   getTime,
-  getCSV,
+  videoRoiCountFish,
+  videoCountFish,
 }
 
 export default apis
