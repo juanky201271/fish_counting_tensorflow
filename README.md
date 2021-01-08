@@ -66,3 +66,6 @@ Estoy seguro de que puedes copiarlos si no estan, sin problemas.
 
 ## Repositorio de archivos creados (csv, avi y zip)
 Dentro de la carpeta: `client/public` va a existir la carpeta: `submits` solamente. Si tu repo es de alguna version anterior tendras otras tres carpetas que deberas borrar recursivamente (borrando tambien todo el contenido de cada una de las tres).
+
+## Modelos entrenados
+A causa de los archivos mayores de 100Mb he quitado los modelos del repo. Para usar un modelo copialo dentro de la carpeta `api_flask`.
