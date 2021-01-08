@@ -19,12 +19,13 @@ def load_image_into_numpy_array(image):
 # Variables
 total_passed_fish = 0  # using it to count fish
 
-def cumulative_object_counting_x_axis(input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation):
+def cumulative_object_counting_x_axis(input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder):
         total_passed_fish = 0
 
         name_file_dict = input_video.split('\\')
-        name_file_csv = 'client/public/files_csv_results/' + name_file_dict[len(name_file_dict) - 1] + '_csv_result.csv'
-        name_file_video = 'client/public/files_video_results/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.avi'
+        f,tail = folder.split('/images')
+        name_file_csv = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_csv_result.csv'
+        name_file_video = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.avi'
 
         # initialize .csv
         with open(name_file_csv, 'w') as f:
@@ -99,7 +100,8 @@ def cumulative_object_counting_x_axis(input_video, detection_graph, category_ind
                                                                                                              x_reference = roi,
                                                                                                              deviation = deviation,
                                                                                                              use_normalized_coordinates=True,
-                                                                                                             line_thickness=4)
+                                                                                                             line_thickness=4,
+                                                                                                             folder=folder)
 
                 # when the vehicle passed over line and counted, make the color of ROI line green
                 if counter == 1:

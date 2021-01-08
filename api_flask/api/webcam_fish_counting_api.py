@@ -19,7 +19,7 @@ def load_image_into_numpy_array(image):
 # Variables
 total_passed_fish = 0  # using it to count fish
 
-def object_counting(input_video, detection_graph, category_index, is_color_recognition_enabled, folder):
+def object_counting_webcam(detection_graph, category_index, is_color_recognition_enabled, folder):
         total_passed_fish = 0
 
         name_file_dict = input_video.split('\\')
@@ -34,16 +34,6 @@ def object_counting(input_video, detection_graph, category_index, is_color_recog
             csv_line = \
                 'Species/Size'
             writer.writerows([csv_line.split(',')])
-
-        # input video
-        cap = cv2.VideoCapture(input_video)
-
-        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        fps = int(cap.get(cv2.CAP_PROP_FPS))
-
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        output_movie = cv2.VideoWriter(name_file_video, fourcc, fps, (width, height))
 
         speed = "waiting..."
         direction = "waiting..."
@@ -67,10 +57,14 @@ def object_counting(input_video, detection_graph, category_index, is_color_recog
             detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
             num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 
+            cap = cv2.VideoCapture(0)
+            (ret, frame) = cap.read()
+
             # for all the frames that are extracted from input video
             print ("**********writing frames")
-            while(cap.isOpened()):
-                ret, frame = cap.read()
+            while True:
+                # Capture frame-by-frame
+                (ret, frame) = cap.read()
 
                 if not  ret:
                     print("**********end of the video file...")
@@ -102,48 +96,12 @@ def object_counting(input_video, detection_graph, category_index, is_color_recog
                                                                                                       line_thickness=4,
                                                                                                       folder=folder)
 
+                if(len(counting_mode) == 0):
+                    cv2.putText(input_frame, "...", (10, 35), font, 0.8, (0,255,255),2,cv2.FONT_HERSHEY_SIMPLEX)
+                else:
+                    cv2.putText(input_frame, counting_mode, (10, 35), font, 0.8, (0,255,255),2,cv2.FONT_HERSHEY_SIMPLEX)
 
-                total_passed_fish = total_passed_fish + counter
-
-                # insert information text to video frame
-                cv2.rectangle(input_frame, (0, 0), (295, 80), (180, 132, 109), -1)
-                cv2.putText(
-                    input_frame,
-                    ' Cumulative detected fishes:     ' + str(total_passed_fish),
-                    (4, 23),
-                    font,
-                    0.45,
-                    (0xFF, 0xFF, 0xFF),
-                    1,
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    )
-
-                cv2.putText(
-                    input_frame,
-                    ' Detected species: ' + counting_mode,
-                    (4, 43),
-                    font,
-                    0.45,
-                    (0xFF, 0xFF, 0xFF),
-                    1,
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL,
-                    )
-
-                cv2.putText(
-                    input_frame,
-                    ' Size: ' + size,
-                    (4, 63),
-                    font,
-                    0.45,
-                    (0xFF, 0xFF, 0xFF),
-                    1,
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL,
-                    )
-
-                #cv2.imshow('fish detection', input_frame)
-
-                output_movie.write(input_frame)
-                #cv2.imshow('object counting',input_frame)
+                cv2.imshow('fish counting',input_frame)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     print("**********go out frames")

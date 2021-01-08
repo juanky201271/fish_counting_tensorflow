@@ -1,23 +1,13 @@
 import time
-import os
+import os, os.path
 from flask import Flask
 from flask import request
 from flask_cors import CORS
+from pathlib import Path
 import purseiner_roi
 import purseiner_video_counting
-
-uploaded = 'client/public/files_uploaded'
-csv = 'client/public/files_csv_results'
-video = 'client/public/files_video_results'
-
-if os.path.isdir(uploaded) == False:
-    os.mkdir(uploaded)
-
-if os.path.isdir(csv) == False:
-    os.mkdir(csv)
-
-if os.path.isdir(video) == False:
-    os.mkdir(video)
+import purseiner_webcam_counting
+import purseiner_picture_counting
 
 app = Flask(__name__)
 CORS(app)
@@ -27,13 +17,41 @@ def get_current_time():
     return { 'time': time.time() }
 
 @app.route('/flask_api/videoroicountfish', methods=['POST'])
-def get_result_roi_counting_fish():
+def get_result_video_roi_counting_fish():
     if request.method == 'POST':
-        url_input_video = request.get_json()
-        return purseiner_roi.purseiner_roi_process(url_input_video.get('url_input_video'))
+        url_input_video_and_dir = request.get_json()
+        folder_images = url_input_video_and_dir.get("dir") + '/images'
+        video = url_input_video_and_dir.get('url_input_video')
+        if os.path.isdir(folder_images) == False:
+            os.mkdir(folder_images)
+        return purseiner_roi.purseiner_roi_process(video, folder_images)
 
 @app.route('/flask_api/videocountfish', methods=['POST'])
-def get_result_counting_fish():
+def get_result_video_counting_fish():
     if request.method == 'POST':
-        url_input_video = request.get_json()
-        return purseiner_video_counting.purseiner_video_counting_process(url_input_video.get('url_input_video'))
+        url_input_video_and_dir = request.get_json()
+        folder_images = url_input_video_and_dir.get("dir") + '/images'
+        video = url_input_video_and_dir.get('url_input_video')
+        if os.path.isdir(folder_images) == False:
+            os.mkdir(folder_images)
+        return purseiner_video_counting.purseiner_video_counting_process(video, folder_images)
+
+@app.route('/flask_api/webcamcountfish', methods=['POST'])
+def get_result_webcam_counting_fish():
+    if request.method == 'POST':
+        url_input_video_and_dir = request.get_json()
+        folder_images = url_input_video_and_dir.get("dir") + '/images'
+        video = url_input_video_and_dir.get('url_input_video')
+        if os.path.isdir(folder_images) == False:
+            os.mkdir(folder_images)
+        return purseiner_webcam_counting.purseiner_webcam_counting_process(video, folder_images)
+
+@app.route('/flask_api/picturecountfish', methods=['POST'])
+def get_result_picture_counting_fish():
+    if request.method == 'POST':
+        url_input_video_and_dir = request.get_json()
+        folder_images = url_input_video_and_dir.get("dir") + '/images'
+        video = url_input_video_and_dir.get('url_input_video')
+        if os.path.isdir(folder_images) == False:
+            os.mkdir(folder_images)
+        return purseiner_picture_counting.purseiner_picture_counting_process(video, folder_images)

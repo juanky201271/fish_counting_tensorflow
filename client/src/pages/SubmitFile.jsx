@@ -61,6 +61,8 @@ class SubmitFile extends Component {
             ip: '',
             user: '',
             total_fish: null,
+            _id: null,
+            dir: null,
         }
         this.uploadInputRef = React.createRef()
     }
@@ -73,97 +75,107 @@ class SubmitFile extends Component {
       this.setState({ selectedFile: event.target.files[0] })
     }
     handleUpload = async e => {
+      const name = "File_" + Date.now() + '_' + this.state.selectedFile.name
+      let _id
+      const payload = this.payload(name)
+      await api.createSubmit(payload)
+        .then(res => {
+          console.log(res.data)
+          this.setState({ _id: res.data._id })
+          _id = res.data._id
+        })
+        .catch(e => console.log(e))
+
+      const dir = _id + "_" + name
+      await api.createDir(dir)
+        .then(res => {
+          console.log(res.data)
+          this.setState({ dir: dir })
+        })
+        .catch(e => console.log(e))
+
+      console.log(this.state.selectedFile, name, dir)
 
       // Create an object of formData
       const formData = new FormData()
-
       // Update the formData object
       formData.append(
         "myFile",
         this.state.selectedFile,
-        this.state.selectedFile.name
+        name
       )
-
-      // Details of the uploaded file
-      console.log(this.state.selectedFile)
-
-      // Request made to the backend api
-      // Send formData object
-      //axios.post('api/2uploadfile', formData)
-      await api.createUploadFile(formData)
+      await api.createUploadFile(formData, dir)
         .then(res => {
           this.setState({ uploadedFile: res.data.path })
         })
         .catch(e => console.log(e))
     }
+    payload = (name) => {
+      return {
+        file: name,
+        file_csv_result: name + '_csv_result.csv',
+        file_video_result: name + '_video_result.avi',
+      }
+    }
+
     handleVideoRoiProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile } = this.state
-      let saveDB = false
-      await api.videoRoiCountFish(uploadedFile)
-        .then(res => {
-          console.log(res.data)
-          this.setState({ total_fish: res.data.total_fish })
-          saveDB = true
-        })
-        .catch(e => console.log(e))
-      if (saveDB) {
-        const file_arr = this.state.uploadedFile.split('\\')
-        const payload = {
-          file: file_arr[file_arr.length - 1],
-          file_url_local: this.state.uploadedFile,
-          file_url_remote: '/' + [file_arr[file_arr.length - 2], file_arr[file_arr.length - 1]].join('/'),
+      const { uploadedFile, dir } = this.state
 
-          file_csv_result: file_arr[file_arr.length - 1] + '_csv_result.csv',
-          file_csv_result_url_local: (this.state.uploadedFile + '_csv_result.csv').replace('files_uploaded','files_csv_results'),
-          file_csv_result_url_remote: '/files_csv_results/' + file_arr[file_arr.length - 1] + '_csv_result.csv',
-
-          file_video_result: file_arr[file_arr.length - 1] + '_video_result.avi',
-          file_video_result_url_local: (this.state.uploadedFile + '_video_result.avi').replace('files_uploaded','files_video_results'),
-          file_video_result_url_remote: '/files_video_results/' + file_arr[file_arr.length - 1] + '_video_result.avi',
-        }
-        await api.createSubmit(payload)
+      if (dir !== null) {
+        await api.videoRoiCountFish(uploadedFile, 'client/public/submits/' + dir)
           .then(res => {
             console.log(res.data)
-            //this.setState({ total_fish: res.data.total_fish })
+            this.setState({ total_fish: res.data.total_fish })
           })
           .catch(e => console.log(e))
       }
+
       this.setState({ isLoading: false })
     }
     handleVideoProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile } = this.state
-      let saveDB = false
-      await api.videoCountFish(uploadedFile)
-        .then(res => {
-          console.log(res.data)
-          this.setState({ total_fish: res.data.total_fish })
-          saveDB = true
-        })
-        .catch(e => console.log(e))
-      if (saveDB) {
-        const file_arr = this.state.uploadedFile.split('\\')
-        const payload = {
-          file: file_arr[file_arr.length - 1],
-          file_url_local: this.state.uploadedFile,
-          file_url_remote: '/' + [file_arr[file_arr.length - 2], file_arr[file_arr.length - 1]].join('/'),
+      const { uploadedFile, dir } = this.state
 
-          file_csv_result: file_arr[file_arr.length - 1] + '_csv_result.csv',
-          file_csv_result_url_local: (this.state.uploadedFile + '_csv_result.csv').replace('files_uploaded','files_csv_results'),
-          file_csv_result_url_remote: '/files_csv_results/' + file_arr[file_arr.length - 1] + '_csv_result.csv',
-
-          file_video_result: file_arr[file_arr.length - 1] + '_video_result.avi',
-          file_video_result_url_local: (this.state.uploadedFile + '_video_result.avi').replace('files_uploaded','files_video_results'),
-          file_video_result_url_remote: '/files_video_results/' + file_arr[file_arr.length - 1] + '_video_result.avi',
-        }
-        await api.createSubmit(payload)
+      if (dir !== null) {
+        await api.videoCountFish(uploadedFile, 'client/public/submits/' + dir)
           .then(res => {
             console.log(res.data)
-            //this.setState({ total_fish: res.data.total_fish })
+            this.setState({ total_fish: res.data.total_fish })
           })
           .catch(e => console.log(e))
       }
+
+      this.setState({ isLoading: false })
+    }
+    handleWebcamProcess = async e => {
+      this.setState({ isLoading: true })
+      const { uploadedFile, dir } = this.state
+
+      if (dir !== null) {
+        await api.webcamCountFish(uploadedFile, 'client/public/submits/' + dir)
+          .then(res => {
+            console.log(res.data)
+            this.setState({ total_fish: res.data.total_fish })
+          })
+          .catch(e => console.log(e))
+      }
+
+      this.setState({ isLoading: false })
+    }
+    handlePictureProcess = async e => {
+      this.setState({ isLoading: true })
+      const { uploadedFile, dir } = this.state
+
+      if (dir !== null) {
+        await api.pictureCountFish(uploadedFile, 'client/public/submits/' + dir)
+          .then(res => {
+            console.log(res.data)
+            this.setState({ total_fish: res.data.total_fish })
+          })
+          .catch(e => console.log(e))
+      }
+
       this.setState({ isLoading: false })
     }
     handleCancel = e => {
@@ -172,8 +184,10 @@ class SubmitFile extends Component {
     }
     fileData = () => {
       const file_arr = this.state.uploadedFile.split('\\')
-      const csv = '/files_csv_results/' + file_arr[file_arr.length - 1] + '_csv_result.csv'
-      const video = '/files_video_results/' + file_arr[file_arr.length - 1] + '_video_result.avi'
+      const file = '/submits/' + this.state.dir + '/' +  file_arr[file_arr.length - 1]
+      const csv = '/submits/' + this.state.dir + '/' +  file_arr[file_arr.length - 1] + '_csv_result.csv'
+      const video = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_video_result.avi'
+      const zip = '/submits/' + this.state.dir + '/' + this.state._id + '_' + file_arr[file_arr.length - 1] + '_images_zip_result.zip'
       if (this.state.selectedFile) {
         return (
           <div>
@@ -182,14 +196,22 @@ class SubmitFile extends Component {
             <p>File Name: {this.state.selectedFile.name}</p>
             <p>File Type: {this.state.selectedFile.type}</p>
             <p>File Size: {this.state.selectedFile.size}</p>
+            {this.state.uploadedFile && (
+              <>
+              <hr />
+              <a href={file} rel="noopener noreferrer" target="_blank">Uploaded File</a>
+              </>
+            )}
             {this.state.total_fish !== null && (
               <>
               <hr />
               <p><strong>Total Fish: {this.state.total_fish}</strong></p>
               <hr />
-              <a href={csv} rel="noopener noreferrer">CSV Result File</a>
+              <a href={csv} rel="noopener noreferrer" target="_blank">CSV Result File</a>
               <br />
-              <a href={video} rel="noopener noreferrer">Video AVI Result File</a>
+              <a href={video} rel="noopener noreferrer" target="_blank">Video AVI Result File</a>
+              <br />
+              <a href={zip} rel="noopener noreferrer" target="_blank">Object Detected Images ZIP Result File</a>
               </>
             )}
           </div>
@@ -395,8 +417,13 @@ class SubmitFile extends Component {
                 />
                 <ButtonUpload id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading ? true : selectedFile && !uploadedFile ? false : true} >Upload!</ButtonUpload>
                 <Label>{'When the file is uploaded, you can Process/Count it.'}</Label>
+
                 <ButtonProcess id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || total_fish !== null ? true : uploadedFile ? false : true} >ROI Video - Count Fish!</ButtonProcess>
                 <ButtonProcess id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || total_fish !== null ? true : uploadedFile ? false : true} >Video - Count Fish!</ButtonProcess>
+
+                <ButtonProcess id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || total_fish !== null ? true : uploadedFile ? false : true} >Webcam - Count Fish!</ButtonProcess>
+                <ButtonProcess id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || total_fish !== null ? true : uploadedFile ? false : true} >Picture - Count Fish!</ButtonProcess>
+
                 <ButtonCancel id="processButton" onClick={this.handleCancel} disabled={isLoading} >{total_fish !== null ? 'Another File' : 'Cancel'}</ButtonCancel>
               </WrapperHeader>
               <WrapperFooter>

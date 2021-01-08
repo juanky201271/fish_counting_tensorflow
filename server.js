@@ -11,6 +11,7 @@ const mongoose = require("mongoose")
 const cors = require("cors")
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
+const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
 
 const submitRouter = require('./routes/submit-router')
 const uploadRouter = require('./routes/upload-router')
@@ -30,6 +31,13 @@ app.use(cookieParser())
 //app.use(passport.initialize())
 //app.use(passport.session())
 
+app.use(expressCspHeader({
+    policies: {
+        'default-src': [NONE],
+        'img-src': [SELF],
+    }
+}))
+
 app.use(
   cors()
 )
@@ -40,12 +48,11 @@ app.use(bodyParser.json())
 app.use('/api', submitRouter)
 app.use('/api', uploadRouter)
 
-app.use("/files_csv_results", express.static(path.join(__dirname, "client/public/files_csv_results")))
-app.use("/files_video_results", express.static(path.join(__dirname, "client/public/files_video_results")))
-app.use("/files_uploaded", express.static(path.join(__dirname, "client/public/files_uploaded")))
+
 
 if (process.env.NODE_ENV == "production") {
   app.use(express.static(path.join(__dirname, "client/build")))
+  app.use(express.static(path.join(__dirname, "client/public")))
 
   app.use(function(req, res) {
   	res.sendFile(path.join(__dirname, '../client/build/index.html'))

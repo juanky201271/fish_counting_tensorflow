@@ -2,11 +2,10 @@ const fs = require('fs')
 const Multer = require('multer')
 const path = require('path')
 
-const uploadFileDir = path.join(__dirname, "../client/public/files_uploaded")
+//const uploadFileDir = path.join(__dirname, "../client/public/files_uploaded")
 
 createUploadFile = async (req, res, next) => {
   const file = req.file
-  console.log(file)
   if (!file) {
     const error = new Error('Please upload a file')
     error.httpStatusCode = 400
@@ -17,16 +16,16 @@ createUploadFile = async (req, res, next) => {
 
 const fileStorage = Multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadFileDir)
+    cb(null, path.join(__dirname, "../client/public/submits/" + req.headers.dir))
   },
   filename: function (req, file, cb) {
-    cb(null, "File" + '_' + Date.now() + '_' + file.originalname);
+    cb(null, file.originalname);
   }
 })
 
 const uploadFile =  Multer({ storage : fileStorage })
 
-const uploadResultDir = path.join(__dirname, "../client/public/files_results")
+//const uploadResultDir = path.join(__dirname, "../client/public/files_results")
 
 createUploadResult = async (req, res, next) => {
   const file = req.file
@@ -40,18 +39,58 @@ createUploadResult = async (req, res, next) => {
 
 const resultStorage = Multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadResultDir)
+    cb(null, path.join(__dirname, "../client/public/submits/" + req.headers.dir))
   },
   filename: function (req, file, cb) {
-    cb(null, "Result" + '_' + Date.now() + '_' + file.originalname)
+    cb(null, file.originalname)
   }
 })
 
 const uploadResult = Multer({ storage : resultStorage  })
+
+const  ensureExists = (path, mask, cb) => {
+    if (typeof mask == 'function') { // allow the `mask` parameter to be optional
+        cb = mask
+        mask = 0777
+    }
+    fs.mkdir(path, mask, function(err) {
+        if (err) {
+            if (err.code == 'EEXIST') cb(null) // ignore the error if the folder already exists
+            else cb(err) // something else went wrong
+        } else cb(null) // successfully created folder
+    })
+}
+
+createDir = async (req, res) => {
+  const parentDir = path.join(__dirname, "../client/public/submits")
+  const dir = path.join(__dirname, "../client/public/submits", req.body.dir)
+  ensureExists(parentDir, 0744, function(err) {
+    if (err) // handle folder creation error
+      console.log('parent error: ', err)
+    else { // we're all good
+      console.log(parentDir, ' created!')
+    }
+  })
+  ensureExists(dir, 0744, function(err) {
+    if (err) { // handle folder creation error
+      console.log('dir error: ', err)
+      return res.status(400).json({ success: false, error: err, })
+    }
+    else { // we're all good
+      console.log(dir, ' created!')
+      return res.status(201).json({
+        success: true,
+        dir: dir,
+        message: 'Directory created!',
+      })
+    }
+  })
+}
 
 module.exports = {
   createUploadFile,
   uploadFile,
   createUploadResult,
   uploadResult,
+  createDir,
 }

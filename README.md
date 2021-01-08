@@ -44,7 +44,7 @@ Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PAS
 ### (venv) $ `pip install python-dotenv`
 ### (venv) $ `pip install request`
 ### (venv) $ `pip install opencv-python`
-### (venv) $ `pip install matplotlib`
+### (venv) $ `pip install matplotlib==3.2`
 ### (venv) $ `pip install tensorflow==2.2.0`
 ### (venv) $ `pip install numpy==1.19.3`
 (probablemente existe ya instalada una version superior, desinstalala e instala la version 1.19.3 `pip uninstall numpy` y `pip install numpy==1.19.3`)

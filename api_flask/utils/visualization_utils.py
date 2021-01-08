@@ -29,9 +29,6 @@ import os
 # string utils - import
 from utils.string_utils import custom_string_util
 
-# image utils - image saver import
-from utils.image_utils import image_saver
-
 #  predicted_speed predicted_color module - import
 from utils.object_counting_module import object_counter
 #  predicted_speed predicted_color module - import
@@ -156,7 +153,8 @@ def draw_bounding_box_on_image_array(current_frame_number, image,
                                      color='red',
                                      thickness=4,
                                      display_str_list=(),
-                                     use_normalized_coordinates=True):
+                                     use_normalized_coordinates=True,
+                                     folder=''):
   """Adds a bounding box to an image (numpy array).
 
   Args:
@@ -176,7 +174,7 @@ def draw_bounding_box_on_image_array(current_frame_number, image,
   image_pil = Image.fromarray(np.uint8(image)).convert('RGB')
   is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image(current_frame_number,image_pil, ymin, xmin, ymax, xmax, color,
                              thickness, display_str_list,
-                             use_normalized_coordinates)
+                             use_normalized_coordinates, folder)
   np.copyto(image, np.array(image_pil))
   return is_vehicle_detected, csv_line, update_csv
 
@@ -188,7 +186,8 @@ def draw_bounding_box_on_image(current_frame_number,image,
                                color='red',
                                thickness=4,
                                display_str_list=(),
-                               use_normalized_coordinates=True):
+                               use_normalized_coordinates=True,
+                               folder=''):
   """Adds a bounding box to an image.
 
   Each string in display_str_list is displayed on a separate line above the
@@ -230,9 +229,9 @@ def draw_bounding_box_on_image(current_frame_number,image,
 
   '''if(bottom > ROI_POSITION): # if the vehicle get in ROI area, vehicle predicted_speed predicted_color algorithms are called - 200 is an arbitrary value, for my case it looks very well to set position of ROI line at y pixel 200'''
   if(x_axis[0] == 1):
-    predicted_direction, is_vehicle_detected, update_csv = object_counter_x_axis.count_objects_x_axis(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0])
+    predicted_direction, is_vehicle_detected, update_csv = object_counter_x_axis.count_objects_x_axis(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0], folder)
   elif(mode_number[0] == 2):
-    predicted_direction, is_vehicle_detected, update_csv = object_counter.count_objects(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0])
+    predicted_direction, is_vehicle_detected, update_csv = object_counter.count_objects(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0], folder)
 
   if(1 in is_color_recognition_enable):
     predicted_color = color_recognition_api.color_recognition(detected_vehicle_image)
@@ -484,7 +483,8 @@ def visualize_boxes_and_labels_on_image_array(current_frame_number,
                                               max_boxes_to_draw=20,
                                               min_score_thresh=.5,
                                               agnostic_mode=False,
-                                              line_thickness=4):
+                                              line_thickness=4,
+                                              folder=''):
   """Overlay labeled boxes on an image with formatted scores and label names.
 
   This function groups boxes that correspond to the same location
@@ -593,7 +593,8 @@ def visualize_boxes_and_labels_on_image_array(current_frame_number,
                 color=color,
                 thickness=line_thickness,
                 display_str_list=box_to_display_str_map[box],
-                use_normalized_coordinates=use_normalized_coordinates)
+                use_normalized_coordinates=use_normalized_coordinates,
+                folder=folder)
 
             if keypoints is not None:
               draw_keypoints_on_image_array(
@@ -616,7 +617,8 @@ def visualize_boxes_and_labels_on_image_array(current_frame_number,
                 color=color,
                 thickness=line_thickness,
                 display_str_list=box_to_display_str_map[box],
-                use_normalized_coordinates=use_normalized_coordinates)
+                use_normalized_coordinates=use_normalized_coordinates,
+                folder=folder)
 
             if keypoints is not None:
               draw_keypoints_on_image_array(
@@ -650,7 +652,7 @@ def visualize_boxes_and_labels_on_image_array_x_axis(current_frame_number,
                                               classes,
                                               scores,
                                               category_index,
-					      targeted_objects=None,
+					                          targeted_objects=None,
                                               x_reference=None,
                                               deviation=None,
                                               instance_masks=None,
@@ -659,7 +661,8 @@ def visualize_boxes_and_labels_on_image_array_x_axis(current_frame_number,
                                               max_boxes_to_draw=20,
                                               min_score_thresh=.5,
                                               agnostic_mode=False,
-                                              line_thickness=4):
+                                              line_thickness=4,
+                                              folder=''):
   """Overlay labeled boxes on an image with formatted scores and label names.
 
   This function groups boxes that correspond to the same location
@@ -769,7 +772,8 @@ def visualize_boxes_and_labels_on_image_array_x_axis(current_frame_number,
                 color=color,
                 thickness=line_thickness,
                 display_str_list=box_to_display_str_map[box],
-                use_normalized_coordinates=use_normalized_coordinates)
+                use_normalized_coordinates=use_normalized_coordinates,
+                folder=folder)
 
             if keypoints is not None:
               draw_keypoints_on_image_array(
@@ -792,7 +796,8 @@ def visualize_boxes_and_labels_on_image_array_x_axis(current_frame_number,
                 color=color,
                 thickness=line_thickness,
                 display_str_list=box_to_display_str_map[box],
-                use_normalized_coordinates=use_normalized_coordinates)
+                use_normalized_coordinates=use_normalized_coordinates,
+                folder=folder)
 
             if keypoints is not None:
               draw_keypoints_on_image_array(
@@ -836,7 +841,8 @@ def visualize_boxes_and_labels_on_image_array_y_axis(current_frame_number,
                                               max_boxes_to_draw=20,
                                               min_score_thresh=.5,
                                               agnostic_mode=False,
-                                              line_thickness=4):
+                                              line_thickness=4,
+                                              folder=''):
   """Overlay labeled boxes on an image with formatted scores and label names.
 
   This function groups boxes that correspond to the same location
@@ -945,7 +951,8 @@ def visualize_boxes_and_labels_on_image_array_y_axis(current_frame_number,
 	        color=color,
 	        thickness=line_thickness,
 	        display_str_list=box_to_display_str_map[box],
-	        use_normalized_coordinates=use_normalized_coordinates)
+	        use_normalized_coordinates=use_normalized_coordinates,
+            folder=folder)
 
 	    if keypoints is not None:
 	      draw_keypoints_on_image_array(
@@ -968,7 +975,8 @@ def visualize_boxes_and_labels_on_image_array_y_axis(current_frame_number,
 	        color=color,
 	        thickness=line_thickness,
 	        display_str_list=box_to_display_str_map[box],
-	        use_normalized_coordinates=use_normalized_coordinates)
+	        use_normalized_coordinates=use_normalized_coordinates,
+            folder=folder)
 
 	    if keypoints is not None:
 	      draw_keypoints_on_image_array(
@@ -1011,7 +1019,8 @@ def visualize_boxes_and_labels_on_image_array_tracker(
     line_thickness=4,
     groundtruth_box_visualization_color='black',
     skip_scores=False,
-    skip_labels=False):
+    skip_labels=False,
+    folder=''):
   """Overlay labeled boxes on an image with formatted scores and label names.
 
   This function groups boxes that correspond to the same location
@@ -1118,7 +1127,8 @@ def visualize_boxes_and_labels_on_image_array_tracker(
         color=color,
         thickness=line_thickness,
         display_str_list=box_to_display_str_map[box],
-        use_normalized_coordinates=use_normalized_coordinates)
+        use_normalized_coordinates=use_normalized_coordinates,
+        folder=folder)
     if keypoints is not None:
       draw_keypoints_on_image_array(
           image,
@@ -1146,7 +1156,8 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
                                               max_boxes_to_draw=20,
                                               min_score_thresh=.5,
                                               agnostic_mode=False,
-                                              line_thickness=4):
+                                              line_thickness=4,
+                                              folder=''):
   """Overlay labeled boxes on an image with formatted scores and label names.
 
   This function groups boxes that correspond to the same location
@@ -1255,7 +1266,8 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
                 color=color,
                 thickness=line_thickness,
                 display_str_list=box_to_display_str_map[box],
-                use_normalized_coordinates=use_normalized_coordinates)
+                use_normalized_coordinates=use_normalized_coordinates,
+                folder=folder)
 
             if keypoints is not None:
               draw_keypoints_on_image_array(
@@ -1278,7 +1290,8 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
                 color=color,
                 thickness=line_thickness,
                 display_str_list=box_to_display_str_map[box],
-                use_normalized_coordinates=use_normalized_coordinates)
+                use_normalized_coordinates=use_normalized_coordinates,
+                folder=folder)
 
             if keypoints is not None:
               draw_keypoints_on_image_array(
