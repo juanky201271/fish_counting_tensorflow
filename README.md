@@ -60,3 +60,6 @@ En el modelo de tensroflow que usamos hay 3 archivos por encima de los `100 Mb`.
 ### `saved_model.pb`
 ### `model.ckpt.data-00000-of-00001`
 Estoy seguro de que puedes copiarlos si no estan, sin problemas.
+
+## Repositorio de archivos creados (csv, avi y zip)
+Dentro de la carpeta: `client/public` va a existir la carpeta: `submits` solamente. Si tu repo es de alguna version anterior tendras otras tres carpetas que deberas borrar recursivamente (borrando tambien todo el contenido de cada una de las tres). 
