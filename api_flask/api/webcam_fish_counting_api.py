@@ -19,7 +19,7 @@ def load_image_into_numpy_array(image):
 # Variables
 total_passed_fish = 0  # using it to count fish
 
-def object_counting_webcam(detection_graph, category_index, is_color_recognition_enabled, folder):
+def object_counting_webcam(input_video, detection_graph, category_index, is_color_recognition_enabled, folder):
         total_passed_fish = 0
 
         name_file_dict = input_video.split('\\')
@@ -115,6 +115,6 @@ def object_counting_webcam(detection_graph, category_index, is_color_recognition
                         writer.writerows([csv_line.split(',')])
 
             cap.release()
-            output_movie.release()
+            #output_movie.release()
             cv2.destroyAllWindows()
             return { 'total_fish': total_passed_fish }

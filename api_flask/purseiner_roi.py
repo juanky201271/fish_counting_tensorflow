@@ -1,3 +1,9 @@
+#----------------------------------------------
+#--- Author         : Ahmet Ozlu
+#--- Mail           : ahmetozlu93@gmail.com
+#--- Date           : 27th July 2019
+#----------------------------------------------
+
 import tensorflow as tf
 import glob, os
 import shutil

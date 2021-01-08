@@ -5,9 +5,13 @@
 #----------------------------------------------
 
 import tensorflow as tf
+import glob, os
+import shutil
 
 from utils import backbone
 from api import picture_fish_counting_api
+from shutil import make_archive
+from pathlib import Path
 
 def purseiner_picture_counting_process(url_input_video, folder):
     #input_video = "./input_images_and_videos/3-convoyeur3 26-08-2019 03-00-02.jpg"
