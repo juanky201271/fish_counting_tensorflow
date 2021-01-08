@@ -16,4 +16,18 @@ def purseiner_picture_counting_process(url_input_video, folder):
 
     is_color_recognition_enabled = 0
 
-    return picture_fish_counting_api.single_image_object_counting(url_input_video, detection_graph, category_index, is_color_recognition_enabled, folder)
+    r =  picture_fish_counting_api.single_image_object_counting(url_input_video, detection_graph, category_index, is_color_recognition_enabled, folder)
+
+    currPath = os.getcwd()
+    f,tail = folder.split('/images')
+    os.chdir(os.getcwd() + '/' + f)
+    print(os.getcwd())
+    shutil.make_archive(folder.split('/')[len(folder.split('/')) - 2] + '_images_zip_result', "zip", './images')
+
+    for f in glob.glob(os.getcwd() + "./images/*"):
+        os.remove(f)
+
+    os.chdir(currPath)
+    print(os.getcwd())
+
+    return r

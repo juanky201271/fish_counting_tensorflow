@@ -115,6 +115,7 @@ class SubmitFile extends Component {
         file: name,
         file_csv_result: name + '_csv_result.csv',
         file_video_result: name + '_video_result.avi',
+        file_images_zip_result: name + '_images_zip_result.zip'
       }
     }
 

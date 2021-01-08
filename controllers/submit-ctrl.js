@@ -41,16 +41,9 @@ updateSubmit = async (req, res) => {
         return res.status(404).json({ success: false, error: 'Submit not found', })
       }
       submit.file = body.file || submit.file
-      submit.file_url_local = body.file_url_local || submit.file_url_local
-      submit.file_url_remote = body.file_url_remote || submit.file_url_remote
-
       submit.file_csv_result = body.file_csv_result || submit.file_csv_result
-      submit.file_csv_result_url_local = body.file_csv_result_url_local || submit.file_csv_result_url_local
-      submit.file_csv_result_url_remote = body.file_csv_result_url_remote || submit.file_csv_result_url_remote
-
       submit.file_video_result = body.file_video_result || submit.file_video_result
-      submit.file_video_result_url_local = body.file_video_result_url_local || submit.file_video_result_url_local
-      submit.file_video_result_url_remote = body.file_video_result_url_remote || submit.file_video_result_url_remote
+      submit.file_images_zip_result = body.file_images_zip_result || submit.file_images_zip_result
 
       //await
       submit

@@ -16,4 +16,18 @@ def webcam_fish_counting_process(url_input_video, folder):
 
     is_color_recognition_enabled = 0
 
-    return webcam_fish_counting_api.object_counting_webcam(detection_graph, category_index, is_color_recognition_enabled, folder)
+    r = webcam_fish_counting_api.object_counting_webcam(detection_graph, category_index, is_color_recognition_enabled, folder)
+
+    currPath = os.getcwd()
+    f,tail = folder.split('/images')
+    os.chdir(os.getcwd() + '/' + f)
+    print(os.getcwd())
+    shutil.make_archive(folder.split('/')[len(folder.split('/')) - 2] + '_images_zip_result', "zip", './images')
+
+    for f in glob.glob(os.getcwd() + "./images/*"):
+        os.remove(f)
+
+    os.chdir(currPath)
+    print(os.getcwd())
+
+    return r
