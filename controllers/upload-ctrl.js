@@ -67,9 +67,9 @@ createDir = async (req, res) => {
   ensureExists(parentDir, 0744, function(err) {
     if (err) // handle folder creation error
       console.log('parent error: ', err)
-    else { // we're all good
-      console.log(parentDir, ' created!')
-    }
+    //else { // we're all good
+    //  console.log(parentDir, ' created!')
+    //}
   })
   ensureExists(dir, 0744, function(err) {
     if (err) { // handle folder creation error
@@ -77,7 +77,7 @@ createDir = async (req, res) => {
       return res.status(400).json({ success: false, error: err, })
     }
     else { // we're all good
-      console.log(dir, ' created!')
+      //console.log(dir, ' created!')
       return res.status(201).json({
         success: true,
         dir: dir,
