@@ -51,7 +51,7 @@ Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PAS
 (probablemente existe ya instalada una version superior, desinstalala e instala la version 1.19.3 `pip uninstall numpy` y `pip install numpy==1.19.3`)
 ### `venv\Scripts\deactivate`
 ### `cd..`
-### `npm run start-api`
+### `npm run start-api` (alternativa: `cd api_flask` `venv\Scripts\activate` `flask run`)
 (si cambias algun fuente de api_flask/python toma efecto automaticamente, no tienes que hacer nada)<br />
 (arrancamos un servidor de flask en el puerto 5000 - http://localhost:5000)<br />
 (puedes probar el API con esta llamada: http://localhost:5000/flask_api/time recibes un archivo JSON con un numerajo del tipo `1609732886.7396224`)
