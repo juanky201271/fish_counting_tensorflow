@@ -13,12 +13,9 @@ Instalar Python 3.8.
 (instalamos los paquetes del cliente)
 ### `npm run build`
 (si cambias algun fuente del client/front-end deberas volver a lanzar este comando y refrescar la pagina en tu navegador para ver el resultado de los cambios)
-
 ### `cd..`
 ### `npm install`
 (instalamos los paquetes del servidor)
-### `npx nodemon`
-(si cambias algun fuente del server/back-end toma efecto automaticamente, no tienes que hacer nada)
 
 ## Archivo de Variables de entorno (`.env` crearlo en el raiz del repo)
 `COOKIE_KEY="thisappisforcountingfish"`<br />
@@ -31,6 +28,8 @@ Instalar Python 3.8.
 Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PASSWORD en la variable MONGODB_URI), de lo contrario puedes usar tu propia MongoDB URI en la variable de entorno.
 
 ## React app ready to go
+### `npx nodemon`
+(si cambias algun fuente del server/back-end toma efecto automaticamente, no tienes que hacer nada)<br /><br />
 (arrancamos un servidor de express en el puerto 8000 - http://localhost:8000)<br />
 (en esta URL la aplicacion deberia arrancar sin problemas)
 
@@ -56,13 +55,6 @@ Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PAS
 (si cambias algun fuente de api_flask/python toma efecto automaticamente, no tienes que hacer nada)
 (arrancamos un servidor de flask en el puerto 5000 - http://localhost:5000)<br />
 (puedes probar el API con esta llamada: http://localhost:5000/flask_api/time recibes un archivo JSON con un numerajo del tipo `1609732886.7396224`)
-
-## Archivos muy grandes
-En el modelo de tensroflow que usamos hay 3 archivos por encima de los `100 Mb`. GitHub no los aloja directamente en el Repo, son:
-### `frozen_inference_graph.pb`
-### `saved_model.pb`
-### `model.ckpt.data-00000-of-00001`
-Estoy seguro de que puedes copiarlos si no estan, sin problemas.
 
 ## Repositorio de archivos creados (csv, avi y zip)
 Dentro de la carpeta: `client/public` va a existir la carpeta: `submits` solamente. Si tu repo es de alguna version anterior tendras otras tres carpetas que deberas borrar recursivamente (borrando tambien todo el contenido de cada una de las tres).

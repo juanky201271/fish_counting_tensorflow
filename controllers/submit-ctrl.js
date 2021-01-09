@@ -41,8 +41,10 @@ updateSubmit = async (req, res) => {
         return res.status(404).json({ success: false, error: 'Submit not found', })
       }
       submit.file = body.file || submit.file
+      submit.type = body.type || submit.type
       submit.file_csv_result = body.file_csv_result || submit.file_csv_result
       submit.file_video_result = body.file_video_result || submit.file_video_result
+      submit.file_image_result = body.file_image_result || submit.file_image_result
       submit.file_images_zip_result = body.file_images_zip_result || submit.file_images_zip_result
 
       //await

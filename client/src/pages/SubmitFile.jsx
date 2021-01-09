@@ -18,15 +18,16 @@ const WrapperFooter = styled.div.attrs({ className: 'form-group bg-white', })`
     margin: 0 30px;
     padding: 30px;
 `
-const WrapperUrl = styled.a.attrs({ className: 'navbar-brand' })`
-  display: 'flex';
-`
+//const WrapperUrl = styled.a.attrs({ className: 'navbar-brand' })`
+//  display: 'flex';
+//`
 const Label = styled.label`
     margin: 2px;
 `
-const LabelBold = styled.label`
+const LabelBold = styled.p`
     margin-left: 20px;
     font-weight: bold;
+    color: red;
 `
 const InputText = styled.input.attrs({ className: 'form-control', })`
     margin: 5px;
@@ -52,7 +53,6 @@ class SubmitFile extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            columns: [],
             selectedFile: '',
             uploadedFile: '',
             isLoading: false,
@@ -63,6 +63,7 @@ class SubmitFile extends Component {
             total_fish: null,
             _id: null,
             dir: null,
+            error: null,
         }
         this.uploadInputRef = React.createRef()
     }
@@ -72,7 +73,22 @@ class SubmitFile extends Component {
         this.setState({ isLoading: false })
     }
     handleChangeInputUpload = (event) => {
-      this.setState({ selectedFile: event.target.files[0] })
+      const file = event.target.files[0]
+      if (!['image', 'video'].includes(file.type.split('/')[0])) {
+        event.preventDefault()
+        this.uploadInputRef.current.value = ''
+        this.setState(
+          {
+            error: 'Please select only images or videos to upload'
+          },
+          () => {
+            setTimeout(() => { this.setState({ error: null }) }, 3000)
+          }
+        )
+        return
+      }
+
+      this.setState({ selectedFile: file })
     }
     handleUpload = async e => {
       const name = "File_" + Date.now() + '_' + this.state.selectedFile.name
@@ -80,21 +96,17 @@ class SubmitFile extends Component {
       const payload = this.payload(name)
       await api.createSubmit(payload)
         .then(res => {
-          console.log(res.data)
           this.setState({ _id: res.data._id })
           _id = res.data._id
         })
-        .catch(e => console.log(e))
+        .catch(e => console.log('create submit ERROR: ', e))
 
       const dir = _id + "_" + name
       await api.createDir(dir)
         .then(res => {
-          console.log(res.data)
           this.setState({ dir: dir })
         })
-        .catch(e => console.log(e))
-
-      console.log(this.state.selectedFile, name, dir)
+        .catch(e => console.log('create Dirs ERROR: ', e))
 
       // Create an object of formData
       const formData = new FormData()
@@ -108,15 +120,28 @@ class SubmitFile extends Component {
         .then(res => {
           this.setState({ uploadedFile: res.data.path })
         })
-        .catch(e => console.log(e))
+        .catch(e => console.log('Upload file ERROR: ', e))
     }
     payload = (name) => {
-      return {
-        file: name,
-        file_csv_result: name + '_csv_result.csv',
-        file_video_result: name + '_video_result.avi',
-        file_images_zip_result: name + '_images_zip_result.zip'
+      const type = this.state.selectedFile.type.split('/')[0]
+      if (type === 'video') {
+        return {
+          file: name,
+          type: type,
+          file_csv_result: name + '_csv_result.csv',
+          file_video_result: name + '_video_result.avi',
+          file_images_zip_result: name + '_images_zip_result.zip'
+        }
+      } else {
+        return {
+          file: name,
+          type: type,
+          file_csv_result: name + '_csv_result.csv',
+          file_image_result: name + '_image_result.png',
+          file_images_zip_result: name + '_images_zip_result.zip'
+        }
       }
+
     }
 
     handleVideoRoiProcess = async e => {
@@ -126,10 +151,9 @@ class SubmitFile extends Component {
       if (dir !== null) {
         await api.videoRoiCountFish(uploadedFile, 'client/public/submits/' + dir)
           .then(res => {
-            console.log(res.data)
             this.setState({ total_fish: res.data.total_fish })
           })
-          .catch(e => console.log(e))
+          .catch(e => console.log('Video Roi Count Fish ERROR: ', e))
       }
 
       this.setState({ isLoading: false })
@@ -141,10 +165,9 @@ class SubmitFile extends Component {
       if (dir !== null) {
         await api.videoCountFish(uploadedFile, 'client/public/submits/' + dir)
           .then(res => {
-            console.log(res.data)
             this.setState({ total_fish: res.data.total_fish })
           })
-          .catch(e => console.log(e))
+          .catch(e => console.log('Video Count Fish ERROR: ', e))
       }
 
       this.setState({ isLoading: false })
@@ -156,10 +179,9 @@ class SubmitFile extends Component {
       if (dir !== null) {
         await api.webcamCountFish(uploadedFile, 'client/public/submits/' + dir)
           .then(res => {
-            console.log(res.data)
             this.setState({ total_fish: res.data.total_fish })
           })
-          .catch(e => console.log(e))
+          .catch(e => console.log('Webcam Count Fish ERROR: ', e))
       }
 
       this.setState({ isLoading: false })
@@ -171,10 +193,9 @@ class SubmitFile extends Component {
       if (dir !== null) {
         await api.pictureCountFish(uploadedFile, 'client/public/submits/' + dir)
           .then(res => {
-            console.log(res.data)
             this.setState({ total_fish: res.data.total_fish })
           })
-          .catch(e => console.log(e))
+          .catch(e => console.log('Picture Count Fish ERROR: ', e))
       }
 
       this.setState({ isLoading: false })
@@ -185,14 +206,17 @@ class SubmitFile extends Component {
     }
     fileData = () => {
       const file_arr = this.state.uploadedFile.split('\\')
+
       const file = '/submits/' + this.state.dir + '/' +  file_arr[file_arr.length - 1]
       const csv = '/submits/' + this.state.dir + '/' +  file_arr[file_arr.length - 1] + '_csv_result.csv'
       const video = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_video_result.avi'
+      const image = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_image_result.png'
       const zip = '/submits/' + this.state.dir + '/' + this.state._id + '_' + file_arr[file_arr.length - 1] + '_images_zip_result.zip'
       if (this.state.selectedFile) {
+        const type = this.state.selectedFile.type.split('/')[0] || ''
         return (
           <div>
-            <h2>File Details:</h2>
+            <h2>File Details ({type}):</h2>
             <hr />
             <p>File Name: {this.state.selectedFile.name}</p>
             <p>File Type: {this.state.selectedFile.type}</p>
@@ -210,7 +234,7 @@ class SubmitFile extends Component {
               <hr />
               <a href={csv} rel="noopener noreferrer" target="_blank">CSV Result File</a>
               <br />
-              <a href={video} rel="noopener noreferrer" target="_blank">Video AVI Result File</a>
+              <a href={type === 'video' ? video : image} rel="noopener noreferrer" target="_blank">{type === 'video' ? 'Video AVI' : 'Image PNG'} Result File</a>
               <br />
               <a href={zip} rel="noopener noreferrer" target="_blank">Object Detected Images ZIP Result File</a>
               </>
@@ -228,181 +252,9 @@ class SubmitFile extends Component {
     }
     render() {
       console.log('submit file', this.state)
-        const { isLoading, selectedFile, uploadedFile, total_fish } = this.state
+        const { isLoading, selectedFile, uploadedFile, total_fish, error } = this.state
+        const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
         const imageData = this.fileData()
-        const columns = [
-            {
-                Header: 'Bar',
-                accessor: '',
-                style: { 'white-space': 'unset' },
-                Cell: function(props) {
-                  return (
-                    <span>
-                      <LabelBold>{ props.original.name }</LabelBold>
-                    </span>
-                  )
-                }
-            },
-
-            {
-                Header: 'Picture',
-                accessor: '',
-                Cell: function(props) {
-                  return (
-                      <span>
-                        <WrapperUrl href={props.original.url} target="_blank">
-                          <img src={props.original.image_url} width="100" height="100" alt={props.original.alias} />
-                        </WrapperUrl>
-                      </span>
-                  )
-                }
-            },
-            {
-                Header: 'Address',
-                accessor: '',
-                style: { 'white-space': 'unset' },
-                Cell: function(props) {
-                  const addressList = props.original.location.display_address.map((item, index) => <div key={item.trim()}>{item}</div>)
-                  return (
-                    <span>
-                      {addressList}
-                    </span>
-                  )
-                }
-            },
-            {
-                Header: 'Phone Number',
-                accessor: '',
-                style: { 'white-space': 'unset' },
-                Cell: function(props) {
-                  return (
-                      <span>
-                      { props.original.display_phone ?
-                        (
-                          <LabelBold>{ props.original.display_phone }</LabelBold>
-                        ): (
-                          <div></div>
-                        )
-                      }
-                      </span>
-                  )
-                }
-            },
-            {
-                Header: 'Info',
-                accessor: '',
-                style: { 'white-space': 'unset' },
-                Cell: function(props) {
-                  const categoriesList = props.original.categories.map((item, index) => <div key={item.title.trim()}>{item.title}</div>)
-                  return (
-                      <span>
-                        <LabelBold>{ props.original.is_closed ? 'Closed' : 'OPEN' }</LabelBold><br />
-                        { props.original.review_count > 0 ?
-                          (
-                            <><Label>Reviews: </Label><LabelBold>{ props.original.review_count }</LabelBold><br /></>
-                          ): (
-                            <div></div>
-                          )
-                        }
-                        { props.original.categories.length > 0 ?
-                          (
-                            <><Label>Categories: </Label><br />
-                            <LabelBold>{categoriesList}</LabelBold><br /></>
-                          ): (
-                            <div></div>
-                          )
-                        }
-                        { props.original.rating > 0 ?
-                          (
-                            <><Label>Rating: </Label><LabelBold>{ props.original.rating }</LabelBold><br /></>
-                          ): (
-                            <div></div>
-                          )
-                        }
-                        { props.original.transactions.length > 0 ?
-                          (
-                            <><Label>Transactions: </Label><br />
-                            <LabelBold>{ props.original.transactions.join(" / ") }</LabelBold><br /></>
-                          ): (
-                            <div></div>
-                          )
-                        }
-                        { props.original.price ?
-                          (
-                            <><Label>Price: </Label><LabelBold>{ props.original.price }</LabelBold><br /></>
-                          ): (
-                            <div></div>
-                          )
-                        }
-                      </span>
-                  )
-                }
-            },
-            {
-                Header: 'Assistance',
-                accessor: '',
-                style: { 'white-space': 'unset' },
-                Cell: function(props) {
-                  var list = {
-                    twitterId: [],
-                    name: [],
-                    assist: [],
-                  }
-                  var found = false
-                  var _id_found = ''
-                  var assist_found = false
-                  for (let i = 0; i < this.state.find.length; i++) {
-                    if (this.state.find[i].businesses.bars_business_id === props.original.id) {
-                      if (this.state.authenticated) {
-                        if (this.state.find[i].businesses.twitterId === this.state.twitterId) {
-                          found = true
-                          _id_found = this.state.find[i].businesses._id
-                          assist_found = this.state.find[i].businesses.assist
-                        } else {
-                          list.twitterId.push(this.state.find[i].businesses.twitterId)
-                          list.name.push(this.state.find[i].businesses.users.name)
-                          list.assist.push(this.state.find[i].businesses.assist)
-                        }
-                      } else {
-                        list.twitterId.push(this.state.find[i].businesses.twitterId)
-                        list.name.push(this.state.find[i].businesses.users.name)
-                        list.assist.push(this.state.find[i].businesses.assist)
-                      }
-                    }
-                  }
-                  const namesList = list.name.map((item, index) => <div key={list.twitterId[index]}>{list.assist[index] ? item + ' (Confirmed)' : item + ' (Canceled)'}</div>)
-                  return (
-                      <span>
-                      { !found && this.state.authenticated ?
-                        (
-                          <><br /></>
-                        ) : assist_found && this.state.authenticated ?
-                            (
-                              <>
-                                <LabelBold>I'll be there tonight.</LabelBold><br />
-                              </>
-                            ) : (
-                              <LabelBold>{ this.state.authenticated ? "I've Canceled, I'm sorry." : "..."}</LabelBold>
-                            )
-                      }
-                      { list.name.length > 0 ?
-                        (
-                          <><hr />
-                          {namesList}</>
-                        ) : (
-                          <></>
-                        )
-                      }
-                      </span>
-                  )
-                }.bind(this)
-            },
-        ]
-
-        //let showTable = true
-        //if (!json.businesses.length) {
-        //    showTable = false
-        //}
 
         return (
             <Wrapper>
@@ -412,18 +264,22 @@ class SubmitFile extends Component {
                 <InputText
                     id="selectedFileInput"
                     type="file"
+                    accept='image/*|video/*'
                     onChange={this.handleChangeInputUpload}
                     ref={this.uploadInputRef}
                     disabled={isLoading ? true : uploadedFile ? true : false}
                 />
+                {error && (
+                  <LabelBold>{error}</LabelBold>
+                )}
                 <ButtonUpload id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading ? true : selectedFile && !uploadedFile ? false : true} >Upload!</ButtonUpload>
                 <Label>{'When the file is uploaded, you can Process/Count it.'}</Label>
 
-                <ButtonProcess id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || total_fish !== null ? true : uploadedFile ? false : true} >ROI Video - Count Fish!</ButtonProcess>
-                <ButtonProcess id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || total_fish !== null ? true : uploadedFile ? false : true} >Video - Count Fish!</ButtonProcess>
+                <ButtonProcess id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >ROI Video - Count Fish!</ButtonProcess>
+                <ButtonProcess id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >Video - Count Fish!</ButtonProcess>
 
-                <ButtonProcess id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || total_fish !== null ? true : uploadedFile ? false : true} >Webcam - Count Fish!</ButtonProcess>
-                <ButtonProcess id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || total_fish !== null ? true : uploadedFile ? false : true} >Picture - Count Fish!</ButtonProcess>
+                <ButtonProcess id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >Webcam - Count Fish!</ButtonProcess>
+                <ButtonProcess id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >Picture - Count Fish!</ButtonProcess>
 
                 <ButtonCancel id="processButton" onClick={this.handleCancel} disabled={isLoading} >{total_fish !== null ? 'Another File' : 'Cancel'}</ButtonCancel>
               </WrapperHeader>
