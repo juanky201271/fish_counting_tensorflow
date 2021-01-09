@@ -52,7 +52,7 @@ Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PAS
 ### `venv\Scripts\deactivate`
 ### `cd..`
 ### `npm run start-api`
-(si cambias algun fuente de api_flask/python toma efecto automaticamente, no tienes que hacer nada)
+(si cambias algun fuente de api_flask/python toma efecto automaticamente, no tienes que hacer nada)<br />
 (arrancamos un servidor de flask en el puerto 5000 - http://localhost:5000)<br />
 (puedes probar el API con esta llamada: http://localhost:5000/flask_api/time recibes un archivo JSON con un numerajo del tipo `1609732886.7396224`)
 
