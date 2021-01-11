@@ -10,3 +10,4 @@ __pycache__
 ellen.txt
 submits
 api_flask/output_inference_graph_v1_purseiner3
+api_flask/my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8
