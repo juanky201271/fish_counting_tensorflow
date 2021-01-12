@@ -19,10 +19,10 @@ export const createUploadResult = payload => api.post(`/uploadresult`, payload)
 export const createDir = dir => api.post(`/createDir/`, { dir: dir })
 
 export const getTime = () => flask_api.get(`/time`)
-export const videoRoiCountFish = (url_input_video, dir) => flask_api.post(`/videoroicountfish`, { url_input_video, dir })
-export const videoCountFish = (url_input_video, dir) => flask_api.post(`/videocountfish`, { url_input_video, dir })
-export const webcamCountFish = (url_input_video, dir) => flask_api.post(`/webcamcountfish`, { url_input_video, dir })
-export const pictureCountFish = (url_input_video, dir) => flask_api.post(`/picturecountfish`, { url_input_video, dir })
+export const videoRoiCountFish = (url_input_video, dir, model) => flask_api.post(`/videoroicountfish`, { url_input_video, dir, model })
+export const videoCountFish = (url_input_video, dir, model) => flask_api.post(`/videocountfish`, { url_input_video, dir, model })
+export const webcamCountFish = (url_input_video, dir, model) => flask_api.post(`/webcamcountfish`, { url_input_video, dir, model })
+export const pictureCountFish = (url_input_video, dir, model) => flask_api.post(`/picturecountfish`, { url_input_video, dir, model })
 
 const apis = {
   createSubmit,

@@ -13,10 +13,10 @@ from api import roi_fish_counting_api
 from shutil import make_archive
 from pathlib import Path
 
-def purseiner_roi_process(url_input_video, folder):
+def purseiner_roi_process(url_input_video, folder, model):
     #input_video = "api_flask/input_images_and_videos/27-08-2019-03-25.avi"
 
-    detection_graph, category_index = backbone.set_model('output_inference_graph_v1_purseiner3', 'purseiner_label_map.pbtxt')
+    detection_graph, category_index = backbone.set_model(model, 'purseiner_label_map.pbtxt')
 
     fps = 1.00 # change it with your input video fps
     width = 1280 # change it with your input video width

@@ -64,6 +64,7 @@ class SubmitFile extends Component {
             _id: null,
             dir: null,
             error: null,
+            model: 'output_inference_graph_v1_purseiner3',
         }
         this.uploadInputRef = React.createRef()
     }
@@ -146,10 +147,10 @@ class SubmitFile extends Component {
 
     handleVideoRoiProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile, dir } = this.state
+      const { uploadedFile, dir, model } = this.state
 
       if (dir !== null) {
-        await api.videoRoiCountFish(uploadedFile, 'client/public/submits/' + dir)
+        await api.videoRoiCountFish(uploadedFile, 'client/public/submits/' + dir, model)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -160,10 +161,10 @@ class SubmitFile extends Component {
     }
     handleVideoProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile, dir } = this.state
+      const { uploadedFile, dir, model } = this.state
 
       if (dir !== null) {
-        await api.videoCountFish(uploadedFile, 'client/public/submits/' + dir)
+        await api.videoCountFish(uploadedFile, 'client/public/submits/' + dir, model)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -174,10 +175,10 @@ class SubmitFile extends Component {
     }
     handleWebcamProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile, dir } = this.state
+      const { uploadedFile, dir, model } = this.state
 
       if (dir !== null) {
-        await api.webcamCountFish(uploadedFile, 'client/public/submits/' + dir)
+        await api.webcamCountFish(uploadedFile, 'client/public/submits/' + dir, model)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -188,10 +189,10 @@ class SubmitFile extends Component {
     }
     handlePictureProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile, dir } = this.state
+      const { uploadedFile, dir, model } = this.state
 
       if (dir !== null) {
-        await api.pictureCountFish(uploadedFile, 'client/public/submits/' + dir)
+        await api.pictureCountFish(uploadedFile, 'client/public/submits/' + dir, model)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -203,6 +204,9 @@ class SubmitFile extends Component {
     handleCancel = e => {
       this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, })
       this.uploadInputRef.current.value = ''
+    }
+    handleList = e => {
+      this.setState({ model: e.target.value })
     }
     fileData = () => {
       const file_arr = this.state.uploadedFile.split('\\')
@@ -259,6 +263,13 @@ class SubmitFile extends Component {
         return (
             <Wrapper>
               <WrapperHeader>
+                <FullName>Select the model to use</FullName>
+                <hr />
+                <select name="models" id="listModels" onChange={this.handleList}>
+                  <option selected value="output_inference_graph_v1_purseiner3">output_inference_graph_v1_purseiner3 - OLD</option>
+                  <option value="my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8">my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8 - NEW</option>
+                </select>
+                <hr />
                 <FullName>Select the File (Image/Video) to Process</FullName>
                 <hr />
                 <InputText

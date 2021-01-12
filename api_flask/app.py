@@ -22,9 +22,10 @@ def get_result_video_roi_counting_fish():
         url_input_video_and_dir = request.get_json()
         folder_images = url_input_video_and_dir.get("dir") + '/images'
         video = url_input_video_and_dir.get('url_input_video')
+        model = url_input_video_and_dir.get('model')
         if os.path.isdir(folder_images) == False:
             os.mkdir(folder_images)
-        return purseiner_roi.purseiner_roi_process(video, folder_images)
+        return purseiner_roi.purseiner_roi_process(video, folder_images, model)
 
 @app.route('/flask_api/videocountfish', methods=['POST'])
 def get_result_video_counting_fish():
@@ -32,9 +33,10 @@ def get_result_video_counting_fish():
         url_input_video_and_dir = request.get_json()
         folder_images = url_input_video_and_dir.get("dir") + '/images'
         video = url_input_video_and_dir.get('url_input_video')
+        model = url_input_video_and_dir.get('model')
         if os.path.isdir(folder_images) == False:
             os.mkdir(folder_images)
-        return purseiner_video_counting.purseiner_video_counting_process(video, folder_images)
+        return purseiner_video_counting.purseiner_video_counting_process(video, folder_images, model)
 
 @app.route('/flask_api/webcamcountfish', methods=['POST'])
 def get_result_webcam_counting_fish():
@@ -42,9 +44,10 @@ def get_result_webcam_counting_fish():
         url_input_video_and_dir = request.get_json()
         folder_images = url_input_video_and_dir.get("dir") + '/images'
         video = url_input_video_and_dir.get('url_input_video')
+        model = url_input_video_and_dir.get('model')
         if os.path.isdir(folder_images) == False:
             os.mkdir(folder_images)
-        return purseiner_webcam_counting.purseiner_webcam_counting_process(video, folder_images)
+        return purseiner_webcam_counting.purseiner_webcam_counting_process(video, folder_images, model)
 
 @app.route('/flask_api/picturecountfish', methods=['POST'])
 def get_result_picture_counting_fish():
@@ -52,6 +55,7 @@ def get_result_picture_counting_fish():
         url_input_video_and_dir = request.get_json()
         folder_images = url_input_video_and_dir.get("dir") + '/images'
         video = url_input_video_and_dir.get('url_input_video')
+        model = url_input_video_and_dir.get('model')
         if os.path.isdir(folder_images) == False:
             os.mkdir(folder_images)
-        return purseiner_picture_counting.purseiner_picture_counting_process(video, folder_images)
+        return purseiner_picture_counting.purseiner_picture_counting_process(video, folder_images, model)

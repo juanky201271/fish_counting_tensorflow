@@ -13,10 +13,10 @@ from api import picture_fish_counting_api
 from shutil import make_archive
 from pathlib import Path
 
-def purseiner_picture_counting_process(url_input_video, folder):
+def purseiner_picture_counting_process(url_input_video, folder, model):
     #input_video = "./input_images_and_videos/3-convoyeur3 26-08-2019 03-00-02.jpg"
 
-    detection_graph, category_index = backbone.set_model('output_inference_graph_v1_purseiner3', 'purseiner_label_map.pbtxt')
+    detection_graph, category_index = backbone.set_model(model, 'purseiner_label_map.pbtxt')
 
     is_color_recognition_enabled = 0
 

@@ -13,9 +13,9 @@ from api import webcam_fish_counting_api
 from shutil import make_archive
 from pathlib import Path
 
-def purseiner_webcam_counting_process(url_input_video, folder):
+def purseiner_webcam_counting_process(url_input_video, folder, model):
 # By default I use an "SSD with Mobilenet" model here. See the detection model zoo (https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md) for a list of other models that can be run out-of-the-box with varying speeds and accuracies.
-    detection_graph, category_index = backbone.set_model('output_inference_graph_v1_purseiner3', 'purseiner_label_map.pbtxt')
+    detection_graph, category_index = backbone.set_model(model, 'purseiner_label_map.pbtxt')
 
     is_color_recognition_enabled = 0
 
@@ -29,7 +29,7 @@ def purseiner_webcam_counting_process(url_input_video, folder):
     for f in glob.glob(os.getcwd() + "./images/*"):
         os.remove(f)
     os.rmdir("images")
-    
+
     os.chdir(currPath)
 
     return r
