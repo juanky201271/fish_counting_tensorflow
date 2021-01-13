@@ -8,6 +8,7 @@ import purseiner_roi
 import purseiner_video_counting
 import purseiner_webcam_counting
 import purseiner_picture_counting
+import save_frozen_graph
 
 app = Flask(__name__)
 CORS(app)
@@ -59,3 +60,7 @@ def get_result_picture_counting_fish():
         if os.path.isdir(folder_images) == False:
             os.mkdir(folder_images)
         return purseiner_picture_counting.purseiner_picture_counting_process(video, folder_images, model)
+
+@app.route('/flask_api/savefrozengraph')
+def get_save_frozen_graph():
+    save_frozen_graph.save_frozen_graph_process()
