@@ -65,7 +65,9 @@ def get_result_picture_counting_fish():
 @app.route('/flask_api/savefrozengraph')
 def get_save_frozen_graph():
     save_frozen_graph.save_frozen_graph_process()
+    return { 'result': 'ok' }
 
 @app.route('/flask_api/testmodelv2')
 def get_test_model_v2():
     test_model_v2.test_model_v2_process()
+    return { 'result': 'ok' }
