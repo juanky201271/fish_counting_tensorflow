@@ -85,20 +85,21 @@ def cumulative_object_counting_x_axis(input_video, detection_model, category_ind
             font = cv2.FONT_HERSHEY_SIMPLEX
 
             # Visualization of the results of a detection.
-            #counter, csv_line, counting_mode = vis_util.visualize_boxes_and_labels_on_image_array_x_axis(cap.get(1),
-            #                                                                                             input_frame,
-            #                                                                                             1,
-            #                                                                                             is_color_recognition_enabled,
-            #                                                                                             np.squeeze(detections['detection_boxes']),
-            #                                                                                             np.squeeze(detections['detection_classes']).astype(np.int32),
-            #                                                                                             np.squeeze(detections['detection_scores']),
-            #                                                                                             category_index,
-            #                                                                                             x_reference = roi,
-            #                                                                                             deviation = deviation,
-            #                                                                                             use_normalized_coordinates=True,
-            #                                                                                             line_thickness=4,
-            #                                                                                             folder=folder)
+            counter, csv_line, counting_mode = vis_util.visualize_boxes_and_labels_on_image_array_x_axis(cap.get(1),
+                                                                                                         input_frame,
+                                                                                                         1,
+                                                                                                         is_color_recognition_enabled,
+                                                                                                         np.squeeze(detections['detection_boxes']),
+                                                                                                         np.squeeze(detections['detection_classes']).astype(np.int32),
+                                                                                                         np.squeeze(detections['detection_scores']),
+                                                                                                         category_index,
+                                                                                                         x_reference=roi,
+                                                                                                         deviation=deviation,
+                                                                                                         use_normalized_coordinates=True,
+                                                                                                         line_thickness=4,
+                                                                                                         folder=folder)
 
+            """
             label_id_offset = 1
             viz_utils.visualize_boxes_and_labels_on_image_array(
                   input_frame,
@@ -114,6 +115,7 @@ def cumulative_object_counting_x_axis(input_video, detection_model, category_ind
             counter = 0
             csv_line = 'not_available'
             counting_mode = ''
+            """
 
             # when the vehicle passed over line and counted, make the color of ROI line green
             if counter == 1:

@@ -97,8 +97,8 @@ def single_image_object_counting(input_video, detection_graph, category_index, i
             cv2.FONT_HERSHEY_COMPLEX_SMALL,
             )
 
-        #cv2.imshow('tensorflow_object counting_api',input_frame)
-        #cv2.waitKey(0)
+        cv2.imshow('tensorflow_object counting_api',input_frame)
+        cv2.waitKey(0)
 
         if csv_line != 'not_available':
             with open(name_file_csv, 'a') as f:

@@ -48,10 +48,14 @@ def set_model(model_name, label_name):
 
 	if (model_name == 'my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8'):
 		path_to_ckpt = 'api_flask/' + model_name + '/pipeline.config'
+		model_dir = 'api_flask/' + model_name + '/checkpoint'
 		# Load a (saved) Tensorflow model into memory.
 		configs = config_util.get_configs_from_pipeline_file(path_to_ckpt)
 		model_config = configs['model']
 		detection_graph = model_builder.build(model_config=model_config, is_training=False)
+		# Restore checkpoint
+		ckpt = tf.compat.v2.train.Checkpoint(model=detection_graph)
+		ckpt.restore(os.path.join(model_dir, 'ckpt-0')).expect_partial()
 
 	#if (model_name == 'my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8'):
 	#	path_to_ckpt = 'api_flask/' + model_name + '/saved_model/saved_model.pb'

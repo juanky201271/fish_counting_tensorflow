@@ -9,6 +9,7 @@ import purseiner_video_counting
 import purseiner_webcam_counting
 import purseiner_picture_counting
 import save_frozen_graph
+import test_model_v2
 
 app = Flask(__name__)
 CORS(app)
@@ -64,3 +65,7 @@ def get_result_picture_counting_fish():
 @app.route('/flask_api/savefrozengraph')
 def get_save_frozen_graph():
     save_frozen_graph.save_frozen_graph_process()
+
+@app.route('/flask_api/testmodelv2')
+def get_test_model_v2():
+    test_model_v2.test_model_v2_process()
