@@ -129,10 +129,11 @@ def test_model_v2_saved_model_process():
     #recover our saved model
     saved_model_path = 'api_flask/models/my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8/saved_model'
     # Load a (saved) Tensorflow model into memory.
-    detection_model = tf.saved_model.load(saved_model_path)
+    #detection_model = tf.saved_model.load(saved_model_path)
 
     #detect_fn = get_model_detection_function(detection_model)
-    detect_fn = detection_model.signatures['serving_default']
+    #detect_fn = detection_model.signatures['serving_default']
+    detect_fn = tf.saved_model.load(saved_model_path)
 
     #map labels for inference decoding
     label_map_path = 'api_flask/data/purseiner_label_map.pbtxt'

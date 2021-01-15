@@ -60,4 +60,4 @@ Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PAS
 Dentro de la carpeta: `client/public` va a existir la carpeta: `submits` solamente. Si tu repo es de alguna version anterior tendras otras tres carpetas que deberas borrar recursivamente (borrando tambien todo el contenido de cada una de las tres).
 
 ## Modelos entrenados
-A causa de los archivos mayores de 100Mb he quitado los modelos del repo. Para usar un modelo copialo dentro de la carpeta `api_flask`.
+A causa de los archivos mayores de 100Mb he quitado los modelos del repo. Para usar un modelo copialo dentro de la carpeta `api_flask/models`.
