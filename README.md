@@ -28,7 +28,7 @@ Instalar Python 3.8.
 Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PASSWORD en la variable MONGODB_URI), de lo contrario puedes usar tu propia MongoDB URI en la variable de entorno.
 
 ## React app ready to go
-### `npx nodemon`
+### `npm run start` o `npx nodemon`
 (si cambias algun fuente del server/back-end toma efecto automaticamente, no tienes que hacer nada)<br /><br />
 (arrancamos un servidor de express en el puerto 8000 - http://localhost:8000)<br />
 (en esta URL la aplicacion deberia arrancar sin problemas)
