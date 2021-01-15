@@ -7,10 +7,10 @@ from tensorflow.python.util import compat
 from object_detection.utils import config_util
 from object_detection.builders import model_builder
 
-def set_model(model_name, label_name):
+def set_model(model_name, label_name, type_name):
 	model_found = 0
 
-	for file in glob.glob("api_flask/*"):
+	for file in glob.glob("api_flask/models/*"):
 		if (file.split('\\')[1] == model_name):
 			model_found = 1
 
@@ -35,8 +35,8 @@ def set_model(model_name, label_name):
 		    tar_file.extract(file, os.getcwd())
 
 	# Path to frozen detection graph. This is the actual model that is used for the object detection.
-	if (model_name == 'output_inference_graph_v1_purseiner3'):
-		path_to_ckpt = 'api_flask/' + model_name + '/frozen_inference_graph.pb'
+	if (type_name == 'frozen_graph'):
+		path_to_ckpt = 'api_flask/models/' + model_name + '/frozen_inference_graph.pb'
 		# Load a (frozen) Tensorflow model into memory.
 		detection_graph = tf.Graph()
 		with detection_graph.as_default():
@@ -46,9 +46,14 @@ def set_model(model_name, label_name):
 		    od_graph_def.ParseFromString(serialized_graph)
 		    tf.import_graph_def(od_graph_def, name='')
 
-	if (model_name == 'my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8'):
-		path_to_ckpt = 'api_flask/' + model_name + '/pipeline.config'
-		model_dir = 'api_flask/' + model_name + '/checkpoint'
+	if (type_name == 'saved_model'):
+		path_to_ckpt = 'api_flask/models/' + model_name + '/saved_model'
+		# Load a (saved) Tensorflow model into memory.
+		detection_graph = tf.saved_model.load(path_to_ckpt)
+
+	if (type_name == 'ckpt'):
+		path_to_ckpt = 'api_flask/models/' + model_name + '/pipeline.config'
+		model_dir = 'api_flask/models/' + model_name + '/checkpoint'
 		# Load a (saved) Tensorflow model into memory.
 		configs = config_util.get_configs_from_pipeline_file(path_to_ckpt)
 		model_config = configs['model']

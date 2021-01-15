@@ -67,7 +67,12 @@ def get_save_frozen_graph():
     save_frozen_graph.save_frozen_graph_process()
     return { 'result': 'ok' }
 
-@app.route('/flask_api/testmodelv2')
-def get_test_model_v2():
-    test_model_v2.test_model_v2_process()
+@app.route('/flask_api/testmodelv2ckpt')
+def get_test_model_v2_ckpt():
+    test_model_v2.test_model_v2_ckpt_process()
+    return { 'result': 'ok' }
+
+@app.route('/flask_api/testmodelv2savedmodel')
+def get_test_model_v2_saved_model():
+    test_model_v2.test_model_v2_saved_model_process()
     return { 'result': 'ok' }

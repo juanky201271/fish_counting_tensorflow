@@ -15,7 +15,7 @@ from object_detection.utils import config_util
 from object_detection.utils import visualization_utils as viz_utils
 from object_detection.builders import model_builder
 
-def load_image_into_numpy_array(path):
+def load_image_into_numpy_array_ckpt(path):
   """Load an image from file into a numpy array.
 
   Puts image into numpy array to feed into tensorflow graph.
@@ -34,6 +34,21 @@ def load_image_into_numpy_array(path):
   return np.array(image.getdata()).reshape(
       (im_height, im_width, 3)).astype(np.uint8)
 
+def load_image_into_numpy_array_saved_model(path):
+    """Load an image from file into a numpy array.
+
+    Puts image into numpy array to feed into tensorflow graph.
+    Note that by convention we put it into a numpy array with shape
+    (height, width, channels), where channels=3 for RGB.
+
+    Args:
+      path: the file path to the image
+
+    Returns:
+      uint8 numpy array with shape (img_height, img_width, 3)
+    """
+    return np.array(Image.open(path))
+
 def get_model_detection_function(model):
   """Get a tf.function for detection."""
 
@@ -49,21 +64,19 @@ def get_model_detection_function(model):
 
   return detect_fn
 
-def test_model_v2_process():
+def test_model_v2_ckpt_process():
 
     #recover our saved model
-    pipeline_config = 'api_flask/my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8/pipeline.config'
+    pipeline_config = 'api_flask/models/my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8/pipeline.config'
     #generally you want to put the last ckpt from training in here
-    model_dir = 'api_flask/my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8/checkpoint/ckpt-0'
+    model_dir = 'api_flask/models/my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8/checkpoint/ckpt-0'
     configs = config_util.get_configs_from_pipeline_file(pipeline_config)
     model_config = configs['model']
-    detection_model = model_builder.build(
-          model_config=model_config, is_training=False)
+    detection_model = model_builder.build(model_config=model_config, is_training=False)
 
     # Restore checkpoint
-    ckpt = tf.compat.v2.train.Checkpoint(
-          model=detection_model)
-    ckpt.restore(os.path.join('api_flask/my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8/checkpoint', 'ckpt-0'))
+    ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
+    ckpt.restore(model_dir)
 
     detect_fn = get_model_detection_function(detection_model)
 
@@ -73,17 +86,14 @@ def test_model_v2_process():
     categories = label_map_util.convert_label_map_to_categories(
         label_map,
         max_num_classes=label_map_util.get_max_label_map_index(label_map),
-        use_display_name=True)
+        use_display_name=True
+    )
     category_index = label_map_util.create_category_index(categories)
     label_map_dict = label_map_util.get_label_map_dict(label_map, use_display_name=True)
 
     #run detector on test image
     #it takes a little longer on the first run and then runs at normal speed.
-    import random
-
-    TEST_IMAGE_PATHS = glob.glob('api_flask/input_images_and_videos/test3.jpg')
-    image_path = random.choice(TEST_IMAGE_PATHS)
-    image_np = load_image_into_numpy_array(image_path)
+    image_np = load_image_into_numpy_array_ckpt('api_flask/input_images_and_videos/test3.jpg')
 
     # Things to try:
     # Flip horizontally
@@ -93,8 +103,7 @@ def test_model_v2_process():
     # image_np = np.tile(
     #     np.mean(image_np, 2, keepdims=True), (1, 1, 3)).astype(np.uint8)
 
-    input_tensor = tf.convert_to_tensor(
-        np.expand_dims(image_np, 0), dtype=tf.float32)
+    input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
     detections, predictions_dict, shapes = detect_fn(input_tensor)
 
     label_id_offset = 1
@@ -108,10 +117,73 @@ def test_model_v2_process():
           category_index,
           use_normalized_coordinates=True,
           max_boxes_to_draw=200,
-          min_score_thresh=.5,
+          min_score_thresh=.4,
           agnostic_mode=False,
     )
 
     cv2.imshow('tensorflow_object counting_api',image_np_with_detections)
     cv2.waitKey(0)
-    return 'ok'
+
+def test_model_v2_saved_model_process():
+
+    #recover our saved model
+    saved_model_path = 'api_flask/models/my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8/saved_model'
+    # Load a (saved) Tensorflow model into memory.
+    detection_model = tf.saved_model.load(saved_model_path)
+
+    #detect_fn = get_model_detection_function(detection_model)
+    detect_fn = detection_model.signatures['serving_default']
+
+    #map labels for inference decoding
+    label_map_path = 'api_flask/data/purseiner_label_map.pbtxt'
+    label_map = label_map_util.load_labelmap(label_map_path)
+    categories = label_map_util.convert_label_map_to_categories(
+        label_map,
+        max_num_classes=label_map_util.get_max_label_map_index(label_map),
+        use_display_name=True
+    )
+    category_index = label_map_util.create_category_index(categories)
+    label_map_dict = label_map_util.get_label_map_dict(label_map, use_display_name=True)
+
+    #run detector on test image
+    #it takes a little longer on the first run and then runs at normal speed.
+    image_np = load_image_into_numpy_array_saved_model('api_flask/input_images_and_videos/test3.jpg')
+
+    # Things to try:
+    # Flip horizontally
+    # image_np = np.fliplr(image_np).copy()
+
+    # Convert image to grayscale
+    # image_np = np.tile(
+    #     np.mean(image_np, 2, keepdims=True), (1, 1, 3)).astype(np.uint8)
+
+    input_tensor = tf.convert_to_tensor(image_np)
+    input_tensor = input_tensor[tf.newaxis, ...]
+
+    detections = detect_fn(input_tensor)
+
+    num_detections = int(detections.pop('num_detections'))
+    detections = {key: value[0, :num_detections].numpy()
+                  for key, value in detections.items()}
+    detections['num_detections'] = num_detections
+
+    # detection_classes should be ints.
+    detections['detection_classes'] = detections['detection_classes'].astype(np.int64)
+
+    label_id_offset = 1
+    image_np_with_detections = image_np.copy()
+
+    viz_utils.visualize_boxes_and_labels_on_image_array(
+          image_np_with_detections,
+          detections['detection_boxes'],
+          detections['detection_classes'],
+          detections['detection_scores'],
+          category_index,
+          use_normalized_coordinates=True,
+          max_boxes_to_draw=200,
+          min_score_thresh=.4,
+          agnostic_mode=False,
+    )
+
+    cv2.imshow('tensorflow_object counting_api',image_np_with_detections)
+    cv2.waitKey(0)
