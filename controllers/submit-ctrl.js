@@ -1,4 +1,5 @@
 const Submit = require('../models/submit-model')
+const fs = require('fs')
 const mongoose = require('mongoose')
 
 const ObjectId = mongoose.Types.ObjectId
@@ -111,10 +112,41 @@ getSubmits = async (req, res) => {
     })
 }
 
+getModels = async (req, res) => {
+  const path = './api_flask/models/'
+  const dirs = fs.readdirSync(path)
+  let models = []
+  dirs.forEach((dir, i) => {
+    const saved_model_root_path = path + dir + '/saved_model.pb'
+    const saved_model_dir_path = path + dir + '/saved_model/saved_model.pb'
+    const frozen_inference_graph_path = path + dir + '/frozen_inference_graph.pb'
+    const ckpt_root_path = path + dir + '/model.ckpt.data-00000-of-00001'
+    const ckpt_dir_path = path + dir + '/checkpoint/ckpt-0.data-00000-of-00001'
+    const pipeline_config_path = path + dir + '/pipeline.config'
+    const label_map_path = path + dir + '/label_map.pbtxt'
+    models.push({
+      model: dir,
+      saved_model_root: fs.existsSync(saved_model_root_path) && fs.existsSync(label_map_path),
+      saved_model_dir: fs.existsSync(saved_model_dir_path) && fs.existsSync(label_map_path),
+      frozen_inference_graph: fs.existsSync(frozen_inference_graph_path) && fs.existsSync(label_map_path),
+      ckpt_root: fs.existsSync(ckpt_root_path) && fs.existsSync(pipeline_config_path) && fs.existsSync(label_map_path),
+      ckpt_dir: fs.existsSync(ckpt_dir_path) && fs.existsSync(pipeline_config_path) && fs.existsSync(label_map_path),
+    })
+  })
+
+  if (models.length === 0)
+    return res.status(404).json({ success: false, error: 'Models not found' })
+  else
+    return res.status(200).json({ success: true, data: models })
+
+}
+
 module.exports = {
   createSubmit,
   updateSubmit,
   deleteSubmit,
   getSubmit,
   getSubmits,
+
+  getModels,
 }

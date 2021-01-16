@@ -10,4 +10,6 @@ submitRouter.delete('/submit/:_id', SubmitCtrl.deleteSubmit)
 submitRouter.get('/submit/id/:_id', SubmitCtrl.getSubmit)
 submitRouter.get('/submits', SubmitCtrl.getSubmits)
 
+submitRouter.get('/models', SubmitCtrl.getModels)
+
 module.exports = submitRouter

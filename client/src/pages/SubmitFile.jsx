@@ -64,13 +64,20 @@ class SubmitFile extends Component {
             _id: null,
             dir: null,
             error: null,
-            model: 'output_inference_graph_v1_purseiner3',
+            model: '',
+            models: null,
         }
         this.uploadInputRef = React.createRef()
     }
     componentDidMount = async () => {
         this.setState({ isLoading: true })
-
+        await api.getModels()
+                .then(res => {
+                  this.setState({ models: res.data.data })
+                })
+                .catch(err => {
+                  console.log(err)
+                })
         this.setState({ isLoading: false })
     }
     handleChangeInputUpload = (event) => {
@@ -206,7 +213,12 @@ class SubmitFile extends Component {
       this.uploadInputRef.current.value = ''
     }
     handleList = e => {
-      this.setState({ model: e.target.value })
+      if (!e.target.value) {
+        this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, model: '', })
+        this.uploadInputRef.current.value = ''
+      } else {
+        this.setState({ model: e.target.value })
+      }
     }
     fileData = () => {
       const file_arr = this.state.uploadedFile.split('\\')
@@ -254,9 +266,34 @@ class SubmitFile extends Component {
         )
       }
     }
+    createSelectItems = () => {
+      const { models } = this.state
+      let items = []
+      items.push(<option key={'empty#empty'} value={''}>{'<choose a model>'}</option>)
+      if (models) {
+        models.forEach((model, i) => {
+          if (model.saved_model_root) {
+            items.push(<option key={model.model + '#saved_model_root'} value={model.model + '#saved_model_root'}>{model.model + ' - saved_model (root)'}</option>)
+          }
+          if (model.saved_model_dir) {
+            items.push(<option key={model.model + '#saved_model_dir'} value={model.model + '#saved_model_dir'}>{model.model + ' - saved_model (dir)'}</option>)
+          }
+          if (model.frozen_inference_graph) {
+            items.push(<option key={model.model + '#frozen_inference_graph'} value={model.model + '#frozen_inference_graph'}>{model.model + ' - frozen_inference_graph'}</option>)
+          }
+          if (model.ckpt_root) {
+            items.push(<option key={model.model + '#ckpt_root'} value={model.model + '#ckpt_root'}>{model.model + ' - checkpoints (root)'}</option>)
+          }
+          if (model.ckpt_dir) {
+            items.push(<option key={model.model + '#ckpt_dir'} value={model.model + '#ckpt_dir'}>{model.model + ' - checkpoints (dir)'}</option>)
+          }
+        })
+      }
+      return items
+    }
     render() {
       console.log('submit file', this.state)
-        const { isLoading, selectedFile, uploadedFile, total_fish, error } = this.state
+        const { isLoading, selectedFile, uploadedFile, total_fish, error, model } = this.state
         const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
         const imageData = this.fileData()
 
@@ -266,8 +303,7 @@ class SubmitFile extends Component {
                 <FullName>Select the model to use</FullName>
                 <hr />
                 <select name="models" id="listModels" onChange={this.handleList}>
-                  <option selected value="output_inference_graph_v1_purseiner3">output_inference_graph_v1_purseiner3 - OLD</option>
-                  <option value="my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8">my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8 - NEW</option>
+                  {this.createSelectItems()}
                 </select>
                 <hr />
                 <FullName>Select the File (Image/Video) to Process</FullName>
@@ -278,21 +314,21 @@ class SubmitFile extends Component {
                     accept='image/*|video/*'
                     onChange={this.handleChangeInputUpload}
                     ref={this.uploadInputRef}
-                    disabled={isLoading ? true : uploadedFile ? true : false}
+                    disabled={isLoading || !model ? true : uploadedFile ? true : false}
                 />
                 {error && (
                   <LabelBold>{error}</LabelBold>
                 )}
-                <ButtonUpload id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading ? true : selectedFile && !uploadedFile ? false : true} >Upload!</ButtonUpload>
+                <ButtonUpload id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >Upload!</ButtonUpload>
                 <Label>{'When the file is uploaded, you can Process/Count it.'}</Label>
 
-                <ButtonProcess id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >ROI Video - Count Fish!</ButtonProcess>
-                <ButtonProcess id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >Video - Count Fish!</ButtonProcess>
+                <ButtonProcess id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >ROI Video - Count Fish!</ButtonProcess>
+                <ButtonProcess id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >Video - Count Fish!</ButtonProcess>
 
-                <ButtonProcess id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >Webcam - Count Fish!</ButtonProcess>
-                <ButtonProcess id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >Picture - Count Fish!</ButtonProcess>
+                <ButtonProcess id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >Webcam - Count Fish!</ButtonProcess>
+                <ButtonProcess id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >Picture - Count Fish!</ButtonProcess>
 
-                <ButtonCancel id="processButton" onClick={this.handleCancel} disabled={isLoading} >{total_fish !== null ? 'Another File' : 'Cancel'}</ButtonCancel>
+                <ButtonCancel id="processButton" onClick={this.handleCancel} disabled={isLoading || !model} >{total_fish !== null ? 'Another File' : 'Cancel'}</ButtonCancel>
               </WrapperHeader>
               <WrapperFooter>
                 {isLoading ?
