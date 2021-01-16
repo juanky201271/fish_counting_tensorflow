@@ -62,9 +62,15 @@ Dentro de la carpeta: `client/public` va a existir la carpeta: `submits` solamen
 ## Modelos entrenados
 A causa de los archivos mayores de 100Mb he quitado los modelos del repo. Para usar un modelo copialo dentro de la carpeta `api_flask/models`.<br />
 Nomenclatura de los ficheros del modelo:<br />
-### `pipeline.config` debe existir esta fichero en el raiz de cada modelo.
-### `label_map.pbtxt` debe existir este fichero de etiquetas en el raiz de cada modelo.
-### `frozen_inference_graph.pb` si existe este fichero usamos Tensorflow v1.
-### `saved_model/saved_model.pb` or `saved_model.pb` si existe este fichero en el raiz o en ese directorio verificamos la version del modelo y usamos Tensorflow v1 o v2.
-### `model.ckpt.data-00000-of-00001` si existe este fichero en el raiz usamos Tensorflow v1 y checkpoints.
-### `checkpoint/ckpt-0.data-00000-of-00001` si existe este fichero en ese directorio usamos Tensorflow v2 y checkpoints.
+### `pipeline.config`
+debe existir esta fichero en el raiz de cada modelo.
+### `label_map.pbtxt`
+debe existir este fichero de etiquetas en el raiz de cada modelo.
+### `frozen_inference_graph.pb`
+si existe este fichero usamos Tensorflow v1.
+### `saved_model/saved_model.pb` or `saved_model.pb`
+si existe este fichero en el raiz o en ese directorio verificamos la version del modelo y usamos Tensorflow v1 o v2.
+### `model.ckpt.data-00000-of-00001`
+si existe este fichero en el raiz usamos Tensorflow v1 y checkpoints.
+### `checkpoint/ckpt-0.data-00000-of-00001`
+si existe este fichero en ese directorio usamos Tensorflow v2 y checkpoints.
