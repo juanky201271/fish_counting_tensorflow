@@ -63,7 +63,7 @@ Dentro de la carpeta: `client/public` va a existir la carpeta: `submits` solamen
 A causa de los archivos mayores de 100Mb he quitado los modelos del repo. Para usar un modelo copialo dentro de la carpeta `api_flask/models`.<br />
 Nomenclatura de los ficheros del modelo:<br />
 ### `pipeline.config`
-debe existir esta fichero en el raiz de cada modelo.
+debe existir esta fichero en el raiz de cada modelo, si vas a usar checkpoints en la inferencia.
 ### `label_map.pbtxt`
 debe existir este fichero de etiquetas en el raiz de cada modelo.
 ### `frozen_inference_graph.pb`
