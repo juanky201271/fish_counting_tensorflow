@@ -281,9 +281,9 @@ class SubmitFile extends Component {
           if (model.frozen_inference_graph) {
             items.push(<option key={model.model + '#frozen_inference_graph'} value={model.model + '#frozen_inference_graph'}>{model.model + ' - frozen_inference_graph'}</option>)
           }
-          if (model.ckpt_root) {
-            items.push(<option key={model.model + '#ckpt_root'} value={model.model + '#ckpt_root'}>{model.model + ' - checkpoints (root)'}</option>)
-          }
+          //if (model.ckpt_root) {
+          //  items.push(<option key={model.model + '#ckpt_root'} value={model.model + '#ckpt_root'}>{model.model + ' - checkpoints (root)'}</option>)
+          //}
           if (model.ckpt_dir) {
             items.push(<option key={model.model + '#ckpt_dir'} value={model.model + '#ckpt_dir'}>{model.model + ' - checkpoints (dir)'}</option>)
           }

@@ -120,7 +120,7 @@ getModels = async (req, res) => {
     const saved_model_root_path = path + dir + '/saved_model.pb'
     const saved_model_dir_path = path + dir + '/saved_model/saved_model.pb'
     const frozen_inference_graph_path = path + dir + '/frozen_inference_graph.pb'
-    const ckpt_root_path = path + dir + '/model.ckpt.data-00000-of-00001'
+    //const ckpt_root_path = path + dir + '/model.ckpt.data-00000-of-00001'
     const ckpt_dir_path = path + dir + '/checkpoint/ckpt-0.data-00000-of-00001'
     const pipeline_config_path = path + dir + '/pipeline.config'
     const label_map_path = path + dir + '/label_map.pbtxt'
@@ -129,7 +129,7 @@ getModels = async (req, res) => {
       saved_model_root: fs.existsSync(saved_model_root_path) && fs.existsSync(label_map_path),
       saved_model_dir: fs.existsSync(saved_model_dir_path) && fs.existsSync(label_map_path),
       frozen_inference_graph: fs.existsSync(frozen_inference_graph_path) && fs.existsSync(label_map_path),
-      ckpt_root: fs.existsSync(ckpt_root_path) && fs.existsSync(pipeline_config_path) && fs.existsSync(label_map_path),
+      //ckpt_root: fs.existsSync(ckpt_root_path) && fs.existsSync(pipeline_config_path) && fs.existsSync(label_map_path),
       ckpt_dir: fs.existsSync(ckpt_dir_path) && fs.existsSync(pipeline_config_path) && fs.existsSync(label_map_path),
     })
   })

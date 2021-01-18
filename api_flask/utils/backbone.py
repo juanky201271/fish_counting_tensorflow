@@ -6,9 +6,11 @@ from tensorflow.core.protobuf import saved_model_pb2
 from tensorflow.python.util import compat
 from object_detection.utils import config_util
 from object_detection.builders import model_builder
+from tensorflow.python.framework import graph_util
 
 def set_model(model_name, label_name, type_name):
 	model_found = 0
+	version = ''
 
 	for file in glob.glob("api_flask/models/*"):
 		if (file.split('\\')[1] == model_name):
@@ -20,7 +22,7 @@ def set_model(model_name, label_name, type_name):
 	download_base = 'http://download.tensorflow.org/models/object_detection/'
 
 	# List of the strings that is used to add correct label for each box.
-	path_to_labels = os.path.join('api_flask/data', label_name)
+	path_to_labels = os.path.join('api_flask/models', model_name, label_name)
 
 	num_classes = 90
 
@@ -35,7 +37,7 @@ def set_model(model_name, label_name, type_name):
 		    tar_file.extract(file, os.getcwd())
 
 	# Path to frozen detection graph. This is the actual model that is used for the object detection.
-	if (type_name == 'frozen_graph'):
+	if (type_name == 'frozen_inference_graph'):
 		path_to_ckpt = 'api_flask/models/' + model_name + '/frozen_inference_graph.pb'
 		# Load a (frozen) Tensorflow model into memory.
 		detection_graph = tf.Graph()
@@ -45,13 +47,21 @@ def set_model(model_name, label_name, type_name):
 		    serialized_graph = fid.read()
 		    od_graph_def.ParseFromString(serialized_graph)
 		    tf.import_graph_def(od_graph_def, name='')
+		version = '1'
 
-	if (type_name == 'saved_model'):
+	if (type_name == 'saved_model_root'):
+		path_to_ckpt = 'api_flask/models/' + model_name
+		# Load a (saved) Tensorflow model into memory.
+		detection_graph = tf.saved_model.load(path_to_ckpt)
+		version = detection_graph.tensorflow_version
+
+	if (type_name == 'saved_model_dir'):
 		path_to_ckpt = 'api_flask/models/' + model_name + '/saved_model'
 		# Load a (saved) Tensorflow model into memory.
 		detection_graph = tf.saved_model.load(path_to_ckpt)
+		version = detection_graph.tensorflow_version
 
-	if (type_name == 'ckpt'):
+	if (type_name == 'ckpt_dir'):
 		path_to_ckpt = 'api_flask/models/' + model_name + '/pipeline.config'
 		model_dir = 'api_flask/models/' + model_name + '/checkpoint'
 		# Load a (saved) Tensorflow model into memory.
@@ -61,19 +71,8 @@ def set_model(model_name, label_name, type_name):
 		# Restore checkpoint
 		ckpt = tf.compat.v2.train.Checkpoint(model=detection_graph)
 		ckpt.restore(os.path.join(model_dir, 'ckpt-0')).expect_partial()
-
-	#if (model_name == 'my_faster_rcnn_resnet50_v1_1024x1024_coco17_tpu-8'):
-	#	path_to_ckpt = 'api_flask/' + model_name + '/saved_model/saved_model.pb'
-	#	# Load a (frozen) Tensorflow model into memory.
-	#	siono = tf.saved_model.contains_saved_model('api_flask/' + model_name + '/saved_model')
-	#	print(siono)
-	#	detection_graph = tf.Graph()
-	#	with detection_graph.as_default():
-	#	    with gfile.FastGFile(path_to_ckpt, 'rb') as fid:
-	#	        data = compat.as_bytes(fid.read())
-	#	        sm = saved_model_pb2.SavedModel()
-	#	        sm.ParseFromString(data)
-	#	        tf.import_graph_def(sm.meta_graphs[0].graph_def)
+		print(detection_graph)
+		version = '2'
 
 # Loading label map
 # Label maps map indices to category names, so that when our convolution network predicts 5, we know that this corresponds to airplane. Here I 		use internal utility functions, but anything that returns a dictionary mapping integers to appropriate string labels would be fine
@@ -81,4 +80,4 @@ def set_model(model_name, label_name, type_name):
 	categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=num_classes, use_display_name=True)
 	category_index = label_map_util.create_category_index(categories)
 
-	return detection_graph, category_index
+	return detection_graph, category_index, version

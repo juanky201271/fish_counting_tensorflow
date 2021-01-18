@@ -43,12 +43,16 @@ Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PAS
 ### (venv) $ `pip install flask`
 ### (venv) $ `pip install flask-cors`
 ### (venv) $ `pip install python-dotenv`
-### (venv) $ `pip install request`
+### (venv) $ `pip install requests`
 ### (venv) $ `pip install opencv-python`
 ### (venv) $ `pip install matplotlib==3.2`
 ### (venv) $ `pip install tensorflow==2.2.0`
 ### (venv) $ `pip install numpy==1.19.3`
 (probablemente existe ya instalada una version superior, desinstalala e instala la version 1.19.3 `pip uninstall numpy` y `pip install numpy==1.19.3`)
+### (venv) $ `pip install tf-slim`
+### (venv) $ `pip install pillow`
+### (venv) $ `pip install tf-models-official`
+### (venv) $ `pip install opencv-contrib-python`
 ### `venv\Scripts\deactivate`
 ### `cd..`
 ### `npm run start-api` (alternativa: `cd api_flask` `venv\Scripts\activate` `flask run`)
@@ -70,7 +74,5 @@ debe existir este fichero de etiquetas en el raiz de cada modelo.
 si existe este fichero usamos Tensorflow v1.
 ### `saved_model/saved_model.pb` or `saved_model.pb`
 si existe este fichero en el raiz o en ese directorio verificamos la version del modelo y usamos Tensorflow v1 o v2.
-### `model.ckpt.data-00000-of-00001`
-si existe este fichero en el raiz usamos Tensorflow v1 y checkpoints.
 ### `checkpoint/ckpt-0.data-00000-of-00001`
 si existe este fichero en ese directorio usamos Tensorflow v2 y checkpoints.
