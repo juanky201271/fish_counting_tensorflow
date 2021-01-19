@@ -8,6 +8,7 @@ import tensorflow as tf
 import csv
 import cv2
 import numpy as np
+import json
 from utils import visualization_utils as vis_util
 
 total_passed_fish = 0
@@ -63,8 +64,17 @@ def single_image_object_counting_fig(input_video, detection_graph, category_inde
                                                                                               line_thickness=4,
                                                                                               folder=folder)
 
+        print(num)
+        print(total_passed_fish)
+        print(csv_line)
+        print(counting_mode)
 
-        total_passed_fish = str(len(counting_mode))
+        counting_mode_dict = json.loads('{' + counting_mode.replace("'", '"') + '}')
+
+        for v in counting_mode_dict.values():
+            total_passed_fish = total_passed_fish + v
+
+        #total_passed_fish = str(len(counting_mode))
         cv2.rectangle(input_frame, (0, 0), (295, 80), (180, 132, 109), -1)
         cv2.putText(
             input_frame,
@@ -173,8 +183,17 @@ def single_image_object_counting_sm(input_video, detection_model, category_index
                                                                                               line_thickness=4,
                                                                                               folder=folder)
 
+        print(num_detections)
+        print(total_passed_fish)
+        print(csv_line)
+        print(counting_mode)
 
-        total_passed_fish = str(len(counting_mode))
+        counting_mode_dict = json.loads('{' + counting_mode.replace("'", '"') + '}')
+
+        for v in counting_mode_dict.values():
+            total_passed_fish = total_passed_fish + v
+
+        #total_passed_fish = str(len(counting_mode))
         cv2.rectangle(input_frame, (0, 0), (295, 80), (180, 132, 109), -1)
         cv2.putText(
             input_frame,

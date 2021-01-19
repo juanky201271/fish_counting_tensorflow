@@ -11,6 +11,7 @@ import io
 import os, glob
 import scipy.misc
 import numpy as np
+import json
 from six import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 
@@ -22,40 +23,6 @@ from object_detection.utils import visualization_utils as viz_utils
 from object_detection.builders import model_builder
 
 from utils import visualization_utils as vis_util
-
-def load_image_into_numpy_array(path):
-  """Load an image from file into a numpy array.
-
-  Puts image into numpy array to feed into tensorflow graph.
-  Note that by convention we put it into a numpy array with shape
-  (height, width, channels), where channels=3 for RGB.
-
-  Args:
-    path: the file path to the image
-
-  Returns:
-    uint8 numpy array with shape (img_height, img_width, 3)
-  """
-  img_data = tf.io.gfile.GFile(path, 'rb').read()
-  image = Image.open(BytesIO(img_data))
-  (im_width, im_height) = image.size
-  return np.array(image.getdata()).reshape(
-      (im_height, im_width, 3)).astype(np.uint8)
-
-def get_model_detection_function(model):
-  """Get a tf.function for detection."""
-
-  @tf.function
-  def detect_fn(image):
-    """Detect objects in image."""
-
-    image, shapes = model.preprocess(image)
-    prediction_dict = model.predict(image, shapes)
-    detections = model.postprocess(prediction_dict, shapes)
-
-    return detections, prediction_dict, tf.reshape(shapes, [-1])
-
-  return detect_fn
 
 total_passed_fish = 0
 
@@ -118,6 +85,16 @@ def single_image_object_counting_sm(input_video, detection_model, category_index
                                                                                               use_normalized_coordinates=True,
                                                                                               line_thickness=4,
                                                                                               folder=folder)
+
+        print(num_detections)
+        print(total_passed_fish)
+        print(csv_line)
+        print(counting_mode)
+
+        counting_mode_dict = json.loads('{' + counting_mode.replace("'", '"') + '}')
+
+        for v in counting_mode_dict.values():
+            total_passed_fish = total_passed_fish + v
 
         #total_passed_fish = str(len(counting_mode))
         cv2.rectangle(input_frame, (0, 0), (295, 80), (180, 132, 109), -1)
@@ -183,7 +160,7 @@ def get_model_detection_function_c(model):
 
   return detect_fn
 
-def load_image_into_numpy_array(path):
+def load_image_into_numpy_array_c(path):
     """Load an image from file into a numpy array.
 
     Puts image into numpy array to feed into tensorflow graph.
@@ -221,7 +198,7 @@ def single_image_object_counting_c(input_video, detection_model, category_index,
         color = "waiting..."
         counting_mode = "..."
 
-        input_frame = load_image_into_numpy_array(input_video)
+        input_frame = load_image_into_numpy_array_c(input_video)
 
         # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
         image_np_expanded = np.expand_dims(input_frame, axis=0)
@@ -259,6 +236,16 @@ def single_image_object_counting_c(input_video, detection_model, category_index,
                                                                                               use_normalized_coordinates=True,
                                                                                               line_thickness=4,
                                                                                               folder=folder)
+
+        print(num_detections)
+        print(total_passed_fish)
+        print(csv_line)
+        print(counting_mode)
+
+        counting_mode_dict = json.loads('{' + counting_mode.replace("'", '"') + '}')
+
+        for v in counting_mode_dict.values():
+            total_passed_fish = total_passed_fish + v
 
         #total_passed_fish = str(len(counting_mode))
         cv2.rectangle(input_frame, (0, 0), (295, 80), (180, 132, 109), -1)
