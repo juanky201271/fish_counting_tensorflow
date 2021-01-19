@@ -62,11 +62,19 @@ const  ensureExists = (path, mask, cb) => {
 }
 
 createDir = async (req, res) => {
+  const modelsDir = path.join(__dirname, "../api_flask/models")
   const parentDir = path.join(__dirname, "../client/public/submits")
   const dir = path.join(__dirname, "../client/public/submits", req.body.dir)
+  ensureExists(modelsDir, 0744, function(err) {
+    if (err) // handle folder creation error
+      console.log('models dir error: ', err)
+    //else { // we're all good
+    //  console.log(parentDir, ' created!')
+    //}
+  })
   ensureExists(parentDir, 0744, function(err) {
     if (err) // handle folder creation error
-      console.log('parent error: ', err)
+      console.log('parent dir error: ', err)
     //else { // we're all good
     //  console.log(parentDir, ' created!')
     //}
