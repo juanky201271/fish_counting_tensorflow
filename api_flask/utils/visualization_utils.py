@@ -33,6 +33,7 @@ from utils.string_utils import custom_string_util
 from utils.object_counting_module import object_counter
 #  predicted_speed predicted_color module - import
 from utils.object_counting_module import object_counter_x_axis
+from utils.object_counting_module import object_counter_y_axis
 
 # color recognition module - import
 from utils.color_recognition_module import color_recognition_api
@@ -145,7 +146,8 @@ def encode_image_array_as_png_str(image):
   output.close()
   return png_string
 
-def draw_bounding_box_on_image_array(current_frame_number, image,
+def draw_bounding_box_on_image_array(current_frame_number,
+                                     image,
                                      ymin,
                                      xmin,
                                      ymax,
@@ -172,11 +174,11 @@ def draw_bounding_box_on_image_array(current_frame_number, image,
       coordinates as absolute.
   """
   image_pil = Image.fromarray(np.uint8(image)).convert('RGB')
-  is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image(current_frame_number,image_pil, ymin, xmin, ymax, xmax, color,
+  size, is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image(current_frame_number,image_pil, ymin, xmin, ymax, xmax, color,
                              thickness, display_str_list,
                              use_normalized_coordinates, folder)
   np.copyto(image, np.array(image_pil))
-  return is_vehicle_detected, csv_line, update_csv
+  return size, is_vehicle_detected, csv_line, update_csv
 
 def draw_bounding_box_on_image(current_frame_number,image,
                                ymin,
@@ -219,6 +221,8 @@ def draw_bounding_box_on_image(current_frame_number,image,
                                   ymin * im_height, ymax * im_height)
   else:
     (left, right, top, bottom) = (xmin, xmax, ymin, ymax)
+
+  print('left right top bottom', left, right, top, bottom)
   draw.line([(left, top), (left, bottom), (right, bottom),
              (right, top), (left, top)], width=thickness, fill=color)
 
@@ -229,9 +233,14 @@ def draw_bounding_box_on_image(current_frame_number,image,
 
   '''if(bottom > ROI_POSITION): # if the vehicle get in ROI area, vehicle predicted_speed predicted_color algorithms are called - 200 is an arbitrary value, for my case it looks very well to set position of ROI line at y pixel 200'''
   if(x_axis[0] == 1):
-    predicted_direction, is_vehicle_detected, update_csv = object_counter_x_axis.count_objects_x_axis(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0], folder)
+    print('x_axis[0] == 1')
+    size, is_vehicle_detected, update_csv = object_counter_x_axis.count_objects_x_axis(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0], folder)
   elif(mode_number[0] == 2):
-    predicted_direction, is_vehicle_detected, update_csv = object_counter.count_objects(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0], folder)
+    print('mode_number[0] == 2')
+    size, is_vehicle_detected, update_csv = object_counter_y_axis.count_objects_y_axis(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0], folder)
+  elif(ROI_POSITION[0] is None and DEVIATION[0] is None):
+    print('ROI_POSITION[0] is None')
+    size, is_vehicle_detected, update_csv = object_counter.count_objects(top, bottom, right, left, detected_vehicle_image, folder)
 
   if(1 in is_color_recognition_enable):
     predicted_color = color_recognition_api.color_recognition(detected_vehicle_image)
@@ -275,7 +284,7 @@ def draw_bounding_box_on_image(current_frame_number,image,
         fill='black',
         font=font)
     text_bottom -= text_height - 2 * margin
-    return is_vehicle_detected, csv_line, update_csv
+    return size, is_vehicle_detected, csv_line, update_csv
 
 
 def draw_bounding_boxes_on_image_array(image,
@@ -584,7 +593,7 @@ def visualize_boxes_and_labels_on_image_array(current_frame_number,
             if instance_masks is not None:
               draw_mask_on_image_array(image, box_to_instance_masks_map[box], color=color)
 
-            is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
+            size, is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
                 image,
                 ymin,
                 xmin,
@@ -608,7 +617,7 @@ def visualize_boxes_and_labels_on_image_array(current_frame_number,
             if instance_masks is not None:
               draw_mask_on_image_array(image, box_to_instance_masks_map[box], color=color)
 
-            is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
+            size, is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
                 image,
                 ymin,
                 xmin,
@@ -658,7 +667,7 @@ def visualize_boxes_and_labels_on_image_array_x_axis(current_frame_number,
                                               instance_masks=None,
                                               keypoints=None,
                                               use_normalized_coordinates=False,
-                                              max_boxes_to_draw=20,
+                                              max_boxes_to_draw=2000,
                                               min_score_thresh=.5,
                                               agnostic_mode=False,
                                               line_thickness=4,
@@ -763,7 +772,7 @@ def visualize_boxes_and_labels_on_image_array_x_axis(current_frame_number,
             if instance_masks is not None:
               draw_mask_on_image_array(image, box_to_instance_masks_map[box], color=color)
 
-            is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
+            size, is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
                 image,
                 ymin,
                 xmin,
@@ -787,7 +796,7 @@ def visualize_boxes_and_labels_on_image_array_x_axis(current_frame_number,
             if instance_masks is not None:
               draw_mask_on_image_array(image, box_to_instance_masks_map[box], color=color)
 
-            is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
+            size, is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
                 image,
                 ymin,
                 xmin,
@@ -942,7 +951,7 @@ def visualize_boxes_and_labels_on_image_array_y_axis(current_frame_number,
 	    if instance_masks is not None:
 	      draw_mask_on_image_array(image, box_to_instance_masks_map[box], color=color)
 
-	    is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
+	    size, is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
 	        image,
 	        ymin,
 	        xmin,
@@ -966,7 +975,7 @@ def visualize_boxes_and_labels_on_image_array_y_axis(current_frame_number,
 	    if instance_masks is not None:
 	      draw_mask_on_image_array(image, box_to_instance_masks_map[box], color=color)
 
-	    is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
+	    size, is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
 	        image,
 	        ymin,
 	        xmin,
@@ -1147,7 +1156,7 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
                                               classes,
                                               scores,
                                               category_index,
-					      targeted_objects=None,
+					                          targeted_objects=None,
                                               y_reference=None,
                                               deviation=None,
                                               instance_masks=None,
@@ -1194,6 +1203,7 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
   """
   # Create a display string (and color) for every box location, group any boxes
   # that correspond to the same location.
+  sizes = []
   csv_line_util = "not_available"
   counter = 0
   ROI_POSITION.insert(0,y_reference)
@@ -1205,6 +1215,8 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
   box_to_color_map = collections.defaultdict(str)
   box_to_instance_masks_map = {}
   box_to_keypoints_map = collections.defaultdict(list)
+  box_to_class_name = collections.defaultdict(list)
+  box_to_score = collections.defaultdict(list)
   if not max_boxes_to_draw:
     max_boxes_to_draw = boxes.shape[0]
   for i in range(min(max_boxes_to_draw, boxes.shape[0])):
@@ -1220,12 +1232,14 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
         if not agnostic_mode:
           if classes[i] in category_index.keys():
             class_name = category_index[classes[i]]['name']
+            box_to_class_name[box] = class_name
           else:
             class_name = 'N/A'
-          display_str = '{}: {}%'.format(class_name,int(100*scores[i]))
+          display_str = '{}: {}%'.format(class_name,int(100 * scores[i]))
         else:
           display_str = 'score: {}%'.format(int(100 * scores[i]))
 
+        box_to_score[box] = '{}%'.format(int(100 * scores[i]))
         box_to_display_str_map[box].append(display_str)
         if agnostic_mode:
           box_to_color_map[box] = 'DarkOrange'
@@ -1257,7 +1271,7 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
             if instance_masks is not None:
               draw_mask_on_image_array(image, box_to_instance_masks_map[box], color=color)
 
-            is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
+            size, is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
                 image,
                 ymin,
                 xmin,
@@ -1281,7 +1295,7 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
             if instance_masks is not None:
               draw_mask_on_image_array(image, box_to_instance_masks_map[box], color=color)
 
-            is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
+            size, is_vehicle_detected, csv_line, update_csv = draw_bounding_box_on_image_array(current_frame_number,
                 image,
                 ymin,
                 xmin,
@@ -1300,6 +1314,7 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
                   color=color,
                   radius=line_thickness / 2,
                   use_normalized_coordinates=use_normalized_coordinates)
+    sizes.insert(0, str(box_to_class_name[box]) + ',' + str(box_to_score[box]) + ',' + str(size))
 
   if(1 in is_vehicle_detected):
         counter = 1
@@ -1313,7 +1328,7 @@ def visualize_boxes_and_labels_on_single_image_array(current_frame_number,
     counting_mode = str(custom_string_util.word_count(counting_mode))
     counting_mode = counting_mode.replace("{", "").replace("}", "")
 
-    return counter, csv_line_util, counting_mode
+    return counter, csv_line_util, counting_mode, sizes
 
   else:
     return counter, csv_line_util

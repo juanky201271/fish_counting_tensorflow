@@ -23,8 +23,6 @@ from object_detection.builders import model_builder
 
 from utils import visualization_utils as vis_util
 
-# Variables
-total_passed_fish = 0  # using it to count fish
 
 def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_index, is_color_recognition_enabled, roi, deviation, folder):
         total_passed_fish = 0
@@ -50,10 +48,13 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         fps = int(cap.get(cv2.CAP_PROP_FPS))
 
+        # calculate roi & deviation
+        roi = int(width / 2)
+        deviation = int(width / 6)
+
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         output_movie = cv2.VideoWriter(name_file_video, fourcc, fps, (width, height))
 
-        total_passed_fish = 0
         speed = "waiting..."
         direction = "waiting..."
         size = "waiting..."
@@ -187,7 +188,7 @@ def get_model_detection_function_c(model):
     return detections
 
   return detect_fn
-  
+
 def cumulative_object_counting_x_axis_c(input_video, detection_model, category_index, is_color_recognition_enabled, roi, deviation, folder):
         total_passed_fish = 0
         detect_fn = get_model_detection_function_c(detection_model)
@@ -212,10 +213,13 @@ def cumulative_object_counting_x_axis_c(input_video, detection_model, category_i
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         fps = int(cap.get(cv2.CAP_PROP_FPS))
 
+        # calculate roi & deviation
+        roi = int(width / 2)
+        deviation = int(width / 6)
+
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         output_movie = cv2.VideoWriter(name_file_video, fourcc, fps, (width, height))
 
-        total_passed_fish = 0
         speed = "waiting..."
         direction = "waiting..."
         size = "waiting..."

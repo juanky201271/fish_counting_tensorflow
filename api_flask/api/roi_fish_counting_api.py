@@ -10,8 +10,6 @@ import cv2
 import numpy as np
 from utils import visualization_utils as vis_util
 
-total_passed_fish = 0  # using it to count fish
-
 def cumulative_object_counting_x_axis_fig(input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder):
         total_passed_fish = 0
 
@@ -35,10 +33,13 @@ def cumulative_object_counting_x_axis_fig(input_video, detection_graph, category
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         fps = int(cap.get(cv2.CAP_PROP_FPS))
 
+        # calculate roi & deviation
+        roi = int(width / 2)
+        deviation = int(width / 6)
+
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         output_movie = cv2.VideoWriter(name_file_video, fourcc, fps, (width, height))
 
-        total_passed_fish = 0
         speed = "waiting..."
         direction = "waiting..."
         size = "waiting..."
@@ -93,8 +94,13 @@ def cumulative_object_counting_x_axis_fig(input_video, detection_graph, category
                                                                                                              x_reference = roi,
                                                                                                              deviation = deviation,
                                                                                                              use_normalized_coordinates=True,
-                                                                                                             line_thickness=4,
                                                                                                              folder=folder)
+
+                print('num detections: ', num)
+                print('counter: ', counter)
+                print('csv line: ', csv_line)
+                print('counting mode: ', counting_mode)
+                print('num frame: ', cap.get(1))
 
                 # when the vehicle passed over line and counted, make the color of ROI line green
                 if counter == 1:
@@ -140,6 +146,7 @@ def cumulative_object_counting_x_axis_fig(input_video, detection_graph, category
                     )
 
                 cv2.imshow('fish detection video roi', input_frame)
+                #cv2.waitKey(0)
 
                 output_movie.write(input_frame)
 
@@ -184,10 +191,13 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         fps = int(cap.get(cv2.CAP_PROP_FPS))
 
+        # calculate roi & deviation
+        roi = int(width / 2)
+        deviation = int(width / 6)
+
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         output_movie = cv2.VideoWriter(name_file_video, fourcc, fps, (width, height))
 
-        total_passed_fish = 0
         speed = "waiting..."
         direction = "waiting..."
         size = "waiting..."
