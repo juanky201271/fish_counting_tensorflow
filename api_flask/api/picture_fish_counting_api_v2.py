@@ -18,6 +18,21 @@ import tensorflow as tf
 
 from utils import visualization_utils as vis_util
 
+def load_image_into_numpy_array(path):
+    """Load an image from file into a numpy array.
+
+    Puts image into numpy array to feed into tensorflow graph.
+    Note that by convention we put it into a numpy array with shape
+    (height, width, channels), where channels=3 for RGB.
+
+    Args:
+      path: the file path to the image
+
+    Returns:
+      uint8 numpy array with shape (img_height, img_width, 3)
+    """
+    return np.array(Image.open(path))
+
 def single_image_object_counting_sm(input_picture, detection_model, category_index, is_color_recognition_enabled, folder):
     total_passed_fish = 0
     counting_mode = ""
@@ -38,7 +53,7 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
         'Specie,Score,Size'
         writer.writerows([csv_line.split(',')])
 
-    input_frame = cv2.imread(input_picture)
+    input_frame = load_image_into_numpy_array(input_picture)
 
     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(input_frame, axis=0)
@@ -63,7 +78,7 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
     font = cv2.FONT_HERSHEY_SIMPLEX
 
     # Visualization of the results of a detection.
-    total_passed_fish, csv_line, counting_mode = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, detections['detection_boxes'], detections['detection_classes'], detections['detection_scores'], category_index, use_normalized_coordinates=True, folder=folder)
+    total_passed_fish, csv_line, counting_mode, sizes = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, detections['detection_boxes'], detections['detection_classes'], detections['detection_scores'], category_index, use_normalized_coordinates=True, folder=folder)
 
     print(sizes)
 
@@ -183,7 +198,7 @@ def single_image_object_counting_c(input_picture, detection_model, category_inde
     font = cv2.FONT_HERSHEY_SIMPLEX
 
     # Visualization of the results of a detection.
-    total_passed_fish, csv_line, counting_mode = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, detections['detection_boxes'], detections['detection_classes'] + label_id_offset, detections['detection_scores'], category_index, use_normalized_coordinates=True, folder=folder)
+    total_passed_fish, csv_line, counting_mode, sizes = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, detections['detection_boxes'], detections['detection_classes'] + label_id_offset, detections['detection_scores'], category_index, use_normalized_coordinates=True, folder=folder)
 
     print(sizes)
 
