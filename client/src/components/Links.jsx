@@ -1,13 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
 
-const Collapse = styled.div.attrs({ className: "collapse navbar-collapse" })``
-const List = styled.div.attrs({ className: "navbar-nav mr-auto" })``
-const Item = styled.div.attrs({ className: "collapse navbar-collapse text-dark" })``
-const Log = styled.div.attrs({ className: "navbar-brand text-dark" })`
-  cursor: pointer;
-`
+import './Links.scss'
 
 class Links extends Component {
   constructor(props) {
@@ -31,7 +25,7 @@ class Links extends Component {
     console.log('links', this.state)
     const { authenticated, twitterId, ip, user, } = this.state
     return (
-      <React.Fragment>
+      <div className="links">
         <Link to={{ pathname: "/",
                     state: {
                       authenticated: authenticated,
@@ -42,10 +36,10 @@ class Links extends Component {
                   }}
           className="navbar-brand"
         >
-          <Log>Fish Counting</Log>
+          <div className="navbar__log navbar-brand text-dark">Fish Counting</div>
         </Link>
-        <Collapse>
-          <List>
+        <div className="collapse navbar-collapse">
+          <div className="navbar-nav mr-auto">
 
             <Link to={{ pathname: "/",
                         state: {
@@ -57,7 +51,7 @@ class Links extends Component {
                       }}
               className="nav-link"
             >
-              <Item>Submit Image/Video</Item>
+              <div className="collapse navbar-collapse text-dark">Submit Image/Video</div>
             </Link>
 
             {
@@ -72,27 +66,27 @@ class Links extends Component {
                           }}
                   className="nav-link"
                 >
-                  <Item>My Bars</Item>
+                  <div className="collapse navbar-collapse text-dark">My Bars</div>
                 </Link>
               ) : (
                 <div></div>
               )
             }
 
-          </List>
+          </div>
           {
             authenticated ? (
-              <Log onClick={true ? null : this._handleLogoutClick}>
+              <div className="navbar__log navbar-brand text-dark" onClick={true ? null : this._handleLogoutClick}>
                 Logout
-              </Log>
+              </div>
             ) : (
-              <Log onClick={true ? null : this._handleLoginClick}>
+              <div className="navbar__log navbar-brand text-dark" onClick={true ? null : this._handleLoginClick}>
                 Login
-              </Log>
+              </div>
             )
           }
-        </Collapse>
-      </React.Fragment>
+        </div>
+      </div>
     )
   }
 }

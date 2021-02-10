@@ -1,16 +1,11 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import styled from 'styled-components'
 
 import { NavBar } from '../components'
 import { SubmitFile } from '../pages'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
-
-const Wrapper = styled.div`
-  background: #f0f0f0;
-  padding: 5px;
-`
+import './index.scss'
 
 class App extends Component {
   constructor(props) {
@@ -36,7 +31,7 @@ class App extends Component {
     console.log('app', this.state)
     const { authenticated, twitterId, ip, user, isLoading, } = this.state
     return (
-      <Wrapper>
+      <div className="app app__wrapper">
         <Router>
 
           {!isLoading ?
@@ -50,17 +45,18 @@ class App extends Component {
                 />
                 <Switch>
                   <Route path="/" exact component={SubmitFile} />
+                  {/* <Route path="/aboutus" exact component={AboutUs} /> */}
                 </Switch>
               </>
              )
              :
              (
-               <div></div>
+               <div> The App is loading... </div>
              )
           }
 
         </Router>
-      </Wrapper>
+      </div>
     )
   }
 }

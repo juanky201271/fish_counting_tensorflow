@@ -1,22 +1,9 @@
 import React, { Component } from 'react'
-import styled from 'styled-components'
 
 import Logo from './Logo'
 import Links from './Links'
 
-const Container = styled.div.attrs({ className: "container" })``
-const Nav = styled.nav.attrs({ className: "navbar navbar-expand-lg navbar-dark bg-white" })`
-  margin-bottom: 20px;
-  color: #000;
-`
-const Name = styled.div`
-  color: #000;
-  background: #fcc;
-  padding: 5px;
-`
-const Pic = styled.img`
-  width: 30px;
-`
+import './NavBar.scss'
 
 class NavBar extends Component {
   constructor(props) {
@@ -37,8 +24,8 @@ class NavBar extends Component {
     const name = user.name || ''
     const profileImageUrl = user.profileImageUrl || ''
     return (
-      <Container>
-        <Nav>
+      <div className="navbar container">
+        <nav className="navbar__nav navbar navbar-expand-lg navbar-dark bg-white">
           <Logo />
           <Links
             authenticated={authenticated}
@@ -49,27 +36,27 @@ class NavBar extends Component {
           />
           { name ?
             (
-              <Name>{name}</Name>
+              <div className="navbar__name">{name}</div>
             ) : (
               <div></div>
             )
           }
           { profileImageUrl ?
             (
-              <Pic src={profileImageUrl}></Pic>
+              <img className="navbar__pic" src={profileImageUrl} alt=""></img>
             ) : (
               <div></div>
             )
           }
           { ip ?
             (
-              <Name>{ip}</Name>
+              <div className="navbar__name">{ip}</div>
             ) : (
               <div></div>
             )
           }
-        </Nav>
-      </Container>
+        </nav>
+      </div>
     )
   }
 }

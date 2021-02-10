@@ -1,0 +1,28 @@
+.submitfile {
+  &__wrapper {
+    margin: 0 30px;
+    padding: 30px;
+  }
+  &__header {
+    margin: 0 30px;
+    padding: 30px;
+  }
+  &__footer {
+    margin: 0 30px;
+    padding: 30px;
+  }
+  &__label {
+    margin: 2px;
+  }
+  &__label-bold {
+    margin-left: 20px;
+    font-weight: bold;
+    color: red;
+  }
+  &__input-text {
+    margin: 5px;
+  }
+  &__button {
+    margin: 15px 15px 15px 5px;
+  }
+}

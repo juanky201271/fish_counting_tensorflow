@@ -1,0 +1,14 @@
+.navbar {
+  &__nav {
+    margin-bottom: 20px;
+    color: #000;
+  }
+  &__name {
+    color: #000;
+    background: #fcc;
+    padding: 5px;
+  }
+  &__pic {
+    width: 30px;
+  }
+}

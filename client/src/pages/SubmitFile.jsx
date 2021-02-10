@@ -1,53 +1,7 @@
 import React, { Component } from 'react'
-//import axios from 'axios'
-//import ReactTable from 'react-table-6'
-import styled from 'styled-components'
-import 'react-table-6/react-table.css'
 import api from '../api'
 
-const FullName = styled.h1.attrs({ className: 'h1', })``
-const Wrapper = styled.div.attrs({ className: 'form-group', })`
-    margin: 0 30px;
-    padding: 30px;
-`
-const WrapperHeader = styled.div.attrs({ className: 'form-group', })`
-    margin: 0 30px;
-    padding: 30px;
-`
-const WrapperFooter = styled.div.attrs({ className: 'form-group bg-white', })`
-    margin: 0 30px;
-    padding: 30px;
-`
-//const WrapperUrl = styled.a.attrs({ className: 'navbar-brand' })`
-//  display: 'flex';
-//`
-const Label = styled.label`
-    margin: 2px;
-`
-const LabelBold = styled.p`
-    margin-left: 20px;
-    font-weight: bold;
-    color: red;
-`
-const InputText = styled.input.attrs({ className: 'form-control', })`
-    margin: 5px;
-`
-const ButtonUpload = styled.button.attrs({ className: `btn btn-primary`, })`
-    margin: 15px 15px 15px 5px;
-`
-const ButtonProcess = styled.button.attrs({ className: `btn btn-success`, })`
-    margin: 15px 15px 15px 5px;
-`
-const ButtonCancel = styled.button.attrs({ className: `btn btn-danger`, })`
-    margin: 15px 15px 15px 5px;
-`
-//const Join = styled.div.attrs({ className: `btn btn-primary`, })`
-//  cursor: pointer;
-//`
-
-//const CancelJoin = styled.div.attrs({ className: `btn btn-warning`, })`
-//  cursor: pointer;
-//`
+import './SubmitFile.scss'
 
 class SubmitFile extends Component {
     constructor(props) {
@@ -298,17 +252,18 @@ class SubmitFile extends Component {
         const imageData = this.fileData()
 
         return (
-            <Wrapper>
-              <WrapperHeader>
-                <FullName>Select the model to use</FullName>
+            <div className="submitfile submitfile__wrapper">
+              <div className="submitfile__header form-group">
+                <div className="h1">Select the model to use</div>
                 <hr />
                 <select name="models" id="listModels" onChange={this.handleList}>
                   {this.createSelectItems()}
                 </select>
                 <hr />
-                <FullName>Select the File (Image/Video) to Process</FullName>
+                <div className="h1">Select the File (Image/Video) to Process</div>
                 <hr />
-                <InputText
+                <input
+                    className="submitfile__input-text form-control"
                     id="selectedFileInput"
                     type="file"
                     accept='image/*|video/*'
@@ -317,28 +272,28 @@ class SubmitFile extends Component {
                     disabled={isLoading || !model ? true : uploadedFile ? true : false}
                 />
                 {error && (
-                  <LabelBold>{error}</LabelBold>
+                  <div className="submitfile__label-bold">{error}</div>
                 )}
-                <ButtonUpload id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >Upload!</ButtonUpload>
-                <Label>{'When the file is uploaded, you can Process/Count it.'}</Label>
+                <button className="submitfile__button btn btn-primary" id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >Upload!</button>
+                <div className="submitfile__label">{'When the file is uploaded, you can Process/Count it.'}</div>
 
-                <ButtonProcess id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >ROI Video - Count Fish!</ButtonProcess>
-                <ButtonProcess id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >Video - Count Fish!</ButtonProcess>
+                <button className="submitfile__button btn btn-success" id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >ROI Video - Count Fish!</button>
+                <button className="submitfile__button btn btn-success" id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >Video - Count Fish!</button>
 
-                <ButtonProcess id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >Webcam - Count Fish!</ButtonProcess>
-                <ButtonProcess id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >Picture - Count Fish!</ButtonProcess>
+                <button className="submitfile__button btn btn-success" id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >Webcam - Count Fish!</button>
+                <button className="submitfile__button btn btn-success" id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >Picture - Count Fish!</button>
 
-                <ButtonCancel id="processButton" onClick={this.handleCancel} disabled={isLoading || !model} >{total_fish !== null ? 'Another File' : 'Cancel'}</ButtonCancel>
-              </WrapperHeader>
-              <WrapperFooter>
+                <button className="submitfile__button btn btn-danger" id="processButton" onClick={this.handleCancel} disabled={isLoading || !model} >{total_fish !== null ? 'Another File' : 'Cancel'}</button>
+              </div>
+              <div className="submitfile__footer form-group bg-white">
                 {isLoading ?
                   (
                     <h3>Counting Fish...</h3>
                   ) : (
                     <>{imageData}</>
                   )}
-              </WrapperFooter>
-            </Wrapper>
+              </div>
+            </div>
         )
     }
 }
