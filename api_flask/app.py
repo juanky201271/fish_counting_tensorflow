@@ -8,6 +8,7 @@ import purseiner_roi
 import purseiner_video_counting
 import purseiner_webcam_counting
 import purseiner_picture_counting
+import purseiner_picture_calibration
 import save_frozen_graph
 import test_model_v2
 
@@ -50,6 +51,15 @@ def get_result_video_counting_fish():
         if os.path.isdir(folder_images) == False:
             os.mkdir(folder_images)
         return purseiner_video_counting.purseiner_video_counting_process(video, folder_images, model, type)
+
+@app.route('/flask_api/picturecalibrationfish', methods=['POST'])
+def get_result_picture_calibration_fish():
+    if request.method == 'POST':
+        url_input_video_and_dir = request.get_json()
+        video = url_input_video_and_dir.get('url_input_video')
+        cms = url_input_video_and_dir.get('cms')
+        model, type = url_input_video_and_dir.get('model').split('#')
+        return purseiner_picture_calibration.purseiner_picture_calibration_process(video, model, type, cms)
 
 """
 @app.route('/flask_api/webcamcountfish', methods=['POST'])

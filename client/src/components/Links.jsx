@@ -36,12 +36,25 @@ class Links extends Component {
                   }}
           className="navbar-brand"
         >
-          <div className="navbar__log navbar-brand text-dark">Fish Counting</div>
+          <div className="navbar__log navbar-brand">Detection Tool</div>
         </Link>
-        <div className="collapse navbar-collapse">
-          <div className="navbar-nav mr-auto">
 
-            <Link to={{ pathname: "/",
+        <Link to={{ pathname: "/aboutus",
+                    state: {
+                      authenticated: authenticated,
+                      twitterId: twitterId,
+                      ip: ip,
+                      user: user,
+                    }
+                  }}
+          className="navbar-brand"
+        >
+          <div className="navbar__log navbar-brand">About us</div>
+        </Link>
+
+        {
+          authenticated ? (
+            <Link to={{ pathname: "/mybars",
                         state: {
                           authenticated: authenticated,
                           twitterId: twitterId,
@@ -49,43 +62,26 @@ class Links extends Component {
                           user: user,
                         }
                       }}
-              className="nav-link"
+              className="navbar-brand"
             >
-              <div className="collapse navbar-collapse text-dark">Submit Image/Video</div>
+              <div className="navbar__log navbar-brand">My Something</div>
             </Link>
+          ) : (
+            <div></div>
+          )
+        }
 
-            {
-              authenticated ? (
-                <Link to={{ pathname: "/mybars",
-                            state: {
-                              authenticated: authenticated,
-                              twitterId: twitterId,
-                              ip: ip,
-                              user: user,
-                            }
-                          }}
-                  className="nav-link"
-                >
-                  <div className="collapse navbar-collapse text-dark">My Bars</div>
-                </Link>
-              ) : (
-                <div></div>
-              )
-            }
-
-          </div>
-          {
-            authenticated ? (
-              <div className="navbar__log navbar-brand text-dark" onClick={true ? null : this._handleLogoutClick}>
-                Logout
-              </div>
-            ) : (
-              <div className="navbar__log navbar-brand text-dark" onClick={true ? null : this._handleLoginClick}>
-                Login
-              </div>
-            )
-          }
-        </div>
+        {
+          authenticated ? (
+            <div style={{ display: 'none' }} className="navbar__log navbar-brand" onClick={true ? null : this._handleLogoutClick}>
+              Logout
+            </div>
+          ) : (
+            <div style={{ display: 'none' }} className="navbar__log navbar-brand" onClick={true ? null : this._handleLoginClick}>
+              Login
+            </div>
+          )
+        }
       </div>
     )
   }

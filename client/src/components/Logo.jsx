@@ -8,7 +8,7 @@ class Logo extends Component {
     return (
       <div className="logo">
         <a className="logo__wrapper navbar-brand" href="/" target="_self">
-          <img src={logo} width="240" height="50" alt="AI peces" />
+          <img src={logo} width="240px" height="50px" alt="AI peces" />
         </a>
       </div>
     )

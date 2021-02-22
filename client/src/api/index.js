@@ -25,6 +25,7 @@ export const videoRoiCountFish = (url_input_video, dir, model) => flask_api.post
 export const videoCountFish = (url_input_video, dir, model) => flask_api.post(`/videocountfish`, { url_input_video, dir, model })
 export const webcamCountFish = (url_input_video, dir, model) => flask_api.post(`/webcamcountfish`, { url_input_video, dir, model })
 export const pictureCountFish = (url_input_video, dir, model) => flask_api.post(`/picturecountfish`, { url_input_video, dir, model })
+export const pictureCalibrationFish = (url_input_video, dir, model, cms) => flask_api.post(`/picturecalibrationfish`, { url_input_video, dir, model, cms })
 
 const apis = {
   createSubmit,
@@ -44,6 +45,7 @@ const apis = {
   videoCountFish,
   webcamCountFish,
   pictureCountFish,
+  pictureCalibrationFish,
 }
 
 export default apis

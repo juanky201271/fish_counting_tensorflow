@@ -1,9 +1,89 @@
 import React, { Component } from 'react'
+import Select from 'react-select'
 
 import Logo from './Logo'
 import Links from './Links'
 
 import './NavBar.scss'
+
+import es from '../assets/images/es.jpg'
+import en from '../assets/images/en.jpg'
+import fr from '../assets/images/fr.jpg'
+import pt from '../assets/images/pt.jpg'
+
+const languages = [
+  { value: 'es', label: (
+    <div className="app-navbar__language">
+      <img src={es} alt="Spanish" width="20px" />
+    </div>
+  ) },
+  { value: 'en', label: (
+    <div className="app-navbar__language">
+      <img src={en} alt="English" width="20px" />
+    </div>
+  ) },
+  { value: 'fr', label: (
+    <div className="app-navbar__language">
+      <img src={fr} alt="French" width="20px" />
+    </div>
+  ) },
+  { value: 'pt', label: (
+    <div className="app-navbar__language">
+      <img src={pt} alt="Portuguese" width="20px" />
+    </div>
+  ) }
+]
+
+const languageStyle = {
+  control: (provided, state) => ({
+    ...provided,
+    width: '80px',
+    minWidth: '80px',
+    height: '20px',
+    minHeight: '20px',
+  }),
+  singleValue: (provided, state) => ({
+    ...provided,
+    top: '17%',
+  }),
+  indicatorSeparator: (provided, state) => ({
+    ...provided,
+    marginTop: '2px',
+    marginBottom: '20px',
+  }),
+  dropdownIndicator: (provided, state) => ({
+    ...provided,
+    padding: '0px',
+    paddingTop: '0px',
+    paddingBottom: '0px',
+    paddingRight: '8px',
+    paddingLeft: '8px',
+    transform: 'translateY(-50%)',
+  }),
+  menu: (provided, state) => ({
+    ...provided,
+    width: '80px',
+    minWidth: '80px',
+    padding: '0px',
+    margin: '0px',
+  }),
+  menuList: (provided, state) => ({
+    ...provided,
+    padding: '0px',
+    margin: '0px',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    padding: '0px',
+    paddingLeft: '5px',
+    margin: '0px',
+    height: '20px',
+    minHeight: '20px',
+    '.app-navbar__language': {
+      transform: 'translateY(-5px)',
+    },
+  }),
+}
 
 class NavBar extends Component {
   constructor(props) {
@@ -13,20 +93,36 @@ class NavBar extends Component {
       twitterId: this.props.twitterId || '',
       ip: this.props.ip || '',
       user: this.props.user || '',
+      language: languages.filter(l => l.value === this.props.language) || languages[0],
     }
   }
   _handleNotAuthenticated = () => {
     this.setState({ authenticated: false, twitterId: '', user: '', })
   }
+  handleList = language => {
+    this.setState({ language: language })
+  }
   render() {
     console.log('navbar', this.state)
-    const { authenticated, twitterId, ip, user, } = this.state
+    const { authenticated, twitterId, ip, user, language, } = this.state
     const name = user.name || ''
     const profileImageUrl = user.profileImageUrl || ''
     return (
-      <div className="navbar container">
-        <nav className="navbar__nav navbar navbar-expand-lg navbar-dark bg-white">
+      <div className="app-navbar">
+        <div className="app-navbar__logo-and-select">
           <Logo />
+          <div className="app-navbar__select">
+            <Select
+              value={language}
+              onChange={this.handleList}
+              options={languages}
+              placeholder=""
+              styles={languageStyle}
+            />
+          </div>
+        </div>
+        <nav className="app-navbar__nav">
+
           <Links
             authenticated={authenticated}
             twitterId={twitterId}
@@ -36,21 +132,21 @@ class NavBar extends Component {
           />
           { name ?
             (
-              <div className="navbar__name">{name}</div>
+              <div className="app-navbar__name">{name}</div>
             ) : (
               <div></div>
             )
           }
           { profileImageUrl ?
             (
-              <img className="navbar__pic" src={profileImageUrl} alt=""></img>
+              <img className="app-navbar__pic" src={profileImageUrl} alt=""></img>
             ) : (
               <div></div>
             )
           }
           { ip ?
             (
-              <div className="navbar__name">{ip}</div>
+              <div className="app-navbar__name">{ip}</div>
             ) : (
               <div></div>
             )

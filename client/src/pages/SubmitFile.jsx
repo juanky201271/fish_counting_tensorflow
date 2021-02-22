@@ -18,11 +18,21 @@ class SubmitFile extends Component {
             _id: null,
             dir: null,
             error: null,
+            errorCalibration: null,
             model: '',
             models: null,
+            selectedFileCalibration: '',
+            uploadedFileCalibration: '',
+            resultFileCalibration: '',
+            total_fishCalibration: null,
+            cms: null,
+            width_cms: 250, // without calibration
+            width_pxs_x_cm: null, // with calibration
         }
         this.uploadInputRef = React.createRef()
+        this.uploadInputRefCalibration = React.createRef()
     }
+
     componentDidMount = async () => {
         this.setState({ isLoading: true })
         await api.getModels()
@@ -34,6 +44,7 @@ class SubmitFile extends Component {
                 })
         this.setState({ isLoading: false })
     }
+
     handleChangeInputUpload = (event) => {
       const file = event.target.files[0]
       if (!['image', 'video'].includes(file.type.split('/')[0])) {
@@ -44,7 +55,7 @@ class SubmitFile extends Component {
             error: 'Please select only images or videos to upload'
           },
           () => {
-            setTimeout(() => { this.setState({ error: null }) }, 3000)
+            setTimeout(() => { this.setState({ error: null }) }, 10000)
           }
         )
         return
@@ -52,6 +63,26 @@ class SubmitFile extends Component {
 
       this.setState({ selectedFile: file })
     }
+
+    handleChangeInputUploadCalibration = (event) => {
+      const file = event.target.files[0]
+      if (!['image', 'video'].includes(file.type.split('/')[0])) {
+        event.preventDefault()
+        this.uploadInputRefCalibration.current.value = ''
+        this.setState(
+          {
+            errorCalibration: 'Please select only images or videos to upload'
+          },
+          () => {
+            setTimeout(() => { this.setState({ errorCalibration: null }) }, 10000)
+          }
+        )
+        return
+      }
+
+      this.setState({ selectedFileCalibration: file })
+    }
+
     handleUpload = async e => {
       const name = "File_" + Date.now() + '_' + this.state.selectedFile.name
       let _id
@@ -84,6 +115,53 @@ class SubmitFile extends Component {
         })
         .catch(e => console.log('Upload file ERROR: ', e))
     }
+
+    handleCalibration = async e => {
+      if (!this.state.selectedFileCalibration || !this.state.cms || !this.state.model) return;
+      this.setState({ isLoading: true })
+      const name = "FileCalibration_" + Date.now() + '_' + this.state.selectedFileCalibration.name
+      const dir = ''
+      let uploadedFileCalibration = ''
+
+      // Create an object of formData
+      const formData = new FormData()
+      // Update the formData object
+      formData.append(
+        "myFile",
+        this.state.selectedFileCalibration,
+        name
+      )
+      await api.createUploadFile(formData, dir)
+        .then(res => {
+          uploadedFileCalibration = res.data.path
+          this.setState({ uploadedFileCalibration: res.data.path })
+        })
+        .catch(e => console.log('Upload Calibration file ERROR: ', e))
+
+      await api.pictureCalibrationFish(uploadedFileCalibration, 'client/public/submits/', this.state.model, this.state.cms)
+        .then(res => {
+          console.log(res.data)
+          this.setState({
+            total_fishCalibration: res.data.total_fish,
+            width_pxs_x_cm: res.data.width_pxs_x_cm === '' ? null : res.data.width_pxs_x_cm,
+            resultFileCalibration: res.data.resultFileCalibration,
+          })
+          if (res.data.total_fish !== null && (res.data.total_fish > 1 || res.data.total_fish === 0)) {
+            this.setState(
+              {
+                errorCalibration: 'Please select an image with just one fish.'
+              },
+              () => {
+                setTimeout(() => { this.setState({ errorCalibration: null }) }, 10000)
+              }
+            )
+          }
+        })
+        .catch(e => console.log('Picture Calibration Fish ERROR: ', e))
+
+      this.setState({ isLoading: false })
+    }
+
     payload = (name) => {
       const type = this.state.selectedFile.type.split('/')[0]
       if (type === 'video') {
@@ -103,12 +181,11 @@ class SubmitFile extends Component {
           file_images_zip_result: name + '_images_zip_result.zip'
         }
       }
-
     }
 
     handleVideoRoiProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile, dir, model } = this.state
+      const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
         await api.videoRoiCountFish(uploadedFile, 'client/public/submits/' + dir, model)
@@ -120,6 +197,7 @@ class SubmitFile extends Component {
 
       this.setState({ isLoading: false })
     }
+
     handleVideoProcess = async e => {
       this.setState({ isLoading: true })
       const { uploadedFile, dir, model } = this.state
@@ -134,6 +212,7 @@ class SubmitFile extends Component {
 
       this.setState({ isLoading: false })
     }
+
     handleWebcamProcess = async e => {
       this.setState({ isLoading: true })
       const { uploadedFile, dir, model } = this.state
@@ -148,6 +227,7 @@ class SubmitFile extends Component {
 
       this.setState({ isLoading: false })
     }
+
     handlePictureProcess = async e => {
       this.setState({ isLoading: true })
       const { uploadedFile, dir, model } = this.state
@@ -162,10 +242,17 @@ class SubmitFile extends Component {
 
       this.setState({ isLoading: false })
     }
+
     handleCancel = e => {
-      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, })
-      this.uploadInputRef.current.value = ''
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, uploadedFileCalibration: '', selectedFileCalibration: '', total_fishCalibration: null, cms: null, width_pxs_x_cm: null, })
+      if (this.uploadInputRef.current) {
+        this.uploadInputRef.current.value = ''
+      }
+      if (this.uploadInputRefCalibration.current) {
+        this.uploadInputRefCalibration.current.value = ''
+      }
     }
+
     handleList = e => {
       if (!e.target.value) {
         this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, model: '', })
@@ -174,6 +261,11 @@ class SubmitFile extends Component {
         this.setState({ model: e.target.value })
       }
     }
+
+    handleChangeInputNumberCalibration = e => {
+      this.setState({ cms: e.target.value })
+    }
+
     fileData = () => {
       const file_arr = this.state.uploadedFile.split('\\')
 
@@ -220,6 +312,60 @@ class SubmitFile extends Component {
         )
       }
     }
+
+    imageData = () => {
+      const file_arr = this.state.uploadedFile ? this.state.uploadedFile.split('\\') : []
+      const file_arrCalibration = this.state.uploadedFileCalibration ? this.state.uploadedFileCalibration.split('\\') : []
+      const file_arrCalibrationResult = this.state.resultFileCalibration ? this.state.resultFileCalibration.split('\\') : []
+
+      const image = file_arr[file_arr.length - 1] ?
+        '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] :
+        ''
+      const imageCalibration = file_arrCalibration[file_arrCalibration.length - 1] ?
+        '/submits/' + file_arrCalibration[file_arrCalibration.length - 1] :
+        ''
+
+      const imageResult = file_arr[file_arr.length - 1] ?
+        '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_image_result.png' :
+        ''
+      const imageCalibrationResult = file_arrCalibrationResult[file_arrCalibrationResult.length - 1] ?
+        '/submits/' + file_arrCalibrationResult[file_arrCalibrationResult.length - 1] :
+        ''
+
+      const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
+      const typeCalibration = this.state.selectedFileCalibration ? this.state.selectedFileCalibration.type.split('/')[0] : ''
+
+      if (this.state.total_fish !== null) {
+        if (type === 'image') {
+          return (
+            <img src={imageResult} alt="" />
+          )
+        }
+      } else if (this.state.uploadedFile) {
+        if (type === 'image') {
+          return (
+            <img src={image} alt="" />
+          )
+        }
+      } else if (this.state.total_fishCalibration !== null) {
+        if (typeCalibration === 'image') {
+          return (
+            <img src={imageCalibrationResult} alt="" />
+          )
+        }
+      } else if (this.state.uploadedFileCalibration) {
+        if (typeCalibration === 'image') {
+          return (
+            <img src={imageCalibration} alt="" />
+          )
+        }
+      } else {
+        return (
+          <div></div>
+        )
+      }
+    }
+
     createSelectItems = () => {
       const { models } = this.state
       let items = []
@@ -245,53 +391,143 @@ class SubmitFile extends Component {
       }
       return items
     }
+
     render() {
       console.log('submit file', this.state)
-        const { isLoading, selectedFile, uploadedFile, total_fish, error, model } = this.state
+        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, } = this.state
         const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
-        const imageData = this.fileData()
+        const fileData = this.fileData()
+        const imageData = this.imageData()
 
         return (
-            <div className="submitfile submitfile__wrapper">
+            <div className="submitfile">
               <div className="submitfile__header form-group">
-                <div className="h1">Select the model to use</div>
-                <hr />
-                <select name="models" id="listModels" onChange={this.handleList}>
-                  {this.createSelectItems()}
-                </select>
-                <hr />
-                <div className="h1">Select the File (Image/Video) to Process</div>
-                <hr />
-                <input
-                    className="submitfile__input-text form-control"
-                    id="selectedFileInput"
-                    type="file"
-                    accept='image/*|video/*'
-                    onChange={this.handleChangeInputUpload}
-                    ref={this.uploadInputRef}
-                    disabled={isLoading || !model ? true : uploadedFile ? true : false}
-                />
-                {error && (
-                  <div className="submitfile__label-bold">{error}</div>
-                )}
-                <button className="submitfile__button btn btn-primary" id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >Upload!</button>
-                <div className="submitfile__label">{'When the file is uploaded, you can Process/Count it.'}</div>
 
-                <button className="submitfile__button btn btn-success" id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >ROI Video - Count Fish!</button>
-                <button className="submitfile__button btn btn-success" id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >Video - Count Fish!</button>
+                <div className="submitfile__header--title">
+                  Object detection tool
+                </div>
 
-                <button className="submitfile__button btn btn-success" id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >Webcam - Count Fish!</button>
-                <button className="submitfile__button btn btn-success" id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >Picture - Count Fish!</button>
+                <div className="submitfile__header--upload-file">
+                  <div className="submitfile__col-67">
+                    <div className="submitfile__title">Select (picture/video) to process</div>
+                    <input
+                        className="submitfile__header--upload-file--input-text form-control"
+                        id="selectedFileInput"
+                        type="file"
+                        accept='image/*|video/*'
+                        onChange={this.handleChangeInputUpload}
+                        ref={this.uploadInputRef}
+                        disabled={isLoading || !model ? true : uploadedFile ? true : false}
+                    />
+                  </div>
+                  <div className="submitfile__col-33">
+                    <button className="submitfile__button-upload btn" id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >Upload!</button>
+                  </div>
+                </div>
+                <div className="submitfile__header--error">
+                  {error && (
+                    <div className="submitfile__header--error--label-red">{error}</div>
+                  )}
+                </div>
 
-                <button className="submitfile__button btn btn-danger" id="processButton" onClick={this.handleCancel} disabled={isLoading || !model} >{total_fish !== null ? 'Another File' : 'Cancel'}</button>
+                <div className="submitfile__header--select-model">
+                  <div className="submitfile__title">Select the model to use</div>
+                  <select name="models" id="listModels" onChange={this.handleList}>
+                    {this.createSelectItems()}
+                  </select>
+                </div>
+
+                <div className="submitfile__header--buttons">
+                  <div className="submitfile__title">
+                    {'Select the type of process'}
+                  </div>
+
+                  <div className="submitfile__row">
+                    <div className="submitfile__col-33">
+                      <button className="submitfile__button-video btn" id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >ROI Video</button>
+                      <button className="submitfile__button-video btn" id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >Webcam</button>
+                    </div>
+
+                    <div className="submitfile__col-33">
+                      <button className="submitfile__button-video btn" id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >Video</button>
+                      <button className="submitfile__button-picture btn" id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >Picture</button>
+                    </div>
+
+                    <div className="submitfile__col-33">
+                      <button className="submitfile__button-cancel btn" id="processButton" onClick={this.handleCancel} disabled={isLoading || !model} >{total_fish !== null ? 'Clear' : 'Cancel'}</button>
+                    </div>
+                  </div>
+                </div>
+                <div className="submitfile__header--calibration">
+                  <div className="submitfile__title--green">
+                    CALIBRACIÓN
+                  </div>
+                  <hr />
+                  {!width_pxs_x_cm ? (
+                    <>
+                      <div className="submitfile__text">
+                        Las tallas de los peces están referenciadas a una distancia de la cámara de 150 cm a 90º, con angulo de visión de 75º, si estos datos se modifican es necesario calibrar los cálculos.
+                      </div>
+                      <div className="submitfile__text">
+                        Para calibrar seleccionar una imagen con un único pez e introducir su talla real en cm
+                      </div>
+                      <div className="submitfile__row">
+                        <div className="submitfile__col-67">
+                          <div className="submitfile__text--green">Select the file</div>
+                          <input
+                              className="submitfile__header--calibration--input-text form-control"
+                              id="selectedFileInputCalibration"
+                              type="file"
+                              accept='image/*|video/*'
+                              onChange={this.handleChangeInputUploadCalibration}
+                              ref={this.uploadInputRefCalibration}
+                              disabled={isLoading || uploadedFileCalibration ? true : false}
+                          />
+                          <div className="submitfile__text--green">Introducir la talla (cm)</div>
+                          <input
+                              className="submitfile__header--calibration--input-number form-control"
+                              id="InputNumberCalibration"
+                              type="number"
+                              onChange={this.handleChangeInputNumberCalibration}
+                              disabled={isLoading || uploadedFileCalibration ? true : false}
+                          />
+                        </div>
+                        <div className="submitfile__col-33">
+                          <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading ? true : selectedFileCalibration && !uploadedFileCalibration ? false : true} >Calibrate!</button>
+                        </div>
+                      </div>
+                      <div className="submitfile__header--error">
+                        {errorCalibration && (
+                          <div className="submitfile__header--error--label-red">{errorCalibration}</div>
+                        )}
+                      </div>
+                    </>
+                  )
+                    :
+                  (
+                    <div className="submitfile__text">
+                      Calibración realizada correctamente: {width_pxs_x_cm} pixels por cm.
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="submitfile__footer form-group bg-white">
+              <div className="submitfile__header-right form-group">
+                <div className="submitfile__header-right--title">
                 {isLoading ?
                   (
-                    <h3>Counting Fish...</h3>
+                    <>Counting Fish...</>
                   ) : (
-                    <>{imageData}</>
+                    <>Select file to process...</>
                   )}
+                </div>
+
+                <div className="submitfile__header-right--image">
+                  {imageData}
+                </div>
+
+                <div className="submitfile__header-right--file">
+                  {fileData}
+                </div>
               </div>
             </div>
         )

@@ -1,5 +1,12 @@
 .logo {
+  margin-top: 10px;
+  margin-left: 10px;
+
+  @media(min-width: 768px) {
+    margin-top: 50px;
+    margin-left: 50px;
+  }
   &__wrapper {
-    display: 'flex';
+
   }
 }

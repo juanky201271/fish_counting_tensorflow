@@ -1,14 +1,59 @@
-.navbar {
+.app-navbar {
+  background-image: url("../assets/images/phone-background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 130px;
+
+  @media(min-width: 330px) {
+    height: 107px;
+  }
+
+  @media(min-width: 768px) {
+    background-image: url("../assets/images/desktop-background.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 180px;
+  }
+
+  @media(min-width: 1024px) {
+    height: 259px;
+  }
+
   &__nav {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
     color: #000;
+    @media(min-width: 768px) {
+      margin-top: 30px;
+    }
+    @media(min-width: 1024px) {
+      margin-top: 55px;
+    }
   }
   &__name {
     color: #000;
-    background: #fcc;
-    padding: 5px;
   }
   &__pic {
-    width: 30px;
+
+  }
+  &__select {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+
+    @media(min-width: 330px) {
+      align-items: flex-end;
+    }
+  }
+  &__logo-and-select {
+    display: flex;
+    flex-direction: column-reverse;
+
+    @media(min-width: 330px) {
+      flex-direction: row;
+    }
   }
 }

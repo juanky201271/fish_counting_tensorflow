@@ -1,5 +1,19 @@
 .links {
+  color: white;
+
+  a {
+    color: white;
+    border-color: white;
+    border-width: 1px;
+    border-style: solid;
+    padding-left: 1rem;
+
+    @media(min-width: 1024px) {
+
+    }
+  }
   &__log {
     cursor: pointer;
+
   }
 }
