@@ -26,9 +26,11 @@ def get_result_video_roi_counting_fish():
         folder_images = url_input_video_and_dir.get("dir") + '/images'
         video = url_input_video_and_dir.get('url_input_video')
         model, type = url_input_video_and_dir.get('model').split('#')
+        width_cms = url_input_video_and_dir.get('width_cms')
+        width_pxs_x_cm = url_input_video_and_dir.get('width_pxs_x_cm')
         if os.path.isdir(folder_images) == False:
             os.mkdir(folder_images)
-        return purseiner_roi.purseiner_roi_process(video, folder_images, model, type)
+        return purseiner_roi.purseiner_roi_process(video, folder_images, model, type, width_cms, width_pxs_x_cm)
 
 @app.route('/flask_api/picturecountfish', methods=['POST'])
 def get_result_picture_counting_fish():
@@ -37,9 +39,11 @@ def get_result_picture_counting_fish():
         folder_images = url_input_video_and_dir.get("dir") + '/images'
         video = url_input_video_and_dir.get('url_input_video')
         model, type = url_input_video_and_dir.get('model').split('#')
+        width_cms = url_input_video_and_dir.get('width_cms')
+        width_pxs_x_cm = url_input_video_and_dir.get('width_pxs_x_cm')
         if os.path.isdir(folder_images) == False:
             os.mkdir(folder_images)
-        return purseiner_picture_counting.purseiner_picture_counting_process(video, folder_images, model, type)
+        return purseiner_picture_counting.purseiner_picture_counting_process(video, folder_images, model, type, width_cms, width_pxs_x_cm)
 
 @app.route('/flask_api/videocountfish', methods=['POST'])
 def get_result_video_counting_fish():
@@ -48,17 +52,19 @@ def get_result_video_counting_fish():
         folder_images = url_input_video_and_dir.get("dir") + '/images'
         video = url_input_video_and_dir.get('url_input_video')
         model, type = url_input_video_and_dir.get('model').split('#')
+        width_cms = url_input_video_and_dir.get('width_cms')
+        width_pxs_x_cm = url_input_video_and_dir.get('width_pxs_x_cm')
         if os.path.isdir(folder_images) == False:
             os.mkdir(folder_images)
-        return purseiner_video_counting.purseiner_video_counting_process(video, folder_images, model, type)
+        return purseiner_video_counting.purseiner_video_counting_process(video, folder_images, model, type, width_cms, width_pxs_x_cm)
 
 @app.route('/flask_api/picturecalibrationfish', methods=['POST'])
 def get_result_picture_calibration_fish():
     if request.method == 'POST':
         url_input_video_and_dir = request.get_json()
         video = url_input_video_and_dir.get('url_input_video')
-        cms = url_input_video_and_dir.get('cms')
         model, type = url_input_video_and_dir.get('model').split('#')
+        cms = url_input_video_and_dir.get('cms')
         return purseiner_picture_calibration.purseiner_picture_calibration_process(video, model, type, cms)
 
 """

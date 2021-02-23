@@ -33,7 +33,7 @@ def load_image_into_numpy_array(path):
     """
     return np.array(Image.open(path))
 
-def single_image_object_counting_sm(input_picture, detection_model, category_index, is_color_recognition_enabled, folder):
+def single_image_object_counting_sm(input_picture, detection_model, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm):
     total_passed_fish = 0
     counting_mode = ""
     csv_line = ""
@@ -108,15 +108,30 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
 
     cv2.imwrite(name_file_picture, input_frame)
 
+    #calculate cms
+    sizes_cms = []
+    if (width_pxs_x_cm != None):
+        for size in sizes:
+            pxs = int(size.split(',')[2].split(".")[0])
+            cms = int(pxs / width_pxs_x_cm)
+            sizes_cms.append(size.split(',')[0] + ',' + size.split(',')[1] + ',' + str(cms))
+    else:
+        for size in sizes:
+            pxs = int(size.split(',')[2].split(".")[0])
+            cms = int((width_cms * pxs) / int(input_frame.shape[1]))
+            sizes_cms.append(size.split(',')[0] + ',' + size.split(',')[1] + ',' + str(cms))
+
+    print(sizes_cms)
+
     with open(name_file_csv, 'a') as f:
         writer = csv.writer(f)
-        for size in sizes:
+        for size in sizes_cms:
             csv_line = \
             str(size)
             writer.writerows([csv_line.split(',')])
 
-    cv2.imshow('fish detection picture',input_frame)
-    cv2.waitKey(0)
+    #cv2.imshow('fish detection picture',input_frame)
+    #cv2.waitKey(0)
 
     cv2.destroyAllWindows()
     return { 'total_fish': total_passed_fish }
@@ -151,7 +166,7 @@ def load_image_into_numpy_array_c(path):
     """
     return np.array(Image.open(path))
 
-def single_image_object_counting_c(input_picture, detection_model, category_index, is_color_recognition_enabled, folder):
+def single_image_object_counting_c(input_picture, detection_model, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm):
     total_passed_fish = 0
     counting_mode = ""
     csv_line = ""
@@ -228,15 +243,30 @@ def single_image_object_counting_c(input_picture, detection_model, category_inde
 
     cv2.imwrite(name_file_picture, input_frame)
 
+    #calculate cms
+    sizes_cms = []
+    if (width_pxs_x_cm != None):
+        for size in sizes:
+            pxs = int(size.split(',')[2].split(".")[0])
+            cms = int(pxs / width_pxs_x_cm)
+            sizes_cms.append(size.split(',')[0] + ',' + size.split(',')[1] + ',' + str(cms))
+    else:
+        for size in sizes:
+            pxs = int(size.split(',')[2].split(".")[0])
+            cms = int((width_cms * pxs) / int(input_frame.shape[1]))
+            sizes_cms.append(size.split(',')[0] + ',' + size.split(',')[1] + ',' + str(cms))
+
+    print(sizes_cms)
+
     with open(name_file_csv, 'a') as f:
         writer = csv.writer(f)
-        for size in sizes:
+        for size in sizes_cms:
             csv_line = \
             str(size)
             writer.writerows([csv_line.split(',')])
 
-    cv2.imshow('fish detection picture',input_frame)
-    cv2.waitKey(0)
+    #cv2.imshow('fish detection picture',input_frame)
+    #cv2.waitKey(0)
 
     cv2.destroyAllWindows()
     return { 'total_fish': total_passed_fish }

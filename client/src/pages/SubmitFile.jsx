@@ -188,7 +188,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoRoiCountFish(uploadedFile, 'client/public/submits/' + dir, model)
+        await api.videoRoiCountFish(uploadedFile, 'client/public/submits/' + dir, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -200,10 +200,10 @@ class SubmitFile extends Component {
 
     handleVideoProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile, dir, model } = this.state
+      const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoCountFish(uploadedFile, 'client/public/submits/' + dir, model)
+        await api.videoCountFish(uploadedFile, 'client/public/submits/' + dir, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -215,10 +215,10 @@ class SubmitFile extends Component {
 
     handleWebcamProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile, dir, model } = this.state
+      const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.webcamCountFish(uploadedFile, 'client/public/submits/' + dir, model)
+        await api.webcamCountFish(uploadedFile, 'client/public/submits/' + dir, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -230,10 +230,10 @@ class SubmitFile extends Component {
 
     handlePictureProcess = async e => {
       this.setState({ isLoading: true })
-      const { uploadedFile, dir, model } = this.state
+      const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.pictureCountFish(uploadedFile, 'client/public/submits/' + dir, model)
+        await api.pictureCountFish(uploadedFile, 'client/public/submits/' + dir, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -244,7 +244,7 @@ class SubmitFile extends Component {
     }
 
     handleCancel = e => {
-      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, uploadedFileCalibration: '', selectedFileCalibration: '', total_fishCalibration: null, cms: null, width_pxs_x_cm: null, })
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, uploadedFileCalibration: '', selectedFileCalibration: '', resultFileCalibration: '', total_fishCalibration: null, cms: null, width_pxs_x_cm: null, })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
       }
@@ -282,28 +282,34 @@ class SubmitFile extends Component {
               DOWNLOADS
             </div>
             <hr />
-            <div className="submitfile__row">
-              <div className="submitfile__col-50">
-                <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank">Processed {type === 'video' ? 'video' : 'image'}</a>
-                <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank">Species/size table</a>
-                <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank">Individual detected images</a>
-              </div>
-              <div className="submitfile__col-50">
-                <div className="submitfile__text--green">File Details ({type}):</div>
-                <div className="submitfile__text">File Name: {this.state.selectedFile.name}</div>
-                <div className="submitfile__text">File Type: {this.state.selectedFile.type}</div>
-                <div className="submitfile__text">File Size: {this.state.selectedFile.size}</div>
-                <div className="submitfile__text--green">
-                  <a href={file} rel="noopener noreferrer" target="_blank">Uploaded File</a>
-                </div>
+            <div className="submitfile__col-50">
+              <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank">Processed {type === 'video' ? 'video' : 'image'}</a>
+              <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank">Species/size table</a>
+              <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank">Individual detected images</a>
+            </div>
+          </div>
+        )
+      } else if (this.state.uploadedFile !== '') {
+        const type = this.state.selectedFile.type.split('/')[0] || ''
+        return (
+          <div className="submitfile__col">
+            <div className="submitfile__title--green">
+              File Details ({type}):
+            </div>
+            <hr />
+            <div className="submitfile__col">
+              <div className="submitfile__text">File Name: {this.state.selectedFile.name}</div>
+              <div className="submitfile__text">File Type: {this.state.selectedFile.type}</div>
+              <div className="submitfile__text">File Size: {this.state.selectedFile.size}</div>
+              <div className="submitfile__text--green">
+                <a href={file} rel="noopener noreferrer" target="_blank">Download uploaded file</a>
               </div>
             </div>
           </div>
         )
       } else {
         return (
-          <div>
-          </div>
+          <div></div>
         )
       }
     }
@@ -461,10 +467,10 @@ class SubmitFile extends Component {
                   {!width_pxs_x_cm ? (
                     <>
                       <div className="submitfile__text">
-                        Las tallas de los peces están referenciadas a una distancia de la cámara de 150 cm a 90º, con angulo de visión de 75º, si estos datos se modifican es necesario calibrar los cálculos.
+                        Las tallas de los peces están referenciadas a una distancia de la cámara de (150 cm = 60 in) a 90º, con angulo de visión de 75º, si estos datos se modifican es necesario calibrar los cálculos.
                       </div>
                       <div className="submitfile__text">
-                        Para calibrar seleccionar una imagen con un único pez e introducir su talla real en cm
+                        Para calibrar seleccionar una imagen con un único pez e introducir su talla real en (cm / in)
                       </div>
                       <div className="submitfile__row">
                         <div className="submitfile__col-67">
@@ -478,7 +484,7 @@ class SubmitFile extends Component {
                               ref={this.uploadInputRefCalibration}
                               disabled={isLoading || uploadedFileCalibration ? true : false}
                           />
-                          <div className="submitfile__text--green">Introducir la talla (cm)</div>
+                          <div className="submitfile__text--green">Introducir la talla (cm / in)</div>
                           <input
                               className="submitfile__header--calibration--input-number form-control"
                               id="InputNumberCalibration"
@@ -501,7 +507,7 @@ class SubmitFile extends Component {
                     :
                   (
                     <div className="submitfile__text">
-                      Calibración realizada correctamente: {width_pxs_x_cm} pixels por cm.
+                      Calibración realizada correctamente: {width_pxs_x_cm} pixels por (cm / in).
                     </div>
                   )}
                 </div>

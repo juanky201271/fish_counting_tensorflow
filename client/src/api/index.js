@@ -21,10 +21,10 @@ export const createUploadResult = payload => api.post(`/uploadresult`, payload)
 export const createDir = dir => api.post(`/createDir/`, { dir: dir })
 
 export const getTime = () => flask_api.get(`/time`)
-export const videoRoiCountFish = (url_input_video, dir, model) => flask_api.post(`/videoroicountfish`, { url_input_video, dir, model })
-export const videoCountFish = (url_input_video, dir, model) => flask_api.post(`/videocountfish`, { url_input_video, dir, model })
-export const webcamCountFish = (url_input_video, dir, model) => flask_api.post(`/webcamcountfish`, { url_input_video, dir, model })
-export const pictureCountFish = (url_input_video, dir, model) => flask_api.post(`/picturecountfish`, { url_input_video, dir, model })
+export const videoRoiCountFish = (url_input_video, dir, model, width_cms, width_pxs_x_cm) => flask_api.post(`/videoroicountfish`, { url_input_video, dir, model, width_cms, width_pxs_x_cm })
+export const videoCountFish = (url_input_video, dir, model, width_cms, width_pxs_x_cm) => flask_api.post(`/videocountfish`, { url_input_video, dir, model, width_cms, width_pxs_x_cm })
+export const webcamCountFish = (url_input_video, dir, model, width_cms, width_pxs_x_cm) => flask_api.post(`/webcamcountfish`, { url_input_video, dir, model, width_cms, width_pxs_x_cm })
+export const pictureCountFish = (url_input_video, dir, model, width_cms, width_pxs_x_cm) => flask_api.post(`/picturecountfish`, { url_input_video, dir, model, width_cms, width_pxs_x_cm })
 export const pictureCalibrationFish = (url_input_video, dir, model, cms) => flask_api.post(`/picturecalibrationfish`, { url_input_video, dir, model, cms })
 
 const apis = {

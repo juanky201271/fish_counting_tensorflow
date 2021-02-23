@@ -23,8 +23,7 @@ from object_detection.builders import model_builder
 
 from utils import visualization_utils as vis_util
 
-
-def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_index, is_color_recognition_enabled, roi, deviation, folder):
+def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_index, is_color_recognition_enabled, roi, deviation, folder, width_cms, width_pxs_x_cm):
         total_passed_fish = 0
         detect_fn = detection_model
 
@@ -189,7 +188,7 @@ def get_model_detection_function_c(model):
 
   return detect_fn
 
-def cumulative_object_counting_x_axis_c(input_video, detection_model, category_index, is_color_recognition_enabled, roi, deviation, folder):
+def cumulative_object_counting_x_axis_c(input_video, detection_model, category_index, is_color_recognition_enabled, roi, deviation, folder, width_cms, width_pxs_x_cm):
         total_passed_fish = 0
         detect_fn = get_model_detection_function_c(detection_model)
 

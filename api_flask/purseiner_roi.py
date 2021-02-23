@@ -14,7 +14,7 @@ from api import roi_fish_counting_api_v2
 from shutil import make_archive
 from pathlib import Path
 
-def purseiner_roi_process(url_input_video, folder, model, type):
+def purseiner_roi_process(url_input_video, folder, model, type, width_cms, width_pxs_x_cm):
     #input_video = "api_flask/input_images_and_videos/27-08-2019-03-25.avi"
 
     detection_graph, category_index, version = backbone.set_model(model, 'label_map.pbtxt', type)
@@ -29,16 +29,16 @@ def purseiner_roi_process(url_input_video, folder, model, type):
     print('VERSION: ' + version)
 
     if (type == 'frozen_inference_graph' and version == '1'):
-        r = roi_fish_counting_api.cumulative_object_counting_x_axis_fig(url_input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder) # counting all the objects
+        r = roi_fish_counting_api.cumulative_object_counting_x_axis_fig(url_input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder, width_cms, width_pxs_x_cm) # counting all the objects
 
     if (type == 'saved_model_root' or type == 'saved_model_dir'):
         if (version.split('.')[0] == '1'):
-            r = roi_fish_counting_api.cumulative_object_counting_x_axis_sm(url_input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder) # counting all the objects
+            r = roi_fish_counting_api.cumulative_object_counting_x_axis_sm(url_input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder, width_cms, width_pxs_x_cm) # counting all the objects
         if (version.split('.')[0] == '2'):
-            r = roi_fish_counting_api_v2.cumulative_object_counting_x_axis_sm(url_input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder) # counting all the objects
+            r = roi_fish_counting_api_v2.cumulative_object_counting_x_axis_sm(url_input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder, width_cms, width_pxs_x_cm) # counting all the objects
 
     if (type == 'ckpt_dir' and version == '2'):
-        r = roi_fish_counting_api_v2.cumulative_object_counting_x_axis_c(url_input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder) # counting all the objects
+        r = roi_fish_counting_api_v2.cumulative_object_counting_x_axis_c(url_input_video, detection_graph, category_index, is_color_recognition_enabled, roi, deviation, folder, width_cms, width_pxs_x_cm) # counting all the objects
 
     currPath = os.getcwd()
     f,tail = folder.split('/images')

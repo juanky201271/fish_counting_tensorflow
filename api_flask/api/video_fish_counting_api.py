@@ -12,7 +12,7 @@ from utils import visualization_utils as vis_util
 
 total_passed_fish = 0  # using it to count fish
 
-def object_counting_fig(input_video, detection_graph, category_index, is_color_recognition_enabled, folder):
+def object_counting_fig(input_video, detection_graph, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm):
         total_passed_fish = 0
 
         name_file_dict = input_video.split('\\')
@@ -153,7 +153,7 @@ def object_counting_fig(input_video, detection_graph, category_index, is_color_r
             cv2.destroyAllWindows()
             return { 'total_fish': total_passed_fish }
 
-def object_counting_sm(input_video, detection_model, category_index, is_color_recognition_enabled, folder):
+def object_counting_sm(input_video, detection_model, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm):
         total_passed_fish = 0
         detect_fn = detection_model.signatures['serving_default']
 
