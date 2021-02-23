@@ -274,40 +274,35 @@ class SubmitFile extends Component {
       const video = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_video_result.avi'
       const image = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_image_result.png'
       const zip = '/submits/' + this.state.dir + '/' + this.state._id + '_' + file_arr[file_arr.length - 1] + '_images_zip_result.zip'
-      if (this.state.selectedFile) {
+      if (this.state.total_fish !== null) {
         const type = this.state.selectedFile.type.split('/')[0] || ''
         return (
-          <div>
-            <h2>File Details ({type}):</h2>
+          <div className="submitfile__col">
+            <div className="submitfile__title--green">
+              DOWNLOADS
+            </div>
             <hr />
-            <p>File Name: {this.state.selectedFile.name}</p>
-            <p>File Type: {this.state.selectedFile.type}</p>
-            <p>File Size: {this.state.selectedFile.size}</p>
-            {this.state.uploadedFile && (
-              <>
-              <hr />
-              <a href={file} rel="noopener noreferrer" target="_blank">Uploaded File</a>
-              </>
-            )}
-            {this.state.total_fish !== null && (
-              <>
-              <hr />
-              <p><strong>Total Fish: {this.state.total_fish}</strong></p>
-              <hr />
-              <a href={csv} rel="noopener noreferrer" target="_blank">CSV Result File</a>
-              <br />
-              <a href={type === 'video' ? video : image} rel="noopener noreferrer" target="_blank">{type === 'video' ? 'Video AVI' : 'Image PNG'} Result File</a>
-              <br />
-              <a href={zip} rel="noopener noreferrer" target="_blank">Object Detected Images ZIP Result File</a>
-              </>
-            )}
+            <div className="submitfile__row">
+              <div className="submitfile__col-50">
+                <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank">Processed {type === 'video' ? 'video' : 'image'}</a>
+                <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank">Species/size table</a>
+                <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank">Individual detected images</a>
+              </div>
+              <div className="submitfile__col-50">
+                <div className="submitfile__text--green">File Details ({type}):</div>
+                <div className="submitfile__text">File Name: {this.state.selectedFile.name}</div>
+                <div className="submitfile__text">File Type: {this.state.selectedFile.type}</div>
+                <div className="submitfile__text">File Size: {this.state.selectedFile.size}</div>
+                <div className="submitfile__text--green">
+                  <a href={file} rel="noopener noreferrer" target="_blank">Uploaded File</a>
+                </div>
+              </div>
+            </div>
           </div>
         )
       } else {
         return (
           <div>
-            <br />
-            <h4>Choose before Pressing the Upload button</h4>
           </div>
         )
       }
@@ -513,12 +508,20 @@ class SubmitFile extends Component {
               </div>
               <div className="submitfile__header-right form-group">
                 <div className="submitfile__header-right--title">
-                {isLoading ?
-                  (
-                    <>Counting Fish...</>
-                  ) : (
-                    <>Select file to process...</>
-                  )}
+                  {total_fish ?
+                    <>RESULTS</>
+                  :
+                    isLoading ?
+                      <>Processing...</>
+                    :
+                      uploadedFile ?
+                        <>Select the type of process...</>
+                      :
+                        selectedFile ?
+                          <>Upload the file to process...</>
+                        :
+                          <>Select file to process...</>
+                  }
                 </div>
 
                 <div className="submitfile__header-right--image">

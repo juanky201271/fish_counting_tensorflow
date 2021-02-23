@@ -162,7 +162,10 @@
       }
     }
     &--file {
-
+      hr {
+        border-top: 1px solid #0091a8;
+        width: 100%;
+      }
     }
   }
 
@@ -188,6 +191,10 @@
 
     &--green {
       color: #0091a8;
+      a {
+        color: #0091a8;
+        text-decoration: none;
+      }
     }
   }
   &__button-upload {
@@ -322,6 +329,16 @@
       display: flex;
       flex-direction: column;
       width: 67%;
+    }
+  }
+  &__col-50 {
+    display: block;
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+      padding-right: 10px;
     }
   }
   &__col-33 {
