@@ -117,7 +117,9 @@ class SubmitFile extends Component {
     }
 
     handleCalibration = async e => {
-      if (!this.state.selectedFileCalibration || !this.state.cms || !this.state.model) return;
+      if (!this.state.selectedFileCalibration || !this.state.cms || !this.state.model) {
+        return;
+      }
       this.setState({ isLoading: true })
       const name = "FileCalibration_" + Date.now() + '_' + this.state.selectedFileCalibration.name
       const dir = ''
@@ -244,10 +246,14 @@ class SubmitFile extends Component {
     }
 
     handleCancel = e => {
-      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, uploadedFileCalibration: '', selectedFileCalibration: '', resultFileCalibration: '', total_fishCalibration: null, cms: null, width_pxs_x_cm: null, })
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
       }
+    }
+
+    handleCancelCalibration = e => {
+      this.setState({ uploadedFileCalibration: '', selectedFileCalibration: '', resultFileCalibration: '', total_fishCalibration: null, cms: null, width_pxs_x_cm: null, })
       if (this.uploadInputRefCalibration.current) {
         this.uploadInputRefCalibration.current.value = ''
       }
@@ -506,9 +512,14 @@ class SubmitFile extends Component {
                   )
                     :
                   (
-                    <div className="submitfile__text">
-                      Calibración realizada correctamente: {width_pxs_x_cm} pixels por (cm / in).
-                    </div>
+                    <>
+                      <div className="submitfile__text">
+                        Calibración realizada correctamente: {width_pxs_x_cm} pixels por (cm / in).
+                      </div>
+                      <div className="submitfile__text--green">
+                        <a onClick={this.handleCancelCalibration}>Volver a Calibrar</a>
+                      </div>
+                    </>
                   )}
                 </div>
               </div>
