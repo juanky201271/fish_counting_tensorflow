@@ -37,7 +37,7 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
         #with open('detected_fishes.csv', 'w') as f:
             writer = csv.writer(f)
             csv_line = \
-                'Species/Size'
+                'Species,Size'
             writer.writerows([csv_line.split(',')])
 
         # input video
@@ -117,6 +117,19 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
 
             total_passed_fish = total_passed_fish + counter
 
+            #calculate cms
+            print(size, counter)
+            if (size != "waiting..." and size != "n.a."):
+                size_cms = str(size)
+                if (width_pxs_x_cm != None):
+                    pxs = int(size_cms.split(".")[0])
+                    cms = int(pxs / width_pxs_x_cm)
+                    size_cms = str(cms)
+                else:
+                    pxs = int(size_cms.split(".")[0])
+                    cms = int((width_cms * pxs) / int(input_frame.shape[1]))
+                    size_cms = str(cms)
+
             # insert information text to video frame
             cv2.rectangle(input_frame, (0, 0), (295, 80), (180, 132, 109), -1)
             cv2.putText(
@@ -143,7 +156,7 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
 
             cv2.putText(
                 input_frame,
-                ' Size: ' + size,
+                ' Size: ' + size_cms,
                 (4, 63),
                 font,
                 0.45,
@@ -152,13 +165,24 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
                 cv2.FONT_HERSHEY_COMPLEX_SMALL,
                 )
 
-            cv2.imshow('fish detection', input_frame)
+            #cv2.imshow('fish detection', input_frame)
 
             output_movie.write(input_frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print("**********go out frames")
                 break
+
+            #calculate cms
+            if (csv_line != 'not_available'):
+                if (width_pxs_x_cm != None):
+                    pxs = int(csv_line.split(',')[1].split(".")[0])
+                    cms = int(pxs / width_pxs_x_cm)
+                    csv_line = csv_line.split(',')[0] + ',' + str(cms)
+                else:
+                    pxs = int(csv_line.split(',')[1].split(".")[0])
+                    cms = int((width_cms * pxs) / int(input_frame.shape[1]))
+                    csv_line = csv_line.split(',')[0] + ',' + str(cms)
 
             if csv_line != 'not_available':
                 with open(name_file_csv, 'a') as f:
@@ -202,7 +226,7 @@ def cumulative_object_counting_x_axis_c(input_video, detection_model, category_i
         #with open('detected_fishes.csv', 'w') as f:
             writer = csv.writer(f)
             csv_line = \
-                'Species/Size'
+                'Species,Size'
             writer.writerows([csv_line.split(',')])
 
         # input video
@@ -284,6 +308,19 @@ def cumulative_object_counting_x_axis_c(input_video, detection_model, category_i
 
             total_passed_fish = total_passed_fish + counter
 
+            #calculate cms
+            print(size, counter)
+            if (size != "waiting..." and size != "n.a."):
+                size_cms = str(size)
+                if (width_pxs_x_cm != None):
+                    pxs = int(size_cms.split(".")[0])
+                    cms = int(pxs / width_pxs_x_cm)
+                    size_cms = str(cms)
+                else:
+                    pxs = int(size_cms.split(".")[0])
+                    cms = int((width_cms * pxs) / int(input_frame.shape[1]))
+                    size_cms = str(cms)
+
             # insert information text to video frame
             cv2.rectangle(input_frame, (0, 0), (295, 80), (180, 132, 109), -1)
             cv2.putText(
@@ -319,13 +356,24 @@ def cumulative_object_counting_x_axis_c(input_video, detection_model, category_i
                 cv2.FONT_HERSHEY_COMPLEX_SMALL,
                 )
 
-            cv2.imshow('fish detection', input_frame)
+            #cv2.imshow('fish detection', input_frame)
 
             output_movie.write(input_frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print("**********go out frames")
                 break
+
+            #calculate cms
+            if (csv_line != 'not_available'):
+                if (width_pxs_x_cm != None):
+                    pxs = int(csv_line.split(',')[1].split(".")[0])
+                    cms = int(pxs / width_pxs_x_cm)
+                    csv_line = csv_line.split(',')[0] + ',' + str(cms)
+                else:
+                    pxs = int(csv_line.split(',')[1].split(".")[0])
+                    cms = int((width_cms * pxs) / int(input_frame.shape[1]))
+                    csv_line = csv_line.split(',')[0] + ',' + str(cms)
 
             if csv_line != 'not_available':
                 with open(name_file_csv, 'a') as f:

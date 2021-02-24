@@ -258,7 +258,7 @@ def draw_bounding_box_on_image(current_frame_number,image,
     csv_line = predicted_color + "," + str (predicted_direction) # csv line created
   else:
     display_str_list[0] = display_str_list[0]
-    csv_line = str (predicted_direction) # csv line created
+    csv_line = str (size) # csv line created
 
   display_str_heights = [font.getsize(ds)[1] for ds in display_str_list]
 
@@ -815,6 +815,10 @@ def visualize_boxes_and_labels_on_image_array_x_axis(current_frame_number,
                   color=color,
                   radius=line_thickness / 2,
                   use_normalized_coordinates=use_normalized_coordinates)
+    print('is detected', is_vehicle_detected)
+    print('size', size)
+    print('csv line', csv_line)
+    print('update csv', update_csv)
 
   if(1 in is_vehicle_detected):
         counter = 1
@@ -841,7 +845,7 @@ def visualize_boxes_and_labels_on_image_array_y_axis(current_frame_number,
                                               classes,
                                               scores,
                                               category_index,
-					      targeted_objects=None,
+					                          targeted_objects=None,
                                               y_reference=None,
                                               deviation=None,
                                               instance_masks=None,
