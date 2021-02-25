@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import detectBrowserLanguage from 'detect-browser-language'
+import { withRouter } from 'react-router'
 
 import { NavBar } from '../components'
 import { SubmitFile, AboutUs } from '../pages'
@@ -36,7 +37,6 @@ class App extends Component {
     const { authenticated, twitterId, ip, user, isLoading, language, } = this.state
     return (
       <div className="app">
-          <Router>
 
             {!isLoading ?
                (
@@ -49,8 +49,8 @@ class App extends Component {
                     language={language}
                   />
                   <Switch>
-                    <Route path="/" exact component={SubmitFile} />
-                    <Route path="/aboutus" exact component={AboutUs} />
+                    <Route path="/" exact render={() => <SubmitFile parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                    <Route path="/aboutus" exact render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
                   </Switch>
                   <div className="app__footer">
                     <p>Copyright &copy;AIpeces</p>
@@ -68,10 +68,9 @@ class App extends Component {
                )
             }
 
-          </Router>
       </div>
     )
   }
 }
 
-export default App
+export default withRouter(App)

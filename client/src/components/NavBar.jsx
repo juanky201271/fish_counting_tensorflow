@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Select from 'react-select'
+import { withRouter } from 'react-router'
 
 import Logo from './Logo'
 import Links from './Links'
@@ -100,6 +101,11 @@ class NavBar extends Component {
     this.setState({ authenticated: false, twitterId: '', user: '', })
   }
   handleList = language => {
+    window.dispatchEvent(
+      new CustomEvent('changeLanguage', {
+        detail: language.value,
+      })
+    )
     this.setState({ language: language })
   }
   render() {
@@ -128,6 +134,7 @@ class NavBar extends Component {
             twitterId={twitterId}
             ip={ip}
             user={user}
+            language={language}
             handleNotAuthenticated={this._handleNotAuthenticated}
           />
           { name ?
@@ -157,4 +164,4 @@ class NavBar extends Component {
   }
 }
 
-export default NavBar
+export default withRouter(NavBar)

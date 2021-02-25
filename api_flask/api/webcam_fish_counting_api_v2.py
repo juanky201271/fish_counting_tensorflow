@@ -25,7 +25,7 @@ def object_counting_webcam(input_video, detection_graph, category_index, is_colo
         name_file_dict = input_video.split('\\')
         f,tail = folder.split('/images')
         name_file_csv = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_csv_result.csv'
-        name_file_video = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.avi'
+        name_file_video = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.mp4'
 
         # initialize .csv
         with open(name_file_csv, 'w') as f:

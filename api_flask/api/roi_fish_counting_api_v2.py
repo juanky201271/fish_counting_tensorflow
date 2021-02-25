@@ -30,7 +30,7 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
         name_file_dict = input_video.split('\\')
         f,tail = folder.split('/images')
         name_file_csv = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_csv_result.csv'
-        name_file_video = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.avi'
+        name_file_video = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.mp4'
 
         # initialize .csv
         with open(name_file_csv, 'w') as f:
@@ -51,7 +51,7 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
         roi = int(width / 2)
         deviation = int(width / 6)
 
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        fourcc = cv2.VideoWriter_fourcc(*'MP4V')
         output_movie = cv2.VideoWriter(name_file_video, fourcc, fps, (width, height))
 
         speed = "waiting..."
@@ -119,6 +119,7 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
 
             #calculate cms
             print(size, counter)
+            size_cms = "..."
             if (size != "waiting..." and size != "n.a."):
                 size_cms = str(size)
                 if (width_pxs_x_cm != None):
@@ -219,7 +220,7 @@ def cumulative_object_counting_x_axis_c(input_video, detection_model, category_i
         name_file_dict = input_video.split('\\')
         f,tail = folder.split('/images')
         name_file_csv = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_csv_result.csv'
-        name_file_video = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.avi'
+        name_file_video = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.mp4'
 
         # initialize .csv
         with open(name_file_csv, 'w') as f:
@@ -240,7 +241,7 @@ def cumulative_object_counting_x_axis_c(input_video, detection_model, category_i
         roi = int(width / 2)
         deviation = int(width / 6)
 
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        fourcc = cv2.VideoWriter_fourcc(*'MP4V')
         output_movie = cv2.VideoWriter(name_file_video, fourcc, fps, (width, height))
 
         speed = "waiting..."
@@ -310,8 +311,8 @@ def cumulative_object_counting_x_axis_c(input_video, detection_model, category_i
 
             #calculate cms
             print(size, counter)
+            size_cms = str(size)
             if (size != "waiting..." and size != "n.a."):
-                size_cms = str(size)
                 if (width_pxs_x_cm != None):
                     pxs = int(size_cms.split(".")[0])
                     cms = int(pxs / width_pxs_x_cm)
@@ -347,7 +348,7 @@ def cumulative_object_counting_x_axis_c(input_video, detection_model, category_i
 
             cv2.putText(
                 input_frame,
-                ' Size: ' + size,
+                ' Size: ' + size_cms,
                 (4, 63),
                 font,
                 0.45,

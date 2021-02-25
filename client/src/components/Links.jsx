@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { withRouter } from 'react-router'
 
 import './Links.scss'
 
@@ -11,6 +12,7 @@ class Links extends Component {
       twitterId: this.props.twitterId || '',
       ip: this.props.ip || '',
       user: this.props.user || '',
+      language: this.props.language || '',
     }
   }
   _handleLogoutClick = async () => {
@@ -23,30 +25,16 @@ class Links extends Component {
   }
   render() {
     console.log('links', this.state)
-    const { authenticated, twitterId, ip, user, } = this.state
+    const { authenticated, twitterId, ip, user, language, } = this.state
     return (
       <div className="links">
-        <Link to={{ pathname: "/",
-                    state: {
-                      authenticated: authenticated,
-                      twitterId: twitterId,
-                      ip: ip,
-                      user: user,
-                    }
-                  }}
+        <Link to={{ pathname: "/" }}
           className="navbar-brand"
         >
           <div className="navbar__log navbar-brand">Detection Tool</div>
         </Link>
 
-        <Link to={{ pathname: "/aboutus",
-                    state: {
-                      authenticated: authenticated,
-                      twitterId: twitterId,
-                      ip: ip,
-                      user: user,
-                    }
-                  }}
+        <Link to={{ pathname: "/aboutus" }}
           className="navbar-brand"
         >
           <div className="navbar__log navbar-brand">About us</div>
@@ -54,14 +42,7 @@ class Links extends Component {
 
         {
           authenticated ? (
-            <Link to={{ pathname: "/mybars",
-                        state: {
-                          authenticated: authenticated,
-                          twitterId: twitterId,
-                          ip: ip,
-                          user: user,
-                        }
-                      }}
+            <Link to={{ pathname: "/mybars" }}
               className="navbar-brand"
             >
               <div className="navbar__log navbar-brand">My Something</div>
@@ -87,4 +68,4 @@ class Links extends Component {
   }
 }
 
-export default Links
+export default withRouter(Links)

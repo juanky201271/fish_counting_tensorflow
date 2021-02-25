@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router'
 import api from '../api'
 
 import './AboutUs.scss'
@@ -298,4 +299,4 @@ class AboutUs extends Component {
     }
 }
 
-export default AboutUs
+export default withRouter(AboutUs)

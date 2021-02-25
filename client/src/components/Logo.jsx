@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router'
 import logo from '../assets/images/logo-white.png'
 
 import './Logo.scss'
@@ -14,4 +15,4 @@ class Logo extends Component {
     )
   }
 }
-export default Logo
+export default withRouter(Logo)

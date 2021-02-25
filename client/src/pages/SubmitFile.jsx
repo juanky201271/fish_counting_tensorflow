@@ -1,7 +1,26 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router'
 import api from '../api'
 
 import './SubmitFile.scss'
+import { errors as errors_es, labels as labels_es } from './SubmitFile_es.js'
+import { errors as errors_en, labels as labels_en } from './SubmitFile_en.js'
+import { errors as errors_fr, labels as labels_fr } from './SubmitFile_fr.js'
+import { errors as errors_pt, labels as labels_pt } from './SubmitFile_pt.js'
+
+const errors_lang = {
+  'es': errors_es,
+  'en': errors_en,
+  'fr': errors_fr,
+  'pt': errors_pt
+}
+
+const labels_lang = {
+  'es': labels_es,
+  'en': labels_en,
+  'fr': labels_fr,
+  'pt': labels_pt
+}
 
 class SubmitFile extends Component {
     constructor(props) {
@@ -28,6 +47,8 @@ class SubmitFile extends Component {
             cms: null,
             width_cms: 250, // without calibration
             width_pxs_x_cm: null, // with calibration
+            errors: errors_lang[this.props.parentState.language],
+            labels: labels_lang[this.props.parentState.language],
         }
         this.uploadInputRef = React.createRef()
         this.uploadInputRefCalibration = React.createRef()
@@ -42,7 +63,20 @@ class SubmitFile extends Component {
                 .catch(err => {
                   console.log(err)
                 })
+        window.addEventListener('changeLanguage', this.changeLanguage);
         this.setState({ isLoading: false })
+    }
+
+    componentWillUnmount = async () => {
+      window.removeEventListener('changeLanguage', this.changeLanguage);
+    }
+
+    changeLanguage = async ({ detail }) => {
+      console.log(detail)
+      this.setState({
+        errors: errors_lang[detail],
+        labels: labels_lang[detail],
+      })
     }
 
     handleChangeInputUpload = (event) => {
@@ -52,10 +86,10 @@ class SubmitFile extends Component {
         this.uploadInputRef.current.value = ''
         this.setState(
           {
-            error: 'Please select only images or videos to upload'
+            error: this.state.errors['only_valid_files']
           },
           () => {
-            setTimeout(() => { this.setState({ error: null }) }, 10000)
+            setTimeout(() => { this.setState({ error: null }) }, 5000)
           }
         )
         return
@@ -71,10 +105,10 @@ class SubmitFile extends Component {
         this.uploadInputRefCalibration.current.value = ''
         this.setState(
           {
-            errorCalibration: 'Please select only images or videos to upload'
+            errorCalibration: this.state.errors['only_valid_files']
           },
           () => {
-            setTimeout(() => { this.setState({ errorCalibration: null }) }, 10000)
+            setTimeout(() => { this.setState({ errorCalibration: null }) }, 5000)
           }
         )
         return
@@ -151,10 +185,10 @@ class SubmitFile extends Component {
           if (res.data.total_fish !== null && (res.data.total_fish > 1 || res.data.total_fish === 0)) {
             this.setState(
               {
-                errorCalibration: 'Please select an image with just one fish.'
+                errorCalibration: this.state.errors['only_one_fish']
               },
               () => {
-                setTimeout(() => { this.setState({ errorCalibration: null }) }, 10000)
+                setTimeout(() => { this.setState({ errorCalibration: null }) }, 5000)
               }
             )
           }
@@ -171,7 +205,7 @@ class SubmitFile extends Component {
           file: name,
           type: type,
           file_csv_result: name + '_csv_result.csv',
-          file_video_result: name + '_video_result.avi',
+          file_video_result: name + '_video_result.mp4',
           file_images_zip_result: name + '_images_zip_result.zip'
         }
       } else {
@@ -277,7 +311,7 @@ class SubmitFile extends Component {
 
       const file = '/submits/' + this.state.dir + '/' +  file_arr[file_arr.length - 1]
       const csv = '/submits/' + this.state.dir + '/' +  file_arr[file_arr.length - 1] + '_csv_result.csv'
-      const video = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_video_result.avi'
+      const video = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_video_result.mp4'
       const image = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_image_result.png'
       const zip = '/submits/' + this.state.dir + '/' + this.state._id + '_' + file_arr[file_arr.length - 1] + '_images_zip_result.zip'
       if (this.state.total_fish !== null) {
@@ -285,13 +319,13 @@ class SubmitFile extends Component {
         return (
           <div className="submitfile__col">
             <div className="submitfile__title--green">
-              DOWNLOADS
+              {this.state.labels['tit_down']}
             </div>
             <hr />
             <div className="submitfile__col-50">
-              <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank">Processed {type === 'video' ? 'video' : 'image'}</a>
-              <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank">Species/size table</a>
-              <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank">Individual detected images</a>
+              <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank">{this.state.labels['tit_processed'](type)}</a>
+              <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank">{this.state.labels['tit_table']}</a>
+              <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank">{this.state.labels['tit_det_images']}</a>
             </div>
           </div>
         )
@@ -300,15 +334,15 @@ class SubmitFile extends Component {
         return (
           <div className="submitfile__col">
             <div className="submitfile__title--green">
-              File Details ({type}):
+              {this.state.labels['tit_fil_details'](type)}
             </div>
             <hr />
             <div className="submitfile__col">
-              <div className="submitfile__text">File Name: {this.state.selectedFile.name}</div>
-              <div className="submitfile__text">File Type: {this.state.selectedFile.type}</div>
-              <div className="submitfile__text">File Size: {this.state.selectedFile.size}</div>
+              <div className="submitfile__text">{this.state.labels['tit_fil_name'](this.state.selectedFile.name)}</div>
+              <div className="submitfile__text">{this.state.labels['tit_fil_type'](this.state.selectedFile.type)}</div>
+              <div className="submitfile__text">{this.state.labels['tit_fil_size'](this.state.selectedFile.size)}</div>
               <div className="submitfile__text--green">
-                <a href={file} rel="noopener noreferrer" target="_blank">Download uploaded file</a>
+                <a href={file} rel="noopener noreferrer" target="_blank">{this.state.labels['tit_dow_uploaded']}</a>
               </div>
             </div>
           </div>
@@ -325,7 +359,7 @@ class SubmitFile extends Component {
       const file_arrCalibration = this.state.uploadedFileCalibration ? this.state.uploadedFileCalibration.split('\\') : []
       const file_arrCalibrationResult = this.state.resultFileCalibration ? this.state.resultFileCalibration.split('\\') : []
 
-      const image = file_arr[file_arr.length - 1] ?
+      const image_video = file_arr[file_arr.length - 1] ?
         '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] :
         ''
       const imageCalibration = file_arrCalibration[file_arrCalibration.length - 1] ?
@@ -334,6 +368,9 @@ class SubmitFile extends Component {
 
       const imageResult = file_arr[file_arr.length - 1] ?
         '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_image_result.png' :
+        ''
+      const videoResult = file_arr[file_arr.length - 1] ?
+        '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_video_result.mp4' :
         ''
       const imageCalibrationResult = file_arrCalibrationResult[file_arrCalibrationResult.length - 1] ?
         '/submits/' + file_arrCalibrationResult[file_arrCalibrationResult.length - 1] :
@@ -347,11 +384,23 @@ class SubmitFile extends Component {
           return (
             <img src={imageResult} alt="" />
           )
+        } else {
+          return (
+            <video width="750" height="500" controls>
+              <source src={videoResult} type="video/mp4"/>
+            </video>
+          )
         }
       } else if (this.state.uploadedFile) {
         if (type === 'image') {
           return (
-            <img src={image} alt="" />
+            <img src={image_video} alt="" />
+          )
+        } else {
+          return (
+            <video width="750" height="500" controls>
+              <source src={image_video} type="video/mp4"/>
+            </video>
           )
         }
       } else if (this.state.total_fishCalibration !== null) {
@@ -376,7 +425,7 @@ class SubmitFile extends Component {
     createSelectItems = () => {
       const { models } = this.state
       let items = []
-      items.push(<option key={'empty#empty'} value={''}>{'<choose a model>'}</option>)
+      items.push(<option key={'empty#empty'} value={''}>{this.state.labels['tit_sel_placeholder']}</option>)
       if (models) {
         models.forEach((model, i) => {
           if (model.saved_model_root) {
@@ -400,7 +449,8 @@ class SubmitFile extends Component {
     }
 
     render() {
-      console.log('submit file', this.state)
+      console.log('submit file state', this.state)
+      console.log('submit file props', this.props)
         const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, } = this.state
         const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
         const fileData = this.fileData()
@@ -411,12 +461,12 @@ class SubmitFile extends Component {
               <div className="submitfile__header form-group">
 
                 <div className="submitfile__header--title">
-                  Object detection tool
+                  {this.state.labels['tit_obj_det_tool']}
                 </div>
 
                 <div className="submitfile__header--upload-file">
                   <div className="submitfile__col-67">
-                    <div className="submitfile__title">Select (picture/video) to process</div>
+                    <div className="submitfile__title">{this.state.labels['tit_select']}</div>
                     <input
                         className="submitfile__header--upload-file--input-text form-control"
                         id="selectedFileInput"
@@ -428,7 +478,7 @@ class SubmitFile extends Component {
                     />
                   </div>
                   <div className="submitfile__col-33">
-                    <button className="submitfile__button-upload btn" id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >Upload!</button>
+                    <button className="submitfile__button-upload btn" id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >{this.state.labels['tit_upload']}</button>
                   </div>
                 </div>
                 <div className="submitfile__header--error">
@@ -438,7 +488,7 @@ class SubmitFile extends Component {
                 </div>
 
                 <div className="submitfile__header--select-model">
-                  <div className="submitfile__title">Select the model to use</div>
+                  <div className="submitfile__title">{this.state.labels['tit_sel_model']}</div>
                   <select name="models" id="listModels" onChange={this.handleList}>
                     {this.createSelectItems()}
                   </select>
@@ -446,41 +496,41 @@ class SubmitFile extends Component {
 
                 <div className="submitfile__header--buttons">
                   <div className="submitfile__title">
-                    {'Select the type of process'}
+                    {this.state.labels['tit_typ_process']}
                   </div>
 
                   <div className="submitfile__row">
                     <div className="submitfile__col-33">
-                      <button className="submitfile__button-video btn" id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >ROI Video</button>
-                      <button className="submitfile__button-video btn" id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >Webcam</button>
+                      <button className="submitfile__button-video btn" id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >{this.state.labels['tit_roi_video']}</button>
+                      <button className="submitfile__button-video btn" id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >{this.state.labels['tit_web_cam']}</button>
                     </div>
 
                     <div className="submitfile__col-33">
-                      <button className="submitfile__button-video btn" id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >Video</button>
-                      <button className="submitfile__button-picture btn" id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >Picture</button>
+                      <button className="submitfile__button-video btn" id="processVideoButton" onClick={this.handleVideoProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >{this.state.labels['tit_video']}</button>
+                      <button className="submitfile__button-picture btn" id="processPictureButton" onClick={this.handlePictureProcess} disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >{this.state.labels['tit_picture']}</button>
                     </div>
 
                     <div className="submitfile__col-33">
-                      <button className="submitfile__button-cancel btn" id="processButton" onClick={this.handleCancel} disabled={isLoading || !model} >{total_fish !== null ? 'Clear' : 'Cancel'}</button>
+                      <button className="submitfile__button-cancel btn" id="processButton" onClick={this.handleCancel} disabled={isLoading || !model} >{this.state.labels['tit_cancel'](total_fish)}</button>
                     </div>
                   </div>
                 </div>
                 <div className="submitfile__header--calibration">
                   <div className="submitfile__title--green">
-                    CALIBRACIÓN
+                    {this.state.labels['tit_calibration']}
                   </div>
                   <hr />
                   {!width_pxs_x_cm ? (
                     <>
                       <div className="submitfile__text">
-                        Las tallas de los peces están referenciadas a una distancia de la cámara de (150 cm = 60 in) a 90º, con angulo de visión de 75º, si estos datos se modifican es necesario calibrar los cálculos.
+                        {this.state.labels['tit_tex_calibration']}
                       </div>
                       <div className="submitfile__text">
-                        Para calibrar seleccionar una imagen con un único pez e introducir su talla real en (cm / in)
+                        {this.state.labels['tit_tex_sel_calibration']}
                       </div>
                       <div className="submitfile__row">
                         <div className="submitfile__col-67">
-                          <div className="submitfile__text--green">Select the file</div>
+                          <div className="submitfile__text--green">{this.state.labels['tit_sel_calibration']}</div>
                           <input
                               className="submitfile__header--calibration--input-text form-control"
                               id="selectedFileInputCalibration"
@@ -490,7 +540,7 @@ class SubmitFile extends Component {
                               ref={this.uploadInputRefCalibration}
                               disabled={isLoading || uploadedFileCalibration ? true : false}
                           />
-                          <div className="submitfile__text--green">Introducir la talla (cm / in)</div>
+                          <div className="submitfile__text--green">{this.state.labels['tit_siz_calibration']}</div>
                           <input
                               className="submitfile__header--calibration--input-number form-control"
                               id="InputNumberCalibration"
@@ -500,7 +550,7 @@ class SubmitFile extends Component {
                           />
                         </div>
                         <div className="submitfile__col-33">
-                          <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading ? true : selectedFileCalibration && !uploadedFileCalibration ? false : true} >Calibrate!</button>
+                          <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading ? true : selectedFileCalibration && !uploadedFileCalibration ? false : true} >{this.state.labels['tit_calibrate']}</button>
                         </div>
                       </div>
                       <div className="submitfile__header--error">
@@ -514,10 +564,10 @@ class SubmitFile extends Component {
                   (
                     <>
                       <div className="submitfile__text">
-                        Calibración realizada correctamente: {width_pxs_x_cm} pixels por (cm / in).
+                        {this.state.labels['tit_ok_calibration'](width_pxs_x_cm)}
                       </div>
                       <div className="submitfile__text--green">
-                        <a onClick={this.handleCancelCalibration}>Volver a Calibrar</a>
+                        <a onClick={this.handleCancelCalibration}>{this.state.labels['tit_recalibrate']}</a>
                       </div>
                     </>
                   )}
@@ -526,18 +576,18 @@ class SubmitFile extends Component {
               <div className="submitfile__header-right form-group">
                 <div className="submitfile__header-right--title">
                   {total_fish ?
-                    <>RESULTS</>
+                    <>{this.state.labels['tit_lab_results']}</>
                   :
                     isLoading ?
-                      <>Processing...</>
+                      <>{this.state.labels['tit_lab_processing']}</>
                     :
                       uploadedFile ?
-                        <>Select the type of process...</>
+                        <>{this.state.labels['tit_lab_sel_typ_process']}</>
                       :
                         selectedFile ?
-                          <>Upload the file to process...</>
+                          <>{this.state.labels['tit_lab_upload']}</>
                         :
-                          <>Select file to process...</>
+                          <>{this.state.labels['tit_lab_sel_file']}</>
                   }
                 </div>
 
@@ -554,4 +604,4 @@ class SubmitFile extends Component {
     }
 }
 
-export default SubmitFile
+export default withRouter(SubmitFile)
