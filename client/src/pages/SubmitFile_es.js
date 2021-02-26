@@ -12,8 +12,8 @@ const labels = {
       'imagen procesada' :
       'video procesado')
   },
-  tit_table: 'Tabla Especie/Tamaño',
-  tit_det_images: 'Imágenes detectadas individualmente',
+  tit_table: 'Tabla de Especies/Tallas',
+  tit_det_images: 'Imágenes detecciones individuales',
   tit_fil_details: (type) => {
     return (`Detalles del fichero (${type === 'image' ?
       'imagen' :
@@ -29,18 +29,18 @@ const labels = {
   tit_fil_size: (size) => {
     return ('Tamaño: ' + size)
   },
-  tit_dow_uploaded: 'Descargar fichero subido',
+  tit_dow_uploaded: 'Fichero cargado',
 
   // header
   tit_obj_det_tool: 'Herramienta para detectar objetos',
-  tit_select: 'Seleccionar (imagen/video) para procesar',
-  tit_upload: 'Subir!',
-  tit_sel_model: 'Seleccionar el modelo a usar',
+  tit_select: 'Selecciona una imagen o video para procesar',
+  tit_upload: 'Cargar archivo!',
+  tit_sel_model: 'Selecciona el modelo más adecuado',
   tit_sel_placeholder: '<elige un modelo>',
   tit_typ_process: 'Seleccionar el tipo de Proceso',
-  tit_roi_video: 'ROI video',
+  tit_roi_video: 'Video cinta transportadora',
   tit_web_cam: 'Cámara web',
-  tit_video: 'Video',
+  tit_video: 'Video estándar',
   tit_picture: 'Imagen',
   tit_cancel: (total_fish) => {
     return (total_fish !== null ?
@@ -60,7 +60,7 @@ const labels = {
     return (`Calibración realizada correctamente: ${width_pxs_x_cm} pixels por (cm / in).`)
   },
   tit_recalibrate: 'Volver a calibrar!',
-  tit_lab_results: 'RESULTADOS',
+  tit_lab_results: 'Resultados',
   tit_lab_processing: 'Procesando...',
   tit_lab_sel_typ_process: 'Seleccionar el tipo de proceso...',
   tit_lab_upload: 'Subir el archivo...',

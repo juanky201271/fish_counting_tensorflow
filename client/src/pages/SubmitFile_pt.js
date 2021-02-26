@@ -1,65 +1,65 @@
 const errors = {
-  only_valid_files: 'Please select only images or videos to upload',
-  only_one_fish: 'Please select an image with just one fish',
+  only_valid_files: 'Selecione apenas imagens ou vídeos para enviar',
+  only_one_fish: 'Selecione uma imagem com apenas um peixe',
 
 };
 
 const labels = {
   // fileData
-  tit_down: 'DOWNLOADS',
+  tit_down: 'TRANSFERÊNCIAS',
   tit_processed: (type) => {
-    return ('Processed ' + type)
+    return (type === 'image' ? 'Imagem' : 'Vídeo' + ' processada')
   },
-  tit_table: 'Species/Size table',
-  tit_det_images: 'Individual detected images',
+  tit_table: 'Tabela de espécies/tamanho',
+  tit_det_images: 'Imagens de detecções individuais',
   tit_fil_details: (type) => {
-    return (`File details (${type}):`)
+    return (`Detalhes do arquivo (${type === 'image' ? 'Imagem' : 'Vídeo'}):`)
   },
   tit_fil_name: (name) => {
-    return ('Name: ' + name)
+    return ('Nome: ' + name)
   },
   tit_fil_type: (type) => {
-    return ('Type: ' + type)
+    return ('Modelo: ' + type)
   },
   tit_fil_size: (size) => {
-    return ('Size: ' + size)
+    return ('Tamanho: ' + size)
   },
-  tit_dow_uploaded: 'Download uploaded file',
+  tit_dow_uploaded: 'Arquivo carregado',
 
   // header
-  tit_obj_det_tool: 'Object detection tool',
-  tit_select: 'Select (picture/video) to process',
-  tit_upload: 'Upload!',
-  tit_sel_model: 'Select the model to use',
-  tit_sel_placeholder: '<choose a model>',
-  tit_typ_process: 'Select the type of process',
-  tit_roi_video: 'ROI video',
+  tit_obj_det_tool: 'Ferramenta de detecção de objetos',
+  tit_select: 'Selecione (imagem / vídeo) para processar',
+  tit_upload: 'Envio!',
+  tit_sel_model: 'Selecione o modelo mais adequado',
+  tit_sel_placeholder: '<Escolha um modelo>',
+  tit_typ_process: 'Selecione o tipo de processo',
+  tit_roi_video: 'Vídeo da esteira transportadora',
   tit_web_cam: 'Webcam',
-  tit_video: 'Video',
-  tit_picture: 'Picture',
+  tit_video: 'Vídeo padrão',
+  tit_picture: 'Foto',
   tit_cancel: (total_fish) => {
     return (total_fish !== null ?
-      'Clear' :
-      'Cancel'
+      'Limpar' :
+      'Cancelar'
     )
   },
 
   // calibration
-  tit_calibration: 'CALIBRATION',
-  tit_tex_calibration: 'The fish sizes are referenced at a distance from the camera of (150 cm = 60 in) at 90º, with a viewing angle of 75º, if these data are modified it is necessary to calibrate the calculations.',
-  tit_tex_sel_calibration: 'To calibrate select an image with a single fish and enter its real size in (cm / in)',
-  tit_sel_calibration: 'Select the image',
-  tit_siz_calibration: 'Enter size (cm / in)',
-  tit_calibrate: 'Calibrate!',
+  tit_calibration: 'CALIBRAÇÃO',
+  tit_tex_calibration: 'Os tamanhos dos peixes são referenciados a uma distância da câmera de (150 cm = 60 in) a 90º, com um ângulo de visão de 75º, se estes dados forem modificados é necessário calibrar os cálculos.',
+  tit_tex_sel_calibration: 'Para calibrar selecione uma imagem com um único peixe e insira seu tamanho real em (cm / in)',
+  tit_sel_calibration: 'Selecione a imagem',
+  tit_siz_calibration: 'Introduzir o tamanho (cm / in)',
+  tit_calibrate: 'Calibrar!',
   tit_ok_calibration: (width_pxs_x_cm) => {
-    return (`Calibration successful: ${width_pxs_x_cm} pixels per (cm / in).`)
+    return (`Calibração bem-sucedida: ${width_pxs_x_cm} pixels por (cm / in).`)
   },
-  tit_recalibrate: 'Recalibrate!',
-  tit_lab_results: 'RESULTS',
-  tit_lab_processing: 'Processing...',
-  tit_lab_sel_typ_process: 'Select the type of process...',
-  tit_lab_upload: 'Upload the file...',
-  tit_lab_sel_file: 'Select file to process...',
+  tit_recalibrate: 'Recalibrar!',
+  tit_lab_results: 'Resultados',
+  tit_lab_processing: 'Em processamento...',
+  tit_lab_sel_typ_process: 'Selecione o tipo de processo...',
+  tit_lab_upload: 'Carregue o arquivo...',
+  tit_lab_sel_file: 'Selecione o arquivo para processar...',
 };
 
 export { errors, labels };
