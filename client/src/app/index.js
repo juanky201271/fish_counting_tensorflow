@@ -10,6 +10,18 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './normalize.css'
 import './index.scss'
 
+import { labels as labels_es } from './index_es.js'
+import { labels as labels_en } from './index_en.js'
+import { labels as labels_fr } from './index_fr.js'
+import { labels as labels_pt } from './index_pt.js'
+
+const labels_lang = {
+  'es': labels_es,
+  'en': labels_en,
+  'fr': labels_fr,
+  'pt': labels_pt
+}
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -21,17 +33,31 @@ class App extends Component {
       user: '',
       isLoading: false,
       language: lang ? lang.split('-')[0] : 'es',
+      labels: labels_lang[lang ? lang.split('-')[0] : 'es'],
     }
   }
+
   componentDidMount = async () => {
     this.setState({
       isLoading: true,
     })
-
+    window.addEventListener('changeLanguage', this.changeLanguage);
     this.setState({
       isLoading: false,
     })
   }
+
+  componentWillUnmount = async () => {
+    window.removeEventListener('changeLanguage', this.changeLanguage);
+  }
+
+  changeLanguage = async ({ detail }) => {
+    console.log(detail)
+    this.setState({
+      labels: labels_lang[detail],
+    })
+  }
+
   render() {
     console.log('app', this.state)
     const { authenticated, twitterId, ip, user, isLoading, language, } = this.state
@@ -53,18 +79,21 @@ class App extends Component {
                     <Route path="/aboutus" exact render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
                   </Switch>
                   <div className="app__footer">
-                    <p>Copyright &copy;AIpeces</p>
+                    <p>{this.state.labels['tit_copy']}</p>
                     <p>
-                      Information:<br />
+                      {this.state.labels['tit_email']}<br />
                       <a href="mailto:aipeces@disroot.org">aipeces@disroot.org</a>
                     </p>
                     <p> </p>
+                  </div>
+                  <div className="app__footer">
+                    {this.state.labels['tit_inspired']}
                   </div>
                 </>
                )
                :
                (
-                 <div> The App is loading... </div>
+                 <div>{this.state.labels['tit_loading']}</div>
                )
             }
 

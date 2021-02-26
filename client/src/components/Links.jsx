@@ -4,6 +4,18 @@ import { withRouter } from 'react-router'
 
 import './Links.scss'
 
+import { labels as labels_es } from './Links_es.js'
+import { labels as labels_en } from './Links_en.js'
+import { labels as labels_fr } from './Links_fr.js'
+import { labels as labels_pt } from './Links_pt.js'
+
+const labels_lang = {
+  'es': labels_es,
+  'en': labels_en,
+  'fr': labels_fr,
+  'pt': labels_pt
+}
+
 class Links extends Component {
   constructor(props) {
     super(props)
@@ -13,31 +25,51 @@ class Links extends Component {
       ip: this.props.ip || '',
       user: this.props.user || '',
       language: this.props.language || '',
+      labels: labels_lang[this.props.language[0].value]
     }
   }
+
+  componentDidMount = async () => {
+    window.addEventListener('changeLanguage', this.changeLanguage);
+  }
+
+  componentWillUnmount = async () => {
+    window.removeEventListener('changeLanguage', this.changeLanguage);
+  }
+
+  changeLanguage = async ({ detail }) => {
+    console.log(detail)
+    this.setState({
+      labels: labels_lang[detail],
+    })
+  }
+
   _handleLogoutClick = async () => {
     window.open("/api/auth/logout", "_self")
     this.props.handleNotAuthenticated()
     this.setState({ authenticated: false, twitterId: '', user: '', })
   }
+
   _handleLoginClick = async () => {
     window.open("/api/auth/twitter", "_self")
   }
+
   render() {
     console.log('links', this.state)
+    console.log('props', this.props)
     const { authenticated, twitterId, ip, user, language, } = this.state
     return (
       <div className="links">
         <Link to={{ pathname: "/" }}
           className="navbar-brand"
         >
-          <div className="navbar__log navbar-brand">Detection Tool</div>
+          <div className="navbar__log navbar-brand">{this.state.labels['tit_det_tool']}</div>
         </Link>
 
         <Link to={{ pathname: "/aboutus" }}
           className="navbar-brand"
         >
-          <div className="navbar__log navbar-brand">About us</div>
+          <div className="navbar__log navbar-brand">{this.state.labels['tit_about_us']}</div>
         </Link>
 
         {
@@ -45,7 +77,7 @@ class Links extends Component {
             <Link to={{ pathname: "/mybars" }}
               className="navbar-brand"
             >
-              <div className="navbar__log navbar-brand">My Something</div>
+              <div className="navbar__log navbar-brand">{this.state.labels['tit_something']}</div>
             </Link>
           ) : (
             <div></div>
@@ -55,11 +87,11 @@ class Links extends Component {
         {
           authenticated ? (
             <div style={{ display: 'none' }} className="navbar__log navbar-brand" onClick={true ? null : this._handleLogoutClick}>
-              Logout
+              {this.state.labels['tit_logout']}
             </div>
           ) : (
             <div style={{ display: 'none' }} className="navbar__log navbar-brand" onClick={true ? null : this._handleLoginClick}>
-              Login
+              {this.state.labels['tit_login']}
             </div>
           )
         }
