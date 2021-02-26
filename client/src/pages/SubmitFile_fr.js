@@ -1,5 +1,6 @@
 const errors = {
   only_valid_files: 'Veuillez sélectionner uniquement des images ou des vidéos à télécharger',
+  only_images: "Veuillez télécharger uniquement des images pour l'étalonnage",
   only_one_fish: 'Veuillez sélectionner une image avec un seul poisson',
 
 };

@@ -28,6 +28,7 @@ class SubmitFile extends Component {
         this.state = {
             selectedFile: '',
             uploadedFile: '',
+            firstImageVideo: '',
             isLoading: false,
             authenticated: '',
             twitterId: '',
@@ -100,12 +101,12 @@ class SubmitFile extends Component {
 
     handleChangeInputUploadCalibration = (event) => {
       const file = event.target.files[0]
-      if (!['image', 'video'].includes(file.type.split('/')[0])) {
+      if (!['image'].includes(file.type.split('/')[0])) {
         event.preventDefault()
         this.uploadInputRefCalibration.current.value = ''
         this.setState(
           {
-            errorCalibration: this.state.errors['only_valid_files']
+            errorCalibration: this.state.errors['only_images']
           },
           () => {
             setTimeout(() => { this.setState({ errorCalibration: null }) }, 5000)
@@ -143,11 +144,22 @@ class SubmitFile extends Component {
         this.state.selectedFile,
         name
       )
+      let uploadedFile = ''
       await api.createUploadFile(formData, dir)
         .then(res => {
+          uploadedFile = res.data.path
           this.setState({ uploadedFile: res.data.path })
         })
         .catch(e => console.log('Upload file ERROR: ', e))
+      const type = this.state.selectedFile.type.split('/')[0]
+      if (type === 'video') {
+        await api.imageVideo(uploadedFile, 'client/public/submits/' + dir)
+          .then(res => {
+            this.setState({ firstImageVideo: res.data.name })
+          })
+          .catch(e => console.log('Image Video file ERROR: ', e))
+      }
+
     }
 
     handleCalibration = async e => {
@@ -359,8 +371,11 @@ class SubmitFile extends Component {
       const file_arrCalibration = this.state.uploadedFileCalibration ? this.state.uploadedFileCalibration.split('\\') : []
       const file_arrCalibrationResult = this.state.resultFileCalibration ? this.state.resultFileCalibration.split('\\') : []
 
-      const image_video = file_arr[file_arr.length - 1] ?
+      const image = file_arr[file_arr.length - 1] ?
         '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] :
+        ''
+      const image_video = this.state.firstImageVideo ?
+        '/submits/' + this.state.dir + '/first_frame_video.png' :
         ''
       const imageCalibration = file_arrCalibration[file_arrCalibration.length - 1] ?
         '/submits/' + file_arrCalibration[file_arrCalibration.length - 1] :
@@ -369,8 +384,8 @@ class SubmitFile extends Component {
       const imageResult = file_arr[file_arr.length - 1] ?
         '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_image_result.png' :
         ''
-      const videoResult = file_arr[file_arr.length - 1] ?
-        '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_video_result.mp4' :
+      const videoResult = this.state.firstImageVideo ?
+        '/submits/' + this.state.dir + '/last_frame_video.png' :
         ''
       const imageCalibrationResult = file_arrCalibrationResult[file_arrCalibrationResult.length - 1] ?
         '/submits/' + file_arrCalibrationResult[file_arrCalibrationResult.length - 1] :
@@ -386,21 +401,17 @@ class SubmitFile extends Component {
           )
         } else {
           return (
-            <video width="750" height="500" controls>
-              <source src={videoResult} type="video/mp4"/>
-            </video>
+            <img src={videoResult} alt="" />
           )
         }
       } else if (this.state.uploadedFile) {
         if (type === 'image') {
           return (
-            <img src={image_video} alt="" />
+            <img src={image} alt="" />
           )
         } else {
           return (
-            <video width="750" height="500" controls>
-              <source src={image_video} type="video/mp4"/>
-            </video>
+            <img src={image_video} alt="" />
           )
         }
       } else if (this.state.total_fishCalibration !== null) {

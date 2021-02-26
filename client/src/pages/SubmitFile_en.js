@@ -1,5 +1,6 @@
 const errors = {
   only_valid_files: 'Please select only images or videos to upload',
+  only_images: 'Please upload only images for calibration',
   only_one_fish: 'Please select an image with just one fish',
 
 };

@@ -17,6 +17,7 @@ def cumulative_object_counting_x_axis_fig(input_video, detection_graph, category
         f,tail = folder.split('/images')
         name_file_csv = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_csv_result.csv'
         name_file_video = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.mp4'
+        name_last_frame = f + '/last_frame_video.png'
 
         # initialize .csv
         with open(name_file_csv, 'w') as f:
@@ -66,6 +67,7 @@ def cumulative_object_counting_x_axis_fig(input_video, detection_graph, category
                 ret, frame = cap.read()
 
                 if not  ret:
+                    cv2.imwrite(name_last_frame, last_frame)
                     print("**********end of the video file")
                     break
 
@@ -155,6 +157,7 @@ def cumulative_object_counting_x_axis_fig(input_video, detection_graph, category
                 #cv2.imshow('fish detection video roi', input_frame)
 
                 output_movie.write(input_frame)
+                last_frame = input_frame
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     print("**********go out frames")
@@ -192,6 +195,7 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
         f,tail = folder.split('/images')
         name_file_csv = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_csv_result.csv'
         name_file_video = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_video_result.mp4'
+        name_last_frame = f + '/last_frame_video.png'
 
         # initialize .csv
         with open(name_file_csv, 'w') as f:
@@ -228,6 +232,7 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
             ret, frame = cap.read()
 
             if not  ret:
+                cv2.imwrite(name_last_frame, last_frame)
                 print("**********end of the video file")
                 break
 
@@ -329,6 +334,7 @@ def cumulative_object_counting_x_axis_sm(input_video, detection_model, category_
             #cv2.imshow('fish detection', input_frame)
 
             output_movie.write(input_frame)
+            last_frame = input_frame
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print("**********go out frames")
