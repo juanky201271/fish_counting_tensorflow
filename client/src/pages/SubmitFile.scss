@@ -35,12 +35,12 @@
     &--title {
       display: none;
       color: #585756;
-      font-size: 20px;
+      font-size: 25px;
       background-color: white;
       opacity: 0.6;
       padding-left: 20px;
-      padding-top: 10px;
-      padding-bottom: 10px;
+      padding-top: 6px;
+      padding-bottom: 6px;
 
       @media(min-width: 1024px) {
         display: flex;
@@ -56,6 +56,7 @@
         flex-direction: row;
       }
       @media(min-width: 1024px) {
+        margin-top: 30px;
         padding-right: 20px;
       }
 
@@ -85,8 +86,8 @@
       select {
         width: 100%;
 
-        @media(min-width: 768px) {
-          width: 80%;
+        @media(min-width: 300px) {
+          width: 67%;
         }
       }
     }
@@ -116,15 +117,13 @@
       hr {
         border-top: 1px solid #0091a8;
         width: 100%;
-      }
-      &--select-talla {
-
+        margin-top: 5px;
       }
       &--input-text {
 
       }
       &--input-number {
-
+        margin-bottom: 20px;
       }
     }
   }
@@ -145,12 +144,12 @@
 
     &--title {
       display: none;
-      font-size: 20px;
+      font-size: 25px;
       color: white;
       background-color: #83a8bc;
       padding-left: 20px;
-      padding-top: 10px;
-      padding-bottom: 10px;
+      padding-top: 6px;
+      padding-bottom: 6px;
 
       @media(min-width: 1024px) {
         display: flex;
@@ -163,18 +162,21 @@
       }
     }
     &--file {
+      padding-top: 10px;
       hr {
         border-top: 1px solid #0091a8;
         width: 100%;
+        margin-top: 5px;
       }
     }
   }
 
   &__title {
     font-size: 17px;
+    padding-top: 5px;
 
     @media(min-width: 768px) {
-      font-size: 25px;
+      font-size: 20px;
     }
 
     &--green {
@@ -222,6 +224,7 @@
       margin-top: 0px;
       margin-bottom: 0px;
       width: auto;
+      max-width: 200px;
     }
   }
   &__button-video {
@@ -241,10 +244,14 @@
 
     @media(min-width: 300px) {
       margin-left: 10px;
-      margin-right: 0px;
-      margin-top: 0px;
+      margin-right: 10px;
+      margin-top: 10px;
       margin-bottom: 10px;
       width: auto;
+      max-width: 300px;
+    }
+    @media(min-width: 768px) {
+      font-size: 16px;
     }
   }
   &__button-picture {
@@ -264,10 +271,14 @@
 
     @media(min-width: 300px) {
       margin-left: 10px;
-      margin-right: 0px;
-      margin-top: 0px;
+      margin-right: 10px;
+      margin-top: 10px;
       margin-bottom: 10px;
       width: auto;
+      max-width: 300px;
+    }
+    @media(min-width: 768px) {
+      font-size: 16px;
     }
   }
   &__button-cancel {
@@ -287,10 +298,14 @@
 
     @media(min-width: 300px) {
       margin-left: 10px;
-      margin-right: 0px;
-      margin-top: 0px;
+      margin-right: 10px;
+      margin-top: 10px;
       margin-bottom: 10px;
       width: auto;
+      max-width: 200px;
+    }
+    @media(min-width: 768px) {
+      font-size: 16px;
     }
   }
   &__button-calibration {
@@ -315,6 +330,7 @@
       margin-top: 0px;
       margin-bottom: 0px;
       width: auto;
+      max-width: 200px;
     }
   }
   &__col {

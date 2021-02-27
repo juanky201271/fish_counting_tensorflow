@@ -232,15 +232,16 @@ def draw_bounding_box_on_image(current_frame_number,image,
   detected_vehicle_image = image_temp[int(top):int(bottom), int(left):int(right)]
 
   '''if(bottom > ROI_POSITION): # if the vehicle get in ROI area, vehicle predicted_speed predicted_color algorithms are called - 200 is an arbitrary value, for my case it looks very well to set position of ROI line at y pixel 200'''
-  if(x_axis[0] == 1):
+  if(ROI_POSITION[0] is None and DEVIATION[0] is None):
+    print('ROI_POSITION[0] is None')
+    size, is_vehicle_detected, update_csv = object_counter.count_objects(top, bottom, right, left, detected_vehicle_image, folder)
+  elif(x_axis[0] == 1):
     print('x_axis[0] == 1')
     size, is_vehicle_detected, update_csv = object_counter_x_axis.count_objects_x_axis(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0], folder)
   elif(mode_number[0] == 2):
     print('mode_number[0] == 2')
     size, is_vehicle_detected, update_csv = object_counter_y_axis.count_objects_y_axis(top, bottom, right, left, detected_vehicle_image, ROI_POSITION[0], ROI_POSITION[0]+DEVIATION[0], ROI_POSITION[0]+(DEVIATION[0]*2), DEVIATION[0], folder)
-  elif(ROI_POSITION[0] is None and DEVIATION[0] is None):
-    print('ROI_POSITION[0] is None')
-    size, is_vehicle_detected, update_csv = object_counter.count_objects(top, bottom, right, left, detected_vehicle_image, folder)
+
 
   if(1 in is_color_recognition_enable):
     predicted_color = color_recognition_api.color_recognition(detected_vehicle_image)

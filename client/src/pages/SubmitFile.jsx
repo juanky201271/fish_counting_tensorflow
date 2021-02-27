@@ -334,7 +334,7 @@ class SubmitFile extends Component {
               {this.state.labels['tit_down']}
             </div>
             <hr />
-            <div className="submitfile__col-50">
+            <div className="submitfile__col-67">
               <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank">{this.state.labels['tit_processed'](type)}</a>
               <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank">{this.state.labels['tit_table']}</a>
               <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank">{this.state.labels['tit_det_images']}</a>
@@ -598,7 +598,10 @@ class SubmitFile extends Component {
                         selectedFile ?
                           <>{this.state.labels['tit_lab_upload']}</>
                         :
-                          <>{this.state.labels['tit_lab_sel_file']}</>
+                          model ?
+                            <>{this.state.labels['tit_lab_sel_file']}</>
+                          :
+                            <>{this.state.labels['tit_lab_sel_model']}</>
                   }
                 </div>
 

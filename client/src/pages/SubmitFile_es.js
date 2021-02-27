@@ -66,6 +66,7 @@ const labels = {
   tit_lab_sel_typ_process: 'Seleccionar el tipo de proceso...',
   tit_lab_upload: 'Subir el archivo...',
   tit_lab_sel_file: 'Seleccionar archivo para procesar...',
+  tit_lab_sel_model: 'Seleccionar modelo para usar...',
 };
 
 export { errors, labels };

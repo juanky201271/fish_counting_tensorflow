@@ -25,11 +25,14 @@
     align-items: flex-end;
     width: 100%;
     color: #000;
+    padding-right: 1rem;
+
     @media(min-width: 768px) {
       margin-top: 30px;
     }
     @media(min-width: 1024px) {
       margin-top: 55px;
+      padding-right: 40px;
     }
   }
   &__name {
@@ -43,9 +46,18 @@
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    padding-top: 0px;
+    padding-bottom: 0px;
 
     @media(min-width: 330px) {
       align-items: flex-end;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+    @media(min-width: 1024px) {
+      padding: 40px;
     }
   }
   &__logo-and-select {
