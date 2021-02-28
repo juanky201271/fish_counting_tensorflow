@@ -86,6 +86,9 @@
     color: #0091a8;
     font-size: 25px;
     width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     hr {
       border-top: 3px solid #0091a8;
@@ -241,6 +244,9 @@
       padding-bottom: 6px;
       background-color: #83a8bc;
       color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       @media(min-width: 1024px) {
         font-size: 25px;
@@ -260,6 +266,9 @@
       padding-bottom: 6px;
       background-color: #83a8bc;
       color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       @media(min-width: 1024px) {
         font-size: 25px;
@@ -278,6 +287,9 @@
       padding-bottom: 6px;
       background-color: #83a8bc;
       color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       @media(min-width: 1024px) {
         font-size: 25px;

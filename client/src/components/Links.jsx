@@ -64,13 +64,13 @@ class Links extends Component {
         <Link to={{ pathname: "/" }}
           className="navbar-brand"
         >
-          <div className="navbar__log navbar-brand">{this.state.labels['tit_det_tool']}</div>
+          <div className="links__log navbar__log navbar-brand">{this.state.labels['tit_det_tool']}</div>
         </Link>
 
         <Link to={{ pathname: "/aboutus" }}
           className="navbar-brand"
         >
-          <div className="navbar__log navbar-brand">{this.state.labels['tit_about_us']}</div>
+          <div className="links__log navbar__log navbar-brand">{this.state.labels['tit_about_us']}</div>
         </Link>
 
         {
@@ -78,7 +78,7 @@ class Links extends Component {
             <Link to={{ pathname: "/mybars" }}
               className="navbar-brand"
             >
-              <div className="navbar__log navbar-brand">{this.state.labels['tit_something']}</div>
+              <div className="links__log navbar__log navbar-brand">{this.state.labels['tit_something']}</div>
             </Link>
           ) : (
             <div></div>
@@ -87,11 +87,11 @@ class Links extends Component {
 
         {
           authenticated ? (
-            <div style={{ display: 'none' }} className="navbar__log navbar-brand" onClick={true ? null : this._handleLogoutClick}>
+            <div style={{ display: 'none' }} className="links__log navbar__log navbar-brand" onClick={true ? null : this._handleLogoutClick}>
               {this.state.labels['tit_logout']}
             </div>
           ) : (
-            <div style={{ display: 'none' }} className="navbar__log navbar-brand" onClick={true ? null : this._handleLoginClick}>
+            <div style={{ display: 'none' }} className="links__log navbar__log navbar-brand" onClick={true ? null : this._handleLoginClick}>
               {this.state.labels['tit_login']}
             </div>
           )

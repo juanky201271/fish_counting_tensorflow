@@ -217,6 +217,9 @@
     font-size: 16px;
     font-weight: bold;
     width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     @media(min-width: 300px) {
       margin-left: 10px;
@@ -241,6 +244,9 @@
     display: inline-block;
     font-size: 13px;
     width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     @media(min-width: 300px) {
       margin-left: 10px;
@@ -268,6 +274,9 @@
     display: inline-block;
     font-size: 13px;
     width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     @media(min-width: 300px) {
       margin-left: 10px;
@@ -295,6 +304,9 @@
     display: inline-block;
     font-size: 13px;
     width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     @media(min-width: 300px) {
       margin-left: 10px;
@@ -323,6 +335,9 @@
     font-size: 16px;
     font-weight: bold;
     width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     @media(min-width: 300px) {
       margin-left: 10px;
@@ -369,10 +384,50 @@
       width: 33%;
     }
   }
+  &__col-33-buttons {
+    display: block;
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: column;
+      width: 48%;
+    }
+    @media(min-width: 500px) {
+      display: flex;
+      flex-direction: column;
+      width: 33%;
+    }
+  }
   &__row {
     display: block;
 
     @media(min-width: 300px) {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+  &__row-67 {
+    display: block;
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+    }
+    @media(min-width: 500px) {
+      display: flex;
+      flex-direction: row;
+      width: 67%;
+    }
+  }
+  &__row-buttons {
+    display: block;
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: column;
+    }
+    @media(min-width: 500px) {
       display: flex;
       flex-direction: row;
     }

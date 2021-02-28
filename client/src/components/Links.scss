@@ -1,6 +1,7 @@
 .links {
   color: white;
   transform: translateX(1rem);
+  white-space: nowrap;
 
   a {
     color: white;
@@ -8,13 +9,23 @@
     border-width: 1px;
     border-style: solid;
     padding-left: 1rem;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    width: 90px;
 
-    @media(min-width: 1024px) {
-
+    @media(min-width: 300px) {
+      width: auto;
     }
   }
   &__log {
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 80px;
 
+    @media(min-width: 300px) {
+      width: auto;
+    }
   }
 }
