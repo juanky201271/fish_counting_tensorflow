@@ -41,6 +41,9 @@
       padding-left: 20px;
       padding-top: 6px;
       padding-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       @media(min-width: 1024px) {
         display: flex;
@@ -150,6 +153,9 @@
       padding-left: 20px;
       padding-top: 6px;
       padding-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       @media(min-width: 1024px) {
         display: flex;
