@@ -1,5 +1,5 @@
 .app-navbar {
-  background-image: url("../assets/images/phone-background.png");
+  background-image: url("../assets/images/phone-background.png"), url("../assets/images/desktop-background.png");
   background-repeat: no-repeat;
   background-size: cover;
   height: 130px;
@@ -9,7 +9,7 @@
   }
 
   @media(min-width: 768px) {
-    background-image: url("../assets/images/desktop-background.png");
+    background-image: url("../assets/images/desktop-background.png"), url("../assets/images/phone-background.png");
     background-repeat: no-repeat;
     background-size: cover;
     height: 180px;
