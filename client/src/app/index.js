@@ -54,12 +54,14 @@ class App extends Component {
   changeLanguage = async ({ detail }) => {
     console.log(detail)
     this.setState({
+      language: detail,
       labels: labels_lang[detail],
     })
   }
 
   render() {
-    console.log('app', this.state)
+    console.log('app state', this.state)
+    console.log('app props', this.props)
     const { authenticated, twitterId, ip, user, isLoading, language, } = this.state
     return (
       <div className="app">

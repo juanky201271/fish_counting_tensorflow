@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router'
-import api from '../api'
 
 import './AboutUs.scss'
 import { labels as labels_es } from './AboutUs_es.js'
@@ -46,8 +45,8 @@ class AboutUs extends Component {
     }
 
     render() {
-      console.log('about us file state', this.state)
-      console.log('about us file props', this.props)
+      console.log('about us state', this.state)
+      console.log('about us props', this.props)
 
       return (
         <div className="aboutus">

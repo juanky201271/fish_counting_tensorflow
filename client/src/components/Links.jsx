@@ -25,7 +25,7 @@ class Links extends Component {
       ip: this.props.ip || '',
       user: this.props.user || '',
       language: this.props.language || '',
-      labels: labels_lang[this.props.language[0].value]
+      labels: labels_lang[this.props.language],
     }
   }
 
@@ -40,6 +40,7 @@ class Links extends Component {
   changeLanguage = async ({ detail }) => {
     console.log(detail)
     this.setState({
+      language: detail,
       labels: labels_lang[detail],
     })
   }
@@ -55,9 +56,9 @@ class Links extends Component {
   }
 
   render() {
-    console.log('links', this.state)
-    console.log('props', this.props)
-    const { authenticated, twitterId, ip, user, language, } = this.state
+    console.log('links state', this.state)
+    console.log('links props', this.props)
+    const { authenticated, twitterId, ip, user, } = this.state
     return (
       <div className="links">
         <Link to={{ pathname: "/" }}

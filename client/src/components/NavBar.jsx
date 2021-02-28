@@ -94,7 +94,7 @@ class NavBar extends Component {
       twitterId: this.props.twitterId || '',
       ip: this.props.ip || '',
       user: this.props.user || '',
-      language: languages.filter(l => l.value === this.props.language) || languages[0],
+      language: languages.filter(l => l.value === this.props.language)[0] || languages[0],
     }
   }
   _handleNotAuthenticated = () => {
@@ -109,7 +109,8 @@ class NavBar extends Component {
     this.setState({ language: language })
   }
   render() {
-    console.log('navbar', this.state)
+    console.log('navbar state', this.state)
+    console.log('navbar props', this.props)
     const { authenticated, twitterId, ip, user, language, } = this.state
     const name = user.name || ''
     const profileImageUrl = user.profileImageUrl || ''
@@ -134,7 +135,7 @@ class NavBar extends Component {
             twitterId={twitterId}
             ip={ip}
             user={user}
-            language={language}
+            language={language.value}
             handleNotAuthenticated={this._handleNotAuthenticated}
           />
           { name ?
