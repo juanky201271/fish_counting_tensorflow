@@ -28,7 +28,7 @@ const labels = {
   tit_dow_uploaded: 'Arquivo carregado',
 
   // header
-  tit_obj_det_tool: 'Ferramenta de detecção de objetos',
+  tit_obj_det_tool: 'Aplicativo de identificação, contagem e medição de peixes',
   tit_select: 'Selecione (imagem / vídeo) para processar',
   tit_upload: 'Envio!',
   tit_sel_model: 'Selecione o modelo mais adequado',

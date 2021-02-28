@@ -28,7 +28,7 @@ const labels = {
   tit_dow_uploaded: 'Uploaded file',
 
   // header
-  tit_obj_det_tool: 'Object detection tool',
+  tit_obj_det_tool: 'Fish Identification, Counting and Measurement App',
   tit_select: 'Select an (image/video) to process',
   tit_upload: 'Upload!',
   tit_sel_model: 'Select the most suitable model',

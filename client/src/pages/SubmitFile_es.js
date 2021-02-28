@@ -10,8 +10,8 @@ const labels = {
   tit_down: 'DESCARGAS',
   tit_processed: (type) => {
     return (type === 'image' ?
-      'imagen procesada' :
-      'video procesado')
+      'Imagen procesada' :
+      'Video procesado')
   },
   tit_table: 'Tabla de Especies/Tallas',
   tit_det_images: 'Imágenes detecciones individuales',
@@ -33,7 +33,7 @@ const labels = {
   tit_dow_uploaded: 'Fichero cargado',
 
   // header
-  tit_obj_det_tool: 'Herramienta para detectar objetos',
+  tit_obj_det_tool: 'Aplicación de identificación, conteo y medida de peces',
   tit_select: 'Selecciona una imagen o video para procesar',
   tit_upload: 'Cargar archivo!',
   tit_sel_model: 'Selecciona el modelo más adecuado',
