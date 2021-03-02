@@ -4,7 +4,6 @@
     margin: 0 5px;
     padding: 5px;
     display: block;
-    min-height: 100px;
 
     @media(min-width: 300px) {
       display: flex;
@@ -19,6 +18,12 @@
       flex-wrap: nowrap;
       margin: 0 20px;
       padding: 20px;
+    }
+    @media(min-width: 1024px) {
+      padding-left: 0px;
+      padding-right: 0px;
+      margin-left: 11%;
+      margin-right: 11%;
     }
   }
 
