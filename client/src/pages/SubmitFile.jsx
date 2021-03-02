@@ -479,7 +479,7 @@ class SubmitFile extends Component {
                   <div className="submitfile__col-67">
                     <div className="submitfile__title">{this.state.labels['tit_select']}</div>
                     <input
-                        className="submitfile__header--upload-file--input-text form-control"
+                        className="submitfile__header--upload-file--input-file form-control"
                         id="selectedFileInput"
                         type="file"
                         accept='image/*|video/*'
@@ -545,7 +545,7 @@ class SubmitFile extends Component {
                         <div className="submitfile__col-67">
                           <div className="submitfile__text--green">{this.state.labels['tit_sel_calibration']}</div>
                           <input
-                              className="submitfile__header--calibration--input-text form-control"
+                              className="submitfile__header--calibration--input-file form-control"
                               id="selectedFileInputCalibration"
                               type="file"
                               accept='image/*|video/*'

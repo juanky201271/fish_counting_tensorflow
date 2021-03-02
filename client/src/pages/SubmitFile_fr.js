@@ -40,8 +40,8 @@ const labels = {
   tit_picture: 'Photo',
   tit_cancel: (total_fish) => {
     return (total_fish !== null ?
-      'Dégager' :
-      'Annuler'
+      'Dégager!' :
+      'Annuler!'
     )
   },
 

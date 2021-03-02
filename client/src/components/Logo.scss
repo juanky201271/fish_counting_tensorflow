@@ -3,8 +3,11 @@
   margin-left: 10px;
 
   @media(min-width: 768px) {
-    margin-top: 50px;
+    margin-top: 80px;
     margin-left: 50px;
+  }
+  @media(min-width: 1024px) {
+    margin-left: 11%;
   }
   &__wrapper {
 
