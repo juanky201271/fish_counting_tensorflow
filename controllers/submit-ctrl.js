@@ -136,18 +136,18 @@ getModels = async (req, res) => {
     //}
   })
 
-  const path = './api_flask/models/'
   let models = []
   try {
-    const dirs = fs.readdirSync(path)
+    const modelsPath = './api_flask/models/'
+    const dirs = fs.readdirSync(modelsPath)
     dirs.forEach((dir, i) => {
-      const saved_model_root_path = path + dir + '/saved_model.pb'
-      const saved_model_dir_path = path + dir + '/saved_model/saved_model.pb'
-      const frozen_inference_graph_path = path + dir + '/frozen_inference_graph.pb'
-      //const ckpt_root_path = path + dir + '/model.ckpt.data-00000-of-00001'
-      const ckpt_dir_path = path + dir + '/checkpoint/ckpt-0.data-00000-of-00001'
-      const pipeline_config_path = path + dir + '/pipeline.config'
-      const label_map_path = path + dir + '/label_map.pbtxt'
+      const saved_model_root_path = modelsPath + dir + '/saved_model.pb'
+      const saved_model_dir_path = modelsPath + dir + '/saved_model/saved_model.pb'
+      const frozen_inference_graph_path = modelsPath + dir + '/frozen_inference_graph.pb'
+      //const ckpt_root_path = modelsPath + dir + '/model.ckpt.data-00000-of-00001'
+      const ckpt_dir_path = modelsPath + dir + '/checkpoint/ckpt-0.data-00000-of-00001'
+      const pipeline_config_path = modelsPath + dir + '/pipeline.config'
+      const label_map_path = modelsPath + dir + '/label_map.pbtxt'
       models.push({
         model: dir,
         saved_model_root: fs.existsSync(saved_model_root_path) && fs.existsSync(label_map_path),
@@ -160,7 +160,6 @@ getModels = async (req, res) => {
   } catch (e) {
     console.log('readdirSync - ', e)
   }
-
 
   if (models.length === 0)
     return res.status(404).json({ success: false, error: 'Models not found' })
