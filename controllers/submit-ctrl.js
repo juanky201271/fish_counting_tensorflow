@@ -1,5 +1,6 @@
 const Submit = require('../models/submit-model')
 const fs = require('fs')
+const path = require('path')
 const mongoose = require('mongoose')
 
 const ObjectId = mongoose.Types.ObjectId
@@ -127,7 +128,6 @@ const  ensureExists = (path, mask, cb) => {
 
 getModels = async (req, res) => {
   const modelsDir = path.join(__dirname, "../api_flask/models")
-
   ensureExists(modelsDir, 0744, function(err) {
     if (err) // handle folder creation error
       console.log('models dir error: ', err)
@@ -137,7 +137,6 @@ getModels = async (req, res) => {
   })
 
   const path = './api_flask/models/'
-
   let models = []
   try {
     const dirs = fs.readdirSync(path)
