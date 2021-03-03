@@ -59,6 +59,7 @@ class SubmitFile extends Component {
         this.setState({ isLoading: true })
         await api.getModels()
                 .then(res => {
+                  console.log(res)
                   this.setState({ models: res.data.data })
                 })
                 .catch(err => {
