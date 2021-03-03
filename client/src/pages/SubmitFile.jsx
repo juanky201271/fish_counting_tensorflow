@@ -500,7 +500,7 @@ class SubmitFile extends Component {
 
                 <div className="submitfile__header--select-model">
                   <div className="submitfile__title">{this.state.labels['tit_sel_model']}</div>
-                  <select name="models" id="listModels" onChange={this.handleList}>
+                  <select name="models" id="listModels" onChange={this.handleList} disabled={isLoading}>
                     {this.createSelectItems()}
                   </select>
                 </div>
@@ -551,7 +551,7 @@ class SubmitFile extends Component {
                               accept='image/*|video/*'
                               onChange={this.handleChangeInputUploadCalibration}
                               ref={this.uploadInputRefCalibration}
-                              disabled={isLoading || uploadedFileCalibration ? true : false}
+                              disabled={isLoading || uploadedFileCalibration || !model ? true : false}
                           />
                           <div className="submitfile__text--green">{this.state.labels['tit_siz_calibration']}</div>
                           <input
@@ -559,11 +559,11 @@ class SubmitFile extends Component {
                               id="InputNumberCalibration"
                               type="number"
                               onChange={this.handleChangeInputNumberCalibration}
-                              disabled={isLoading || uploadedFileCalibration ? true : false}
+                              disabled={isLoading || uploadedFileCalibration || !model ? true : false}
                           />
                         </div>
                         <div className="submitfile__col-33">
-                          <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading ? true : selectedFileCalibration && !uploadedFileCalibration ? false : true} >{this.state.labels['tit_calibrate']}</button>
+                          <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading || !model ? true : selectedFileCalibration && !uploadedFileCalibration ? false : true} >{this.state.labels['tit_calibrate']}</button>
                         </div>
                       </div>
                       <div className="submitfile__header--error">
