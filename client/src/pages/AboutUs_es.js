@@ -7,13 +7,13 @@ const labels = {
 
   our_products: 'Nuestros productos',
 
-  obj_det_tool: 'Herramienta de detección de objetos',
+  obj_det_tool: 'Detección de objetos',
   obj_det_tool_text: 'Aplicación para identificar automáticamente diferentes especies de peces, cuantificarlas y medirlas a partir de imágenes de video o foto.',
 
-  blo_tool: 'Herramienta Blockchain',
+  blo_tool: 'Blockchain',
   blo_tool_text: 'Aplicación blockchain para establecer la trazabilidad digital de productos agroalimentarios.',
 
-  rec_tool: 'Herramienta de reconocimiento',
+  rec_tool: 'Reconocimiento',
   rec_tool_text: 'Aplicación de reconocimiento de barcos pesqueros basada en sistemas de reconocimiento facial a partir de imágenes de video o foto.',
 };
 
