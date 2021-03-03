@@ -5,7 +5,7 @@ const api = axios.create({
 })
 
 const flask_api = axios.create({
-  baseURL: 'http://localhost:5000/flask_api' // flask
+  baseURL: process.env.REACT_APP_FLASK_API // flask
 })
 
 export const createSubmit = payload => api.post(`/submit`, payload)

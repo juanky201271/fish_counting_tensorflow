@@ -17,12 +17,15 @@ Instalar Python 3.8.
 ### `npm install`
 (instalamos los paquetes del servidor)
 
-## Archivo de Variables de entorno (`.env` crearlo en el raiz del repo)
+## Archivo de Variables de entorno - Servidor (`.env` crearlo en el raiz del repo)
 `COOKIE_KEY="thisappisforcountingfish"`<br />
 `MONGODB_URI="mongodb://USER:PASSWORD@cluster0-shard-00-00-0ibmb.mongodb.net:27017,cluster0-shard-00-01-0ibmb.mongodb.net:27017,cluster0-shard-00-02-0ibmb.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"`<br />
 `NODE_ENV="production"`<br />
 `PORT=8000`<br />
 `PUBLIC_URL="http://localhost:8000"`
+
+## Archivo de Variables de entorno - Cliente (`.env` crearlo dentro de la carpeta `client`)
+`REACT_APP_FLASK_API="http://localhost:5000/flask_api"`
 
 ## MongoDB User & Password
 Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PASSWORD en la variable MONGODB_URI), de lo contrario puedes usar tu propia MongoDB URI en la variable de entorno.
