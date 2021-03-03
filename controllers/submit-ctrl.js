@@ -112,8 +112,32 @@ getSubmits = async (req, res) => {
     })
 }
 
+const  ensureExists = (path, mask, cb) => {
+    if (typeof mask == 'function') { // allow the `mask` parameter to be optional
+        cb = mask
+        mask = 0777
+    }
+    fs.mkdir(path, mask, function(err) {
+        if (err) {
+            if (err.code == 'EEXIST') cb(null) // ignore the error if the folder already exists
+            else cb(err) // something else went wrong
+        } else cb(null) // successfully created folder
+    })
+}
+
 getModels = async (req, res) => {
+  const modelsDir = path.join(__dirname, "../api_flask/models")
+
+  ensureExists(modelsDir, 0744, function(err) {
+    if (err) // handle folder creation error
+      console.log('models dir error: ', err)
+    //else { // we're all good
+    //  console.log(parentDir, ' created!')
+    //}
+  })
+
   const path = './api_flask/models/'
+
   let models = []
   try {
     const dirs = fs.readdirSync(path)
