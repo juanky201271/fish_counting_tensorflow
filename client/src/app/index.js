@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import detectBrowserLanguage from 'detect-browser-language'
 import { withRouter } from 'react-router'
 
-import { NavBar } from '../components'
+import { NavBar, Logo } from '../components'
 import { SubmitFile, AboutUs } from '../pages'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -81,15 +81,31 @@ class App extends Component {
                     <Route path="/aboutus" exact render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
                   </Switch>
                   <div className="app__footer">
-                    <p>{this.state.labels['tit_copy']}</p>
-                    <p>
-                      {this.state.labels['tit_email']}<br />
-                      <a href="mailto:aipeces@disroot.org">aipeces@disroot.org</a>
-                    </p>
-                    <p> </p>
+                    <div className="app__footer--left">
+                      <Logo />
+                      <p>{this.state.labels['tit_copy']}</p>
+                    </div>
+                    <div className="app__footer--right">
+                      <div className="app__footer--right-left">
+                        <p style={{ color: '#0091a8' }}>{this.state.labels['tit_abo_us']}</p>
+                        <p>{this.state.labels['tit_pri_policy']}</p>
+                        <p>{this.state.labels['tit_leg_warning']}</p>
+                      </div>
+                      <div className="app__footer--right-right">
+                        <div className="app__footer--right-right-rect-blue"></div>
+                        <div>
+                          <p>
+                            {this.state.labels['tit_email']}<br />
+                            <a href="mailto:aipeces@disroot.org">aipeces@disroot.org</a>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div className="app__footer">
-                    {this.state.labels['tit_inspired']}
+                    <div className="app__footer--text">
+                      {this.state.labels['tit_inspired']}
+                    </div>
                   </div>
                 </>
                )
