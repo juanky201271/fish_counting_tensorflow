@@ -102,11 +102,11 @@ class App extends Component {
                       </div>
                     </div>
                   </div>
-                  <div className="app__footer">
+                  {/* <div className="app__footer">
                     <div className="app__footer--text">
                       {this.state.labels['tit_inspired']}
                     </div>
-                  </div>
+                  </div> */}
                 </>
                )
                :

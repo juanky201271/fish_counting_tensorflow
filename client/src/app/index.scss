@@ -11,7 +11,7 @@
   &__footer {
     display: block;
     color: white;
-    background-color: #9f9994;
+    background-color: #b5aca6;
     padding-top: 20px;
     padding-bottom: 20px;
 
@@ -52,6 +52,12 @@
       .logo {
         margin-top: 0px;
         margin-left: 0px;
+
+        &__wrapper {
+          img {
+            width: 215px;
+          }
+        }
       }
     }
     &--right {

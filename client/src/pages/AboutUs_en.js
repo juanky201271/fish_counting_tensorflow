@@ -7,10 +7,10 @@ const labels = {
 
   our_products: 'Our products',
 
-  obj_det_tool: 'Object detection',
+  obj_det_tool: 'Fish identification',
   obj_det_tool_text: 'Application to automatically identify different species of fish, quantify and measure them from video or photo images.',
 
-  blo_tool: 'Blockchain',
+  blo_tool: 'Traceability blockchain',
   blo_tool_text: 'Blockchain application to establish the digital traceability of agri-food products.',
 
   rec_tool: 'Recognition',
