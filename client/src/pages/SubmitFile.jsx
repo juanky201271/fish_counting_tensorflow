@@ -57,7 +57,7 @@ class SubmitFile extends Component {
 
     componentDidMount = async () => {
         this.setState({ isLoading: true })
-        await api.getModels()
+        await api.getModelsAwsS3()
                 .then(res => {
                   console.log(res)
                   this.setState({ models: res.data.data })

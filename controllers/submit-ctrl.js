@@ -2,6 +2,12 @@ const Submit = require('../models/submit-model')
 const fs = require('fs')
 const path = require('path')
 const mongoose = require('mongoose')
+const AwsS3 = require("aws-sdk/clients/s3")
+const s3 = new AwsS3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+})
 
 const ObjectId = mongoose.Types.ObjectId
 
@@ -126,7 +132,7 @@ const  ensureExists = (path, mask, cb) => {
     })
 }
 
-getModels = async (req, res) => {
+getModelsLocaly = async (req, res) => {
   const modelsDir = path.join(__dirname, "../api_flask/models")
   ensureExists(modelsDir, 0744, function(err) {
     if (err) // handle folder creation error
@@ -168,6 +174,140 @@ getModels = async (req, res) => {
 
 }
 
+const listDirectories  = async params => {
+  return new Promise ((resolve, reject) => {
+    const s3params = {
+      Bucket: params.bucket,
+      MaxKeys: 10,
+      Delimiter: '/',
+      Prefix: params.subdir + '/',
+    }
+    s3.listObjectsV2 (s3params, (err, data) => {
+      if (err) {
+        reject (err)
+      }
+      resolve (data)
+    })
+  })
+}
+
+const objectExits = async params => {
+  return new Promise ((resolve, reject) => {
+    const s3params = {
+      Bucket: params.bucket,
+      Key: params.file,
+    }
+    s3.headObject (s3params, (err, data) => {
+      if (err) {
+        reject (err)
+      }
+      resolve (data)
+    })
+  })
+}
+
+getModelsAwsS3 = async (req, res) => {
+  let models = []
+  let dirs = []
+  await listDirectories({ bucket: 'aipeces', subdir: 'models' })
+    .then(res => {
+      dirs = res.CommonPrefixes
+    })
+    .catch(err => console.log('bucket models list error - ', err))
+
+  if (dirs.length > 0) {
+    for (i = 0; i < dirs.length; i++) {
+      const dir = dirs[i]
+      let saved_model_root_path = false
+      await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'saved_model.pb' })
+        .then(res => {
+          saved_model_root_path = true
+        })
+        .catch(err => {
+          if (err && err.code !== 'NotFound') {
+            console.log('object exits error - ', err)
+          }
+        })
+      let saved_model_dir_path = false
+      await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'saved_model/saved_model.pb' })
+        .then(res => {
+          saved_model_dir_path = true
+        })
+        .catch(err => {
+          if (err && err.code !== 'NotFound') {
+            console.log('object exits error - ', err)
+          }
+        })
+      let frozen_inference_graph_path = false
+      await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'frozen_inference_graph.pb' })
+        .then(res => {
+          frozen_inference_graph_path = true
+        })
+        .catch(err => {
+          if (err && err.code !== 'NotFound') {
+            console.log('object exits error - ', err)
+          }
+        })
+      /*
+      let ckpt_root_path = false
+      objectExits({ bucket: 'aipeces', file: dir.Prefix + 'model.ckpt.data-00000-of-00001' })
+        .then(res => {
+          ckpt_root_path = true
+        })
+        .catch(err => {
+          if (err && err.code !== 'NotFound') {
+            console.log('object exits error - ', err)
+          }
+        })
+      */
+      let ckpt_dir_path = false
+      await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'checkpoint/ckpt-0.data-00000-of-00001' })
+        .then(res => {
+          ckpt_dir_path = true
+        })
+        .catch(err => {
+          if (err && err.code !== 'NotFound') {
+            console.log('object exits error - ', err)
+          }
+        })
+      let pipeline_config_path = false
+      await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'pipeline.config' })
+        .then(res => {
+          pipeline_config_path = true
+        })
+        .catch(err => {
+          if (err && err.code !== 'NotFound') {
+            console.log('object exits error - ', err)
+          }
+        })
+      let label_map_path = false
+      await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'label_map.pbtxt' })
+        .then(res => {
+          label_map_path = true
+        })
+        .catch(err => {
+          if (err && err.code !== 'NotFound') {
+            console.log('object exits error - ', err)
+          }
+        })
+      models.push({
+        model: dir.Prefix,
+        saved_model_root: saved_model_root_path && label_map_path,
+        saved_model_dir: saved_model_dir_path && label_map_path,
+        frozen_inference_graph: frozen_inference_graph_path && label_map_path,
+        //ckpt_root: ckpt_root_path && pipeline_config_path && label_map_path,
+        ckpt_dir: ckpt_dir_path && pipeline_config_path && label_map_path,
+      })
+    }
+  }
+
+  if (models.length === 0)
+    return res.status(404).json({ success: false, error: 'Models not found' })
+  else
+    return res.status(200).json({ success: true, data: models })
+
+}
+
 module.exports = {
   createSubmit,
   updateSubmit,
@@ -175,5 +315,6 @@ module.exports = {
   getSubmit,
   getSubmits,
 
-  getModels,
+  getModelsLocaly,
+  getModelsAwsS3,
 }

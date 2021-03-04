@@ -16,6 +16,17 @@ const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
 const submitRouter = require('./routes/submit-router')
 const uploadRouter = require('./routes/upload-router')
 const db = require('./db')
+const AWS = require("aws-sdk")
+
+AWS.config.getCredentials(function(err) {
+  if (err) console.log(err.stack);
+  // credentials not loaded
+  else {
+    console.log("Access key:", AWS.config.credentials.accessKeyId);
+  }
+})
+
+console.log("Region: ", AWS.config.region)
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 

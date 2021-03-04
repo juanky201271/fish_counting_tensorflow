@@ -14,7 +14,8 @@ export const deleteSubmit = _id => api.delete(`/submit/${_id}`)
 export const getSubmit = _id => api.get(`/submit/${_id}`)
 export const getSubmits = () => api.get(`/submits`)
 
-export const getModels = () => api.get(`/models`)
+export const getModelsLocaly = () => api.get(`/modelslocaly`)
+export const getModelsAwsS3 = () => api.get(`/modelsawss3`)
 
 export const createUploadFile = (payload, dir) => api.post(`/uploadfile`, payload, { headers: { dir: dir } })
 export const createUploadResult = payload => api.post(`/uploadresult`, payload)
@@ -35,7 +36,8 @@ const apis = {
   getSubmit,
   getSubmits,
 
-  getModels,
+  getModelsLocaly,
+  getModelsAwsS3,
 
   createUploadFile,
   createUploadResult,

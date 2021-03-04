@@ -1,6 +1,7 @@
 const fs = require('fs')
 const Multer = require('multer')
 const path = require('path')
+const AWS = require("aws-sdk")
 
 //const uploadFileDir = path.join(__dirname, "../client/public/files_uploaded")
 

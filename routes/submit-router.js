@@ -10,6 +10,7 @@ submitRouter.delete('/submit/:_id', SubmitCtrl.deleteSubmit)
 submitRouter.get('/submit/id/:_id', SubmitCtrl.getSubmit)
 submitRouter.get('/submits', SubmitCtrl.getSubmits)
 
-submitRouter.get('/models', SubmitCtrl.getModels)
+submitRouter.get('/modelslocaly', SubmitCtrl.getModelsLocaly)
+submitRouter.get('/modelsawss3', SubmitCtrl.getModelsAwsS3)
 
 module.exports = submitRouter
