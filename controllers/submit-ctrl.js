@@ -291,7 +291,7 @@ getModelsAwsS3 = async (req, res) => {
           }
         })
       models.push({
-        model: dir.Prefix,
+        model: dir.Prefix.split('/')[1],
         saved_model_root: saved_model_root_path && label_map_path,
         saved_model_dir: saved_model_dir_path && label_map_path,
         frozen_inference_graph: frozen_inference_graph_path && label_map_path,
