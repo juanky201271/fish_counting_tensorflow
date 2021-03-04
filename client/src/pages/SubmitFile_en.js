@@ -47,13 +47,13 @@ const labels = {
 
   // calibration
   tit_calibration: 'CALIBRATION',
-  tit_tex_calibration: 'The fish sizes are referenced at a distance from the camera of (150 cm = 60 in) at 90º, with a viewing angle of 75º, if these data are modified it is necessary to calibrate the calculations.',
-  tit_tex_sel_calibration: 'To calibrate select an image with a single fish and enter its real size in (cm / in)',
+  tit_tex_calibration: 'The fish sizes are referenced at a distance from the camera of (60 in) at 90º, with a viewing angle of 75º, if these data are modified it is necessary to calibrate the calculations.',
+  tit_tex_sel_calibration: 'To calibrate select an image with a single fish and enter its real size in (in)',
   tit_sel_calibration: 'Select an image',
-  tit_siz_calibration: 'Introduce size (cm / in)',
+  tit_siz_calibration: 'Introduce size (in)',
   tit_calibrate: 'Calibrate!',
   tit_ok_calibration: (width_pxs_x_cm) => {
-    return (`Calibration successful: ${width_pxs_x_cm} pixels per (cm / in).`)
+    return (`Calibration successful: ${width_pxs_x_cm} pixels per (in).`)
   },
   tit_recalibrate: 'Recalibrate!',
   tit_lab_results: 'Results',

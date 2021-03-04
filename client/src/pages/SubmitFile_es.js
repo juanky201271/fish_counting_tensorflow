@@ -52,13 +52,13 @@ const labels = {
 
   // calibration
   tit_calibration: 'CALIBRACIÓN',
-  tit_tex_calibration: 'Las tallas de los peces están referenciadas a una distancia de la cámara de (150 cm = 60 in) a 90º, con angulo de visión de 75º, si estos datos se modifican es necesario calibrar los cálculos.',
-  tit_tex_sel_calibration: 'Para calibrar seleccionar una imagen con un único pez e introducir su talla real en (cm / in)',
+  tit_tex_calibration: 'Las tallas de los peces están referenciadas a una distancia de la cámara de (150 cm) a 90º, con angulo de visión de 75º, si estos datos se modifican es necesario calibrar los cálculos.',
+  tit_tex_sel_calibration: 'Para calibrar seleccionar una imagen con un único pez e introducir su talla real en (cm)',
   tit_sel_calibration: 'Seleccionar la imagen',
-  tit_siz_calibration: 'Intruducir la talla (cm / in)',
+  tit_siz_calibration: 'Introducir la talla (cm)',
   tit_calibrate: 'Calibrar!',
   tit_ok_calibration: (width_pxs_x_cm) => {
-    return (`Calibración realizada correctamente: ${width_pxs_x_cm} pixels por (cm / in).`)
+    return (`Calibración realizada correctamente: ${width_pxs_x_cm} pixels por (cm).`)
   },
   tit_recalibrate: 'Volver a calibrar!',
   tit_lab_results: 'Resultados',

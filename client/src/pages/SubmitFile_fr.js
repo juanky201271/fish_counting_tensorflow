@@ -47,13 +47,13 @@ const labels = {
 
   // calibration
   tit_calibration: 'ÉTALONNAGE',
-  tit_tex_calibration: 'Les tailles de poisson sont référencées à une distance de la caméra de (150 cm = 60 in) à 90 °, avec un angle de vue de 75 °, si ces données sont modifiées il est nécessaire de calibrer les calculs.',
-  tit_tex_sel_calibration: 'Pour calibrer, sélectionnez une image avec un seul poisson et entrez sa taille réelle en (cm / in)',
+  tit_tex_calibration: 'Les tailles de poisson sont référencées à une distance de la caméra de (150 cm) à 90 °, avec un angle de vue de 75 °, si ces données sont modifiées il est nécessaire de calibrer les calculs.',
+  tit_tex_sel_calibration: 'Pour calibrer, sélectionnez une image avec un seul poisson et entrez sa taille réelle en (cm)',
   tit_sel_calibration: "Sélectionnez l'image",
-  tit_siz_calibration: 'Mettre la taille (cm / po)',
+  tit_siz_calibration: 'Mettre la taille (cm)',
   tit_calibrate: 'Étalonner!',
   tit_ok_calibration: (width_pxs_x_cm) => {
-    return (`Calibration réussie: ${width_pxs_x_cm} pixels par (cm / in).`)
+    return (`Calibration réussie: ${width_pxs_x_cm} pixels par (cm).`)
   },
   tit_recalibrate: 'Recalibrer!',
   tit_lab_results: 'Résultats',
