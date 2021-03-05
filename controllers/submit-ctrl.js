@@ -171,10 +171,10 @@ getModelsLocaly = async (req, res) => {
     return res.status(404).json({ success: false, error: 'Models not found' })
   else
     return res.status(200).json({ success: true, data: models })
-
 }
 
 const listDirectories  = async params => {
+  console.log(params)
   return new Promise ((resolve, reject) => {
     const s3params = {
       Bucket: params.bucket,
@@ -192,6 +192,7 @@ const listDirectories  = async params => {
 }
 
 const objectExits = async params => {
+  console.log(params)
   return new Promise ((resolve, reject) => {
     const s3params = {
       Bucket: params.bucket,
@@ -210,8 +211,8 @@ getModelsAwsS3 = async (req, res) => {
   let models = []
   let dirs = []
   await listDirectories({ bucket: 'aipeces', subdir: 'models' })
-    .then(res => {
-      dirs = res.CommonPrefixes
+    .then(data => {
+      dirs = data.CommonPrefixes
     })
     .catch(err => console.log('bucket models list error - ', err))
 
@@ -220,7 +221,7 @@ getModelsAwsS3 = async (req, res) => {
       const dir = dirs[i]
       let saved_model_root_path = false
       await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'saved_model.pb' })
-        .then(res => {
+        .then(data => {
           saved_model_root_path = true
         })
         .catch(err => {
@@ -230,7 +231,7 @@ getModelsAwsS3 = async (req, res) => {
         })
       let saved_model_dir_path = false
       await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'saved_model/saved_model.pb' })
-        .then(res => {
+        .then(data => {
           saved_model_dir_path = true
         })
         .catch(err => {
@@ -240,7 +241,7 @@ getModelsAwsS3 = async (req, res) => {
         })
       let frozen_inference_graph_path = false
       await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'frozen_inference_graph.pb' })
-        .then(res => {
+        .then(data => {
           frozen_inference_graph_path = true
         })
         .catch(err => {
@@ -251,7 +252,7 @@ getModelsAwsS3 = async (req, res) => {
       /*
       let ckpt_root_path = false
       objectExits({ bucket: 'aipeces', file: dir.Prefix + 'model.ckpt.data-00000-of-00001' })
-        .then(res => {
+        .then(data => {
           ckpt_root_path = true
         })
         .catch(err => {
@@ -262,7 +263,7 @@ getModelsAwsS3 = async (req, res) => {
       */
       let ckpt_dir_path = false
       await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'checkpoint/ckpt-0.data-00000-of-00001' })
-        .then(res => {
+        .then(data => {
           ckpt_dir_path = true
         })
         .catch(err => {
@@ -272,7 +273,7 @@ getModelsAwsS3 = async (req, res) => {
         })
       let pipeline_config_path = false
       await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'pipeline.config' })
-        .then(res => {
+        .then(data => {
           pipeline_config_path = true
         })
         .catch(err => {
@@ -282,7 +283,7 @@ getModelsAwsS3 = async (req, res) => {
         })
       let label_map_path = false
       await objectExits({ bucket: 'aipeces', file: dir.Prefix + 'label_map.pbtxt' })
-        .then(res => {
+        .then(data => {
           label_map_path = true
         })
         .catch(err => {

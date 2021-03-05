@@ -52,7 +52,7 @@ class AboutUs extends Component {
         <div className="aboutus">
 
           <div className="aboutus__wrapper">
-            <div className="aboutus__header form-group">
+            <div className="aboutus__header">
               <div className="aboutus__header--title">
                 {this.state.labels['who_we_are']}
                 <hr />
@@ -61,7 +61,7 @@ class AboutUs extends Component {
                 {this.state.labels['who_we_are_text']}
               </div>
             </div>
-            <div className="aboutus__header-right form-group">
+            <div className="aboutus__header-right">
               <div className="aboutus__header-right--title">
                 {this.state.labels['what_do_we_do']}
                 <hr />
@@ -73,35 +73,36 @@ class AboutUs extends Component {
           </div>
 
           <div className="aboutus__wrapper">
-            <div className="aboutus__our-products">
-              {this.state.labels['our_products']}
-              <hr />
-            </div>
-          </div>
-
-          <div className="aboutus__wrapper">
-            <div className="aboutus__col-33">
-              <div className="aboutus__col-33--left">
-                {this.state.labels['obj_det_tool']}
+            <div className="aboutus__col">
+              <div className="aboutus__our-products">
+                {this.state.labels['our_products']}
+                <hr />
               </div>
-              <div className="aboutus__text">
-                {this.state.labels['obj_det_tool_text']}
-              </div>
-            </div>
-            <div className="aboutus__col-33">
-              <div className="aboutus__col-33--middle">
-                {this.state.labels['blo_tool']}
-              </div>
-              <div className="aboutus__text">
-                {this.state.labels['blo_tool_text']}
-              </div>
-            </div>
-            <div className="aboutus__col-33">
-              <div className="aboutus__col-33--right">
-                {this.state.labels['rec_tool']}
-              </div>
-              <div className="aboutus__text">
-                {this.state.labels['rec_tool_text']}
+              <div className="aboutus__wrapper-our-products">
+                <div className="aboutus__col-33">
+                  <div className="aboutus__col-33--left">
+                    {this.state.labels['obj_det_tool']}
+                  </div>
+                  <div className="aboutus__text">
+                    {this.state.labels['obj_det_tool_text']}
+                  </div>
+                </div>
+                <div className="aboutus__col-33">
+                  <div className="aboutus__col-33--middle">
+                    {this.state.labels['blo_tool']}
+                  </div>
+                  <div className="aboutus__text">
+                    {this.state.labels['blo_tool_text']}
+                  </div>
+                </div>
+                <div className="aboutus__col-33">
+                  <div className="aboutus__col-33--right">
+                    {this.state.labels['rec_tool']}
+                  </div>
+                  <div className="aboutus__text">
+                    {this.state.labels['rec_tool_text']}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

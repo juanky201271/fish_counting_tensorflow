@@ -131,7 +131,7 @@ class SubmitFile extends Component {
         .catch(e => console.log('create submit ERROR: ', e))
 
       const dir = _id + "_" + name
-      await api.createDir(dir)
+      await api.createDirAwsS3(dir)
         .then(res => {
           this.setState({ dir: dir })
         })
@@ -146,15 +146,16 @@ class SubmitFile extends Component {
         name
       )
       let uploadedFile = ''
-      await api.createUploadFile(formData, dir)
+      await api.createUploadFileAwsS3(formData, dir)
         .then(res => {
-          uploadedFile = res.data.path
-          this.setState({ uploadedFile: res.data.path })
+          console.log(res)
+          uploadedFile = res.data.originalname
+          this.setState({ uploadedFile: res.data.originalname })
         })
         .catch(e => console.log('Upload file ERROR: ', e))
       const type = this.state.selectedFile.type.split('/')[0]
       if (type === 'video') {
-        await api.imageVideo(uploadedFile, 'client/public/submits/' + dir)
+        await api.imageVideoAwsS3(uploadedFile, dir)
           .then(res => {
             this.setState({ firstImageVideo: res.data.name })
           })
@@ -180,14 +181,14 @@ class SubmitFile extends Component {
         this.state.selectedFileCalibration,
         name
       )
-      await api.createUploadFile(formData, dir)
+      await api.createUploadFileAwsS3(formData, dir)
         .then(res => {
-          uploadedFileCalibration = res.data.path
-          this.setState({ uploadedFileCalibration: res.data.path })
+          uploadedFileCalibration = res.data.originalname
+          this.setState({ uploadedFileCalibration: res.data.originalname })
         })
         .catch(e => console.log('Upload Calibration file ERROR: ', e))
 
-      await api.pictureCalibrationFish(uploadedFileCalibration, 'client/public/submits/', this.state.model, this.state.cms)
+      await api.pictureCalibrationFishAwsS3(uploadedFileCalibration, '', this.state.model, this.state.cms)
         .then(res => {
           console.log(res.data)
           this.setState({
@@ -237,7 +238,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoRoiCountFish(uploadedFile, 'client/public/submits/' + dir, model, width_cms, width_pxs_x_cm)
+        await api.videoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  uploadedFile, dir, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -252,7 +253,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoCountFish(uploadedFile, 'client/public/submits/' + dir, model, width_cms, width_pxs_x_cm)
+        await api.videoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  uploadedFile, dir, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -267,7 +268,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.webcamCountFish(uploadedFile, 'client/public/submits/' + dir, model, width_cms, width_pxs_x_cm)
+        await api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  uploadedFile, dir, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -282,7 +283,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.pictureCountFish(uploadedFile, 'client/public/submits/' + dir, model, width_cms, width_pxs_x_cm)
+        await api.pictureCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  uploadedFile, dir, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -320,13 +321,11 @@ class SubmitFile extends Component {
     }
 
     fileData = () => {
-      const file_arr = this.state.uploadedFile.split('\\')
-
-      const file = '/submits/' + this.state.dir + '/' +  file_arr[file_arr.length - 1]
-      const csv = '/submits/' + this.state.dir + '/' +  file_arr[file_arr.length - 1] + '_csv_result.csv'
-      const video = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_video_result.mp4'
-      const image = '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_image_result.png'
-      const zip = '/submits/' + this.state.dir + '/' + this.state._id + '_' + file_arr[file_arr.length - 1] + '_images_zip_result.zip'
+      const file = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile
+      const csv = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile + '_csv_result.csv'
+      const video = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_video_result.mp4'
+      const image = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png'
+      const zip = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state._id + '_' + this.state.uploadedFile + '_images_zip_result.zip'
       if (this.state.total_fish !== null) {
         const type = this.state.selectedFile.type.split('/')[0] || ''
         return (
@@ -368,28 +367,24 @@ class SubmitFile extends Component {
     }
 
     imageData = () => {
-      const file_arr = this.state.uploadedFile ? this.state.uploadedFile.split('\\') : []
-      const file_arrCalibration = this.state.uploadedFileCalibration ? this.state.uploadedFileCalibration.split('\\') : []
-      const file_arrCalibrationResult = this.state.resultFileCalibration ? this.state.resultFileCalibration.split('\\') : []
-
-      const image = file_arr[file_arr.length - 1] ?
-        '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] :
+      const image = this.state.uploadedFile ?
+        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile :
         ''
       const image_video = this.state.firstImageVideo ?
-        '/submits/' + this.state.dir + '/first_frame_video.png' :
+        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/first_frame_video.png' :
         ''
-      const imageCalibration = file_arrCalibration[file_arrCalibration.length - 1] ?
-        '/submits/' + file_arrCalibration[file_arrCalibration.length - 1] :
+      const imageCalibration = this.state.uploadedFileCalibration ?
+        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.uploadedFileCalibration :
         ''
 
-      const imageResult = file_arr[file_arr.length - 1] ?
-        '/submits/' + this.state.dir + '/' + file_arr[file_arr.length - 1] + '_image_result.png' :
+      const imageResult = this.state.uploadedFile ?
+        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png' :
         ''
       const videoResult = this.state.firstImageVideo ?
-        '/submits/' + this.state.dir + '/last_frame_video.png' :
+        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/last_frame_video.png' :
         ''
-      const imageCalibrationResult = file_arrCalibrationResult[file_arrCalibrationResult.length - 1] ?
-        '/submits/' + file_arrCalibrationResult[file_arrCalibrationResult.length - 1] :
+      const imageCalibrationResult = this.state.resultFileCalibration ?
+        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.resultFileCalibration :
         ''
 
       const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''

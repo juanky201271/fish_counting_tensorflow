@@ -1,6 +1,6 @@
 const labels = {
   // fileData
-  tit_det_tool: 'Módulo de detección',
+  tit_det_tool: 'Módulo de identificación',
   tit_about_us: 'Sobre nosotros',
   tit_something: 'Mi algo',
   tit_logout: 'Logout',

@@ -1,4 +1,5 @@
 .aboutus {
+  display: block;
 
   &__wrapper {
     margin: 0 5px;
@@ -24,6 +25,26 @@
       padding-right: 0px;
       margin-left: 11%;
       margin-right: 11%;
+      transform: translateY(-70px);
+    }
+  }
+
+  &__wrapper-our-products {
+    margin: 0px;
+    padding: 0px;
+    display: block;
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: column;
+    }
+    @media(min-width: 470px) {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    @media(min-width: 768px) {
+      flex-wrap: nowrap;
     }
   }
 
@@ -42,7 +63,7 @@
     @media(min-width: 1024px) {
       display: flex;
       width: 60%;
-      transform: translateY(-70px);
+
     }
 
     &--title {
@@ -71,6 +92,7 @@
       }
     }
     &--who-we-are {
+      display: block;
       padding: 5px;
       padding-right: 10px;
       display: block;
@@ -88,6 +110,7 @@
   }
 
   &__our-products {
+    display: block;
     color: #0091a8;
     font-size: 25px;
     width: 100%;
@@ -102,6 +125,7 @@
     }
 
     @media(min-width: 1024px) {
+      margin-bottom: 10px;
 
       hr {
         display: none;
@@ -124,7 +148,7 @@
     @media(min-width: 1024px) {
       display: flex;
       width: 40%;
-      transform: translateY(-70px);
+
     }
 
     &--title {
@@ -152,6 +176,7 @@
       }
     }
     &--what-do-we-do {
+      display: block;
       padding: 5px;
       padding-right: 10px;
       display: block;
@@ -169,6 +194,7 @@
   }
 
   &__title {
+    display: block;
     font-size: 17px;
     padding-top: 5px;
 
@@ -181,12 +207,15 @@
     }
   }
   &__text {
+    display: block;
     font-size: 15px;
     color: black;
     padding: 20px;
+    padding-right: 30px;
 
     @media(min-width: 768px) {
       padding: 25px;
+      padding-right: 40px;
     }
 
     &--green {
@@ -242,6 +271,7 @@
       width: 34%;
     }
     &--left {
+      display: block;
       margin: 10px;
       font-size: 20px;
       padding-left: 10px;
@@ -256,7 +286,7 @@
       @media(min-width: 1024px) {
         font-size: 23px;
         color: black;
-        background-color: white;
+        background-color: transparent;
         margin: 0px;
         border-left: 5px solid #0091a8;
         border-top: 5px solid #0091a8;
@@ -264,6 +294,7 @@
       }
     }
     &--middle {
+      display: block;
       margin: 10px;
       font-size: 20px;
       padding-left: 10px;
@@ -278,13 +309,14 @@
       @media(min-width: 1024px) {
         font-size: 23px;
         color: black;
-        background-color: white;
+        background-color: transparent;
         margin: 0px;
         border-top: 5px solid #0091a8;
         border-bottom: 5px solid #0091a8;
       }
     }
     &--right {
+      display: block;
       margin: 10px;
       font-size: 20px;
       padding-left: 10px;
@@ -299,7 +331,7 @@
       @media(min-width: 1024px) {
         font-size: 23px;
         color: black;
-        background-color: white;
+        background-color: transparent;
         margin: 0px;
         border-right: 5px solid #0091a8;
         border-top: 5px solid #0091a8;
