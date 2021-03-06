@@ -149,7 +149,7 @@ class SubmitFile extends Component {
       await api.createUploadFileAwsS3(formData, dir)
         .then(res => {
           console.log(res)
-          uploadedFile = res.data.originalname
+          uploadedFile = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + res.data.originalname
           this.setState({ uploadedFile: res.data.originalname })
         })
         .catch(e => console.log('Upload file ERROR: ', e))

@@ -13,6 +13,9 @@ import save_frozen_graph
 import test_model_v2
 import cv2
 import boto3
+import PIL.Image as Image
+import numpy as np
+import six
 
 app = Flask(__name__)
 CORS(app)
@@ -152,10 +155,14 @@ def get_image_video_awss3():
         #cv2.waitKey(0)
         if ret:
             name = dir + '/first_frame_video.png'
-            print(name)
-            #cv2.imwrite(name, frame)
-            s3 = boto3.client('s3')
-            s3.upload_file(Bucket='aipeces', Key=name, Body=bytes(frame), ContentType='image/png', ACL='public-read')
+            image_pil = Image.fromarray(np.uint8(frame))
+            output = six.BytesIO()
+            image_pil.save(output, format='PNG')
+            png_string = output.getvalue()
+            output.close()
+            session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+            s3 = session.client('s3')
+            s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name, Body=png_string, ContentType='image/png', ACL='public-read')
         else:
             name = ''
         cam.release()
