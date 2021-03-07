@@ -22,9 +22,7 @@ def single_image_object_counting_fig(input_picture, detection_graph, category_in
     csv_line = ""
     sizes = []
 
-    print(input_picture)
     _, name_file_picture = input_picture.split('amazonaws.com/')
-    print(name_file_picture)
 
     with detection_graph.as_default():
       with tf.compat.v1.Session(graph=detection_graph) as sess:
@@ -34,11 +32,10 @@ def single_image_object_counting_fig(input_picture, detection_graph, category_in
         detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
         num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 
-        resp = urllib.request.urlopen(input_picture)
+        resp = urllib.request.urlopen(input_picture.replace(" ", "%20"))
         image = np.asarray(bytearray(resp.read()), dtype="uint8")
         input_frame = cv2.imdecode(image, cv2.IMREAD_COLOR)
         #input_frame = cv2.imread(input_picture)
-        print('input frame:', input_frame)
         image_np_expanded = np.expand_dims(input_frame, axis=0)
 
         (boxes, scores, classes, num) = sess.run(
@@ -47,8 +44,6 @@ def single_image_object_counting_fig(input_picture, detection_graph, category_in
 
     # insert information text to video frame
     font = cv2.FONT_HERSHEY_SIMPLEX
-
-    print('antes')
 
     # Visualization of the results of a detection.
     total_passed_fish, csv_line, counting_mode, sizes = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, np.squeeze(boxes), np.squeeze(classes).astype(np.int32), np.squeeze(scores), category_index, use_normalized_coordinates=True, folder='')
@@ -121,11 +116,12 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
 
     detect_fn = detection_model.signatures['serving_default']
 
-    print(input_picture)
     _, name_file_picture = input_picture.split('amazonaws.com/')
-    print(name_file_picture)
 
-    input_frame = cv2.imread(input_picture)
+    resp = urllib.request.urlopen(input_picture.replace(" ", "%20"))
+    image = np.asarray(bytearray(resp.read()), dtype="uint8")
+    input_frame = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    #input_frame = cv2.imread(input_picture)
 
     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(input_frame, axis=0)
@@ -208,6 +204,6 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
 
     cv2.destroyAllWindows()
     if (ok):
-        return { 'total_fish': total_passed_fish, 'width_pxs_x_cm': math.ceil(fish_width / fish_cms) }
+        return { 'total_fish': total_passed_fish, 'width_pxs_x_cm': math.ceil(fish_width / fish_cms), 'resultFileCalibration': name_file_picture }
     else:
-        return { 'total_fish': total_passed_fish, 'width_pxs_x_cm': '' }
+        return { 'total_fish': total_passed_fish, 'width_pxs_x_cm': '', 'resultFileCalibration': name_file_picture }

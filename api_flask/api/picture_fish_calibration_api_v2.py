@@ -12,9 +12,11 @@ import scipy.misc
 import numpy as np
 import json
 import math
+import six
 from six import BytesIO
 from PIL import Image, ImageDraw, ImageFont
 import boto3
+import urllib
 
 import tensorflow as tf
 
@@ -43,11 +45,12 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
 
     detect_fn = detection_model
 
-    print(input_picture)
     _, name_file_picture = input_picture.split('amazonaws.com/')
-    print(name_file_picture)
 
-    input_frame = load_image_into_numpy_array(input_picture)
+    resp = urllib.request.urlopen(input_picture.replace(" ", "%20"))
+    image = np.asarray(bytearray(resp.read()), dtype="uint8")
+    input_frame = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    #input_frame = load_image_into_numpy_array(input_frame)
 
     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(input_frame, axis=0)
@@ -172,11 +175,12 @@ def single_image_object_counting_c(input_picture, detection_model, category_inde
 
     detect_fn = get_model_detection_function_c(detection_model)
 
-    print(input_picture)
     _, name_file_picture = input_picture.split('amazonaws.com/')
-    print(name_file_picture)
 
-    input_frame = load_image_into_numpy_array_c(input_picture)
+    resp = urllib.request.urlopen(input_picture.replace(" ", "%20"))
+    image = np.asarray(bytearray(resp.read()), dtype="uint8")
+    input_frame = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    #input_frame = load_image_into_numpy_array_c(input_frame)
 
     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(input_frame, axis=0)

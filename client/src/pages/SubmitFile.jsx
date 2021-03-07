@@ -184,7 +184,7 @@ class SubmitFile extends Component {
       await api.createUploadFileAwsS3(formData, dir)
         .then(res => {
           uploadedFileCalibration = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + res.data.originalname
-          this.setState({ uploadedFileCalibration: res.data.originalname })
+          this.setState({ uploadedFileCalibration: res.data.originalname, resultFileCalibration: '', total_fishCalibration: null })
         })
         .catch(e => console.log('Upload Calibration file ERROR: ', e))
 
@@ -458,7 +458,7 @@ class SubmitFile extends Component {
     render() {
       console.log('submit file state', this.state)
       console.log('submit file props', this.props)
-        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, } = this.state
+        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, } = this.state
         const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
         const fileData = this.fileData()
         const imageData = this.imageData()
@@ -547,7 +547,7 @@ class SubmitFile extends Component {
                               accept='image/*|video/*'
                               onChange={this.handleChangeInputUploadCalibration}
                               ref={this.uploadInputRefCalibration}
-                              disabled={isLoading || uploadedFileCalibration || !model ? true : false}
+                              disabled={isLoading || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
                           />
                           <div className="submitfile__text--green">{this.state.labels['tit_siz_calibration']}</div>
                           <input
@@ -555,11 +555,11 @@ class SubmitFile extends Component {
                               id="InputNumberCalibration"
                               type="number"
                               onChange={this.handleChangeInputNumberCalibration}
-                              disabled={isLoading || uploadedFileCalibration || !model ? true : false}
+                              disabled={isLoading || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
                           />
                         </div>
                         <div className="submitfile__col-33">
-                          <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading || !model ? true : selectedFileCalibration && !uploadedFileCalibration ? false : true} >{this.state.labels['tit_calibrate']}</button>
+                          <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading || !model ? true : selectedFileCalibration && cms && (!uploadedFileCalibration || resultFileCalibration)  ? false : true} >{this.state.labels['tit_calibrate']}</button>
                         </div>
                       </div>
                       <div className="submitfile__header--error">
