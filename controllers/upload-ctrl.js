@@ -46,7 +46,8 @@ createUploadFileAwsS3 = async (req, res, next) => {
     error.httpStatusCode = 400
     return next(error)
   }
-  await uploadFile({ bucket: 'aipeces', file: 'submits/' + req.headers.dir + '/' + file.originalname, buffer: file.buffer, contenttype: file.mimetype, acl: 'public-read' })
+  const dir = req.headers.dir === '' ? '' : req.headers.dir + '/'
+  await uploadFile({ bucket: 'aipeces', file: 'submits/' + dir + file.originalname, buffer: file.buffer, contenttype: file.mimetype, acl: 'public-read' })
     .then(data => {
       res.send(file)
     })

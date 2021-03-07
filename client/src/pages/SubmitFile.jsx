@@ -183,12 +183,12 @@ class SubmitFile extends Component {
       )
       await api.createUploadFileAwsS3(formData, dir)
         .then(res => {
-          uploadedFileCalibration = res.data.originalname
+          uploadedFileCalibration = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + res.data.originalname
           this.setState({ uploadedFileCalibration: res.data.originalname })
         })
         .catch(e => console.log('Upload Calibration file ERROR: ', e))
 
-      await api.pictureCalibrationFishAwsS3(uploadedFileCalibration, '', this.state.model, this.state.cms)
+      await api.pictureCalibrationFishAwsS3(uploadedFileCalibration, this.state.model, this.state.cms)
         .then(res => {
           console.log(res.data)
           this.setState({
@@ -384,7 +384,7 @@ class SubmitFile extends Component {
         process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/last_frame_video.png' :
         ''
       const imageCalibrationResult = this.state.resultFileCalibration ?
-        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.resultFileCalibration :
+        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + this.state.resultFileCalibration :
         ''
 
       const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''

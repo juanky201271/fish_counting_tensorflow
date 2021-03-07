@@ -5,12 +5,16 @@
 #----------------------------------------------
 
 import tensorflow as tf
-import csv
+import csv, os
 import cv2
 import numpy as np
 import json
 import math
 from utils import visualization_utils as vis_util
+import boto3
+import PIL.Image as Image
+import six
+import urllib
 
 def single_image_object_counting_fig(input_picture, detection_graph, category_index, is_color_recognition_enabled, cms):
     total_passed_fish = 0
@@ -18,7 +22,9 @@ def single_image_object_counting_fig(input_picture, detection_graph, category_in
     csv_line = ""
     sizes = []
 
-    name_file_picture = input_picture
+    print(input_picture)
+    _, name_file_picture = input_picture.split('amazonaws.com/')
+    print(name_file_picture)
 
     with detection_graph.as_default():
       with tf.compat.v1.Session(graph=detection_graph) as sess:
@@ -28,7 +34,11 @@ def single_image_object_counting_fig(input_picture, detection_graph, category_in
         detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
         num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 
-        input_frame = cv2.imread(input_picture)
+        resp = urllib.request.urlopen(input_picture)
+        image = np.asarray(bytearray(resp.read()), dtype="uint8")
+        input_frame = cv2.imdecode(image, cv2.IMREAD_COLOR)
+        #input_frame = cv2.imread(input_picture)
+        print('input frame:', input_frame)
         image_np_expanded = np.expand_dims(input_frame, axis=0)
 
         (boxes, scores, classes, num) = sess.run(
@@ -37,6 +47,8 @@ def single_image_object_counting_fig(input_picture, detection_graph, category_in
 
     # insert information text to video frame
     font = cv2.FONT_HERSHEY_SIMPLEX
+
+    print('antes')
 
     # Visualization of the results of a detection.
     total_passed_fish, csv_line, counting_mode, sizes = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, np.squeeze(boxes), np.squeeze(classes).astype(np.int32), np.squeeze(scores), category_index, use_normalized_coordinates=True, folder='')
@@ -81,7 +93,16 @@ def single_image_object_counting_fig(input_picture, detection_graph, category_in
         image_cms = ''
         name_file_picture = name_file_picture + '__KO.png'
 
-    cv2.imwrite(name_file_picture, input_frame)
+    image_pil = Image.fromarray(np.uint8(input_frame))
+    output = six.BytesIO()
+    image_pil.save(output, format='PNG')
+    png_string = output.getvalue()
+    output.close()
+    session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+    s3 = session.client('s3')
+    s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_picture, Body=png_string, ContentType='image/png', ACL='public-read')
+
+    #cv2.imwrite(name_file_picture, input_frame)
 
     #cv2.imshow('fish detection picture',input_frame)
     #cv2.waitKey(0)
@@ -100,7 +121,9 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
 
     detect_fn = detection_model.signatures['serving_default']
 
-    name_file_picture = input_picture
+    print(input_picture)
+    _, name_file_picture = input_picture.split('amazonaws.com/')
+    print(name_file_picture)
 
     input_frame = cv2.imread(input_picture)
 
@@ -169,7 +192,16 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
         image_cms = ''
         name_file_picture = name_file_picture + '__KO.png'
 
-    cv2.imwrite(name_file_picture, input_frame)
+    image_pil = Image.fromarray(np.uint8(input_frame))
+    output = six.BytesIO()
+    image_pil.save(output, format='PNG')
+    png_string = output.getvalue()
+    output.close()
+    session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+    s3 = session.client('s3')
+    s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_picture, Body=png_string, ContentType='image/png', ACL='public-read')
+
+    #cv2.imwrite(name_file_picture, input_frame)
 
     #cv2.imshow('fish detection picture',input_frame)
     #cv2.waitKey(0)

@@ -39,7 +39,7 @@ export const pictureCountFishLocaly = (url_input_video, dir, model, width_cms, w
 export const pictureCountFishAwsS3 = (url_input_video, dir, model, width_cms, width_pxs_x_cm) => flask_api.post(`/picturecountfishawss3`, { url_input_video, dir, model, width_cms, width_pxs_x_cm })
 
 export const pictureCalibrationFishLocaly = (url_input_video, dir, model, cms) => flask_api.post(`/picturecalibrationfishlocaly`, { url_input_video, dir, model, cms })
-export const pictureCalibrationFishAwsS3 = (url_input_video, dir, model, cms) => flask_api.post(`/picturecalibrationfishawss3`, { url_input_video, dir, model, cms })
+export const pictureCalibrationFishAwsS3 = (url_input_video, model, cms) => flask_api.post(`/picturecalibrationfishawss3`, { url_input_video, model, cms })
 
 export const imageVideoLocaly = (url_input_video, dir) => flask_api.post(`/imagevideolocaly`, { url_input_video, dir })
 export const imageVideoAwsS3 = (url_input_video, dir) => flask_api.post(`/imagevideoawss3`, { url_input_video, dir })

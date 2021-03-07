@@ -14,6 +14,7 @@ import json
 import math
 from six import BytesIO
 from PIL import Image, ImageDraw, ImageFont
+import boto3
 
 import tensorflow as tf
 
@@ -42,7 +43,9 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
 
     detect_fn = detection_model
 
-    name_file_picture = input_picture
+    print(input_picture)
+    _, name_file_picture = input_picture.split('amazonaws.com/')
+    print(name_file_picture)
 
     input_frame = load_image_into_numpy_array(input_picture)
 
@@ -111,7 +114,16 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
         image_cms = ''
         name_file_picture = name_file_picture + '__KO.png'
 
-    cv2.imwrite(name_file_picture, input_frame)
+    image_pil = Image.fromarray(np.uint8(input_frame))
+    output = six.BytesIO()
+    image_pil.save(output, format='PNG')
+    png_string = output.getvalue()
+    output.close()
+    session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+    s3 = session.client('s3')
+    s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_picture, Body=png_string, ContentType='image/png', ACL='public-read')
+
+    #cv2.imwrite(name_file_picture, input_frame)
 
     #cv2.imshow('fish detection picture',input_frame)
     #cv2.waitKey(0)
@@ -160,7 +172,9 @@ def single_image_object_counting_c(input_picture, detection_model, category_inde
 
     detect_fn = get_model_detection_function_c(detection_model)
 
-    name_file_picture = input_picture
+    print(input_picture)
+    _, name_file_picture = input_picture.split('amazonaws.com/')
+    print(name_file_picture)
 
     input_frame = load_image_into_numpy_array_c(input_picture)
 
@@ -231,7 +245,16 @@ def single_image_object_counting_c(input_picture, detection_model, category_inde
         image_cms = ''
         name_file_picture = name_file_picture + '__KO.png'
 
-    cv2.imwrite(name_file_picture, input_frame)
+    image_pil = Image.fromarray(np.uint8(input_frame))
+    output = six.BytesIO()
+    image_pil.save(output, format='PNG')
+    png_string = output.getvalue()
+    output.close()
+    session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+    s3 = session.client('s3')
+    s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_picture, Body=png_string, ContentType='image/png', ACL='public-read')
+
+    #cv2.imwrite(name_file_picture, input_frame)
 
     #cv2.imshow('fish detection picture',input_frame)
     #cv2.waitKey(0)
