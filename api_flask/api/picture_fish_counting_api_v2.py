@@ -11,8 +11,12 @@ import os, glob
 import scipy.misc
 import numpy as np
 import json
+import six
+import urllib
 from six import BytesIO
 from PIL import Image, ImageDraw, ImageFont
+from io import StringIO
+import boto3
 
 import tensorflow as tf
 
@@ -33,7 +37,7 @@ def load_image_into_numpy_array(path):
     """
     return np.array(Image.open(path))
 
-def single_image_object_counting_sm(input_picture, detection_model, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm):
+def single_image_object_counting_sm(input_picture, detection_model, category_index, is_color_recognition_enabled, width_cms, width_pxs_x_cm):
     total_passed_fish = 0
     counting_mode = ""
     csv_line = ""
@@ -41,19 +45,21 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
 
     detect_fn = detection_model
 
-    name_file_dict = input_picture.split('\\')
-    f,tail = folder.split('/images')
-    name_file_csv = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_csv_result.csv'
-    name_file_picture = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_image_result.png'
+    _, name_file = input_picture.split('amazonaws.com/')
+    name_file_csv = name_file + '_csv_result.csv'
+    name_file_picture = name_file + '_image_result.png'
+    folder_images = name_file + '/images'
 
     # initialize .csv
-    with open(name_file_csv, 'w') as f:
-        writer = csv.writer(f)
-        csv_line = \
-        'Specie,Score,Size'
-        writer.writerows([csv_line.split(',')])
+    f = StringIO()
+    csv_line = \
+    'Specie,Score,Size'
+    csv.writer(f).writerows([csv_line.split(',')])
 
-    input_frame = load_image_into_numpy_array(input_picture)
+    resp = urllib.request.urlopen(input_picture.replace(" ", "%20"))
+    image = np.asarray(bytearray(resp.read()), dtype="uint8")
+    input_frame = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    #input_frame = load_image_into_numpy_array(input_frame)
 
     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(input_frame, axis=0)
@@ -78,7 +84,7 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
     font = cv2.FONT_HERSHEY_SIMPLEX
 
     # Visualization of the results of a detection.
-    total_passed_fish, csv_line, counting_mode, sizes = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, detections['detection_boxes'], detections['detection_classes'], detections['detection_scores'], category_index, use_normalized_coordinates=True, folder=folder)
+    total_passed_fish, csv_line, counting_mode, sizes = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, detections['detection_boxes'], detections['detection_classes'], detections['detection_scores'], category_index, use_normalized_coordinates=True, folder=folder_images)
 
     print(sizes)
 
@@ -106,7 +112,16 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
         cv2.FONT_HERSHEY_SIMPLEX,
         )
 
-    cv2.imwrite(name_file_picture, input_frame)
+    image_pil = Image.fromarray(np.uint8(input_frame))
+    output = six.BytesIO()
+    image_pil.save(output, format='PNG')
+    png_string = output.getvalue()
+    output.close()
+    session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+    s3 = session.client('s3')
+    s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_picture, Body=png_string, ContentType='image/png', ACL='public-read')
+
+    #cv2.imwrite(name_file_picture, input_frame)
 
     #calculate cms
     sizes_cms = []
@@ -123,12 +138,15 @@ def single_image_object_counting_sm(input_picture, detection_model, category_ind
 
     print(sizes_cms)
 
-    with open(name_file_csv, 'a') as f:
-        writer = csv.writer(f)
-        for size in sizes_cms:
-            csv_line = \
-            str(size)
-            writer.writerows([csv_line.split(',')])
+    for size in sizes_cms:
+        csv_line = \
+        str(size)
+        csv.writer(f).writerows([csv_line.split(',')])
+
+    session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+    s3 = session.client('s3')
+    s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_csv, Body=f.getvalue(), ContentType='text/csv', ACL='public-read')
+    f.close()
 
     #cv2.imshow('fish detection picture',input_frame)
     #cv2.waitKey(0)
@@ -166,7 +184,7 @@ def load_image_into_numpy_array_c(path):
     """
     return np.array(Image.open(path))
 
-def single_image_object_counting_c(input_picture, detection_model, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm):
+def single_image_object_counting_c(input_picture, detection_model, category_index, is_color_recognition_enabled, width_cms, width_pxs_x_cm):
     total_passed_fish = 0
     counting_mode = ""
     csv_line = ""
@@ -174,19 +192,21 @@ def single_image_object_counting_c(input_picture, detection_model, category_inde
 
     detect_fn = get_model_detection_function_c(detection_model)
 
-    name_file_dict = input_picture.split('\\')
-    f,tail = folder.split('/images')
-    name_file_csv = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_csv_result.csv'
-    name_file_picture = f + '/' + name_file_dict[len(name_file_dict) - 1] + '_image_result.png'
+    _, name_file = input_picture.split('amazonaws.com/')
+    name_file_csv = name_file + '_csv_result.csv'
+    name_file_picture = name_file + '_image_result.png'
+    folder_images = name_file + '/images'
 
     # initialize .csv
-    with open(name_file_csv, 'w') as f:
-        writer = csv.writer(f)
-        csv_line = \
-        'Specie,Score,Size'
-        writer.writerows([csv_line.split(',')])
+    f = StringIO()
+    csv_line = \
+    'Specie,Score,Size'
+    csv.writer(f).writerows([csv_line.split(',')])
 
-    input_frame = load_image_into_numpy_array_c(input_picture)
+    resp = urllib.request.urlopen(input_picture.replace(" ", "%20"))
+    image = np.asarray(bytearray(resp.read()), dtype="uint8")
+    input_frame = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    #input_frame = load_image_into_numpy_array_c(input_frame)
 
     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(input_frame, axis=0)
@@ -213,7 +233,7 @@ def single_image_object_counting_c(input_picture, detection_model, category_inde
     font = cv2.FONT_HERSHEY_SIMPLEX
 
     # Visualization of the results of a detection.
-    total_passed_fish, csv_line, counting_mode, sizes = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, detections['detection_boxes'], detections['detection_classes'] + label_id_offset, detections['detection_scores'], category_index, use_normalized_coordinates=True, folder=folder)
+    total_passed_fish, csv_line, counting_mode, sizes = vis_util.visualize_boxes_and_labels_on_single_image_array(1, input_frame, 1, is_color_recognition_enabled, detections['detection_boxes'], detections['detection_classes'] + label_id_offset, detections['detection_scores'], category_index, use_normalized_coordinates=True, folder=folder_images)
 
     print(sizes)
 
@@ -241,7 +261,16 @@ def single_image_object_counting_c(input_picture, detection_model, category_inde
         cv2.FONT_HERSHEY_SIMPLEX,
         )
 
-    cv2.imwrite(name_file_picture, input_frame)
+    image_pil = Image.fromarray(np.uint8(input_frame))
+    output = six.BytesIO()
+    image_pil.save(output, format='PNG')
+    png_string = output.getvalue()
+    output.close()
+    session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+    s3 = session.client('s3')
+    s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_picture, Body=png_string, ContentType='image/png', ACL='public-read')
+
+    #cv2.imwrite(name_file_picture, input_frame)
 
     #calculate cms
     sizes_cms = []
@@ -258,12 +287,15 @@ def single_image_object_counting_c(input_picture, detection_model, category_inde
 
     print(sizes_cms)
 
-    with open(name_file_csv, 'a') as f:
-        writer = csv.writer(f)
-        for size in sizes_cms:
-            csv_line = \
-            str(size)
-            writer.writerows([csv_line.split(',')])
+    for size in sizes_cms:
+        csv_line = \
+        str(size)
+        csv.writer(f).writerows([csv_line.split(',')])
+
+    session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+    s3 = session.client('s3')
+    s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_csv, Body=f.getvalue(), ContentType='text/csv', ACL='public-read')
+    f.close()
 
     #cv2.imshow('fish detection picture',input_frame)
     #cv2.waitKey(0)

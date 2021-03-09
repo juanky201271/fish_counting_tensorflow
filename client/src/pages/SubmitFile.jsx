@@ -121,21 +121,27 @@ class SubmitFile extends Component {
 
     handleUpload = async e => {
       const name = "File_" + Date.now() + '_' + this.state.selectedFile.name
-      let _id
+      let _id, dir
       const payload = this.payload(name)
       await api.createSubmit(payload)
-        .then(res => {
-          this.setState({ _id: res.data._id })
+        .then(async res => {
+          this.setState({ _id: res.data._id, dir: res.data._id + "_" + name })
           _id = res.data._id
+          dir = res.data._id + "_" + name
+          const payload2 = this.payload(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + _id + "_" + name + '/' + name)
+          await api.updateSubmit(_id, payload2)
+            .then()
+            .catch(e => console.log('update submit ERROR: ', e))
         })
         .catch(e => console.log('create submit ERROR: ', e))
 
-      const dir = _id + "_" + name
+/*
       await api.createDirAwsS3(dir)
         .then(res => {
           this.setState({ dir: dir })
         })
         .catch(e => console.log('create Dirs ERROR: ', e))
+*/
 
       // Create an object of formData
       const formData = new FormData()
@@ -238,7 +244,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  uploadedFile, dir, model, width_cms, width_pxs_x_cm)
+        await api.videoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -253,7 +259,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  uploadedFile, dir, model, width_cms, width_pxs_x_cm)
+        await api.videoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -268,7 +274,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  uploadedFile, dir, model, width_cms, width_pxs_x_cm)
+        await api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -283,7 +289,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.pictureCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  uploadedFile, dir, model, width_cms, width_pxs_x_cm)
+        await api.pictureCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -325,7 +331,7 @@ class SubmitFile extends Component {
       const csv = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile + '_csv_result.csv'
       const video = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_video_result.mp4'
       const image = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png'
-      const zip = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state._id + '_' + this.state.uploadedFile + '_images_zip_result.zip'
+      const zip = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_images_zip_result.zip'
       if (this.state.total_fish !== null) {
         const type = this.state.selectedFile.type.split('/')[0] || ''
         return (

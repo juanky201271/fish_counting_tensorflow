@@ -7,15 +7,16 @@
 import tensorflow as tf
 import glob, os
 import shutil
+import boto3
 
 from utils import backbone
 from api import picture_fish_counting_api
 from api import picture_fish_counting_api_v2
-from shutil import make_archive
 from pathlib import Path
+from zipfile import ZipFile, ZipInfo
+from io import BytesIO
 
-def purseiner_picture_counting_process(url_input_video, folder, model, type, width_cms, width_pxs_x_cm):
-    #input_video = "./input_images_and_videos/3-convoyeur3 26-08-2019 03-00-02.jpg"
+def purseiner_picture_counting_process(url_input_video, model, type, width_cms, width_pxs_x_cm):
 
     detection_graph, category_index, version = backbone.set_model(model, 'label_map.pbtxt', type)
 
@@ -24,26 +25,38 @@ def purseiner_picture_counting_process(url_input_video, folder, model, type, wid
     print('VERSION: ' + version)
 
     if (type == 'frozen_inference_graph' and version == '1'):
-        r =  picture_fish_counting_api.single_image_object_counting_fig(url_input_video, detection_graph, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm)
+        r =  picture_fish_counting_api.single_image_object_counting_fig(url_input_video, detection_graph, category_index, is_color_recognition_enabled, width_cms, width_pxs_x_cm)
 
     if (type == 'saved_model_root' or type == 'saved_model_dir'):
         if (version.split('.')[0] == '1'):
-            r =  picture_fish_counting_api.single_image_object_counting_sm(url_input_video, detection_graph, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm)
+            r =  picture_fish_counting_api.single_image_object_counting_sm(url_input_video, detection_graph, category_index, is_color_recognition_enabled, width_cms, width_pxs_x_cm)
         if (version.split('.')[0] == '2'):
-            r =  picture_fish_counting_api_v2.single_image_object_counting_sm(url_input_video, detection_graph, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm)
+            r =  picture_fish_counting_api_v2.single_image_object_counting_sm(url_input_video, detection_graph, category_index, is_color_recognition_enabled, width_cms, width_pxs_x_cm)
 
     if (type == 'ckpt_dir' and version == '2'):
-        r =  picture_fish_counting_api_v2.single_image_object_counting_c(url_input_video, detection_graph, category_index, is_color_recognition_enabled, folder, width_cms, width_pxs_x_cm)
+        r =  picture_fish_counting_api_v2.single_image_object_counting_c(url_input_video, detection_graph, category_index, is_color_recognition_enabled, width_cms, width_pxs_x_cm)
 
-    currPath = os.getcwd()
-    f,tail = folder.split('/images')
-    os.chdir(os.getcwd() + '/' + f)
-    shutil.make_archive(folder.split('/')[len(folder.split('/')) - 2] + '_images_zip_result', "zip", './images')
+    _, dir_zip = url_input_video.split('amazonaws.com/')
+    name_file_zip = dir_zip + '_images_zip_result.zip'
+    dir_images = dir_zip + '/images'
+    session = boto3.session.Session( aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"), aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"), region_name=os.environ.get("AWS_REGION") )
+    s3 = session.client('s3')
+    paginator = s3.get_paginator("list_objects_v2")
+    pages = paginator.paginate(Bucket=os.environ.get("AWS_BUCKET"), Prefix=dir_images)
 
-    for f in glob.glob(os.getcwd() + "./images/*"):
-        os.remove(f)
-    os.rmdir("images")
+    archive = BytesIO()
+    for page in pages:
+        for obj_key in page['Contents']:
+            obj = s3.get_object(Bucket=os.environ.get("AWS_BUCKET"), Key=obj_key['Key'])
+            s3.delete_object(Bucket=os.environ.get("AWS_BUCKET"), Key=obj_key['Key'])
+            _, name = obj_key['Key'].split('/images/object')
+            name = 'object' + name
+            image = obj['Body'].read()
+            print(name)
+            with ZipFile(archive, 'a') as zip_archive:
+                zip_archive.writestr(name, image)
 
-    os.chdir(currPath)
+    s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_zip, Body=archive.getvalue(), ContentType='application/zip', ACL='public-read')
+    archive.close()
 
     return r
