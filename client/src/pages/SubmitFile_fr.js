@@ -9,7 +9,7 @@ const labels = {
   // fileData
   tit_down: 'TÉLÉCHARGEMENTS',
   tit_processed: (type) => {
-    return (type === 'image' ? 'image' : 'vidéo' + ' traitée')
+    return ((type === 'image' ? 'image' : 'vidéo').concat(' traitée'))
   },
   tit_table: 'Tableau des espèces / tailles',
   tit_det_images: 'Images de détections individuelles',

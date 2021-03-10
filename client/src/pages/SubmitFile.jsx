@@ -343,9 +343,9 @@ class SubmitFile extends Component {
             </div>
             <hr />
             <div className="submitfile__col-67">
-              <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank">{this.state.labels['tit_processed'](type)}</a>
-              <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank">{this.state.labels['tit_table']}</a>
-              <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank">{this.state.labels['tit_det_images']}</a>
+              <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_processed'](type)}</a>
+              <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_table']}</a>
+              <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_det_images']}</a>
             </div>
           </div>
         )

@@ -9,7 +9,7 @@ const labels = {
   // fileData
   tit_down: 'TRANSFERÊNCIAS',
   tit_processed: (type) => {
-    return (type === 'image' ? 'Imagem' : 'Vídeo' + ' processada')
+    return ((type === 'image' ? 'Imagem' : 'Vídeo').concat(' processada'))
   },
   tit_table: 'Tabela de espécies/tamanho',
   tit_det_images: 'Imagens de detecções individuais',

@@ -58,7 +58,7 @@ class Links extends Component {
   render() {
     console.log('links state', this.state)
     console.log('links props', this.props)
-    const { authenticated, twitterId, ip, user, } = this.state
+    const { authenticated, } = this.state
     return (
       <div className="links">
         <Link to={{ pathname: "/" }}
