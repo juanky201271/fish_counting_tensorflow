@@ -68,13 +68,13 @@ def get_image_video_awss3():
     if request.method == 'POST':
         url_input_video = request.get_json()
         video = url_input_video.get('url_input_video')
-        dir = 'submits/' + url_input_video.get("dir")
+        _, name_file = video.split('amazonaws.com/')
         cam = cv2.VideoCapture(video)
         ret, frame = cam.read()
         #cv2.imshow('first frame', frame)
         #cv2.waitKey(0)
         if ret:
-            name = dir + '/first_frame_video.png'
+            name = name_file + '_first_frame_video.png'
             image_pil = Image.fromarray(np.uint8(frame))
             output = six.BytesIO()
             image_pil.save(output, format='PNG')

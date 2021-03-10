@@ -42,7 +42,7 @@ export const pictureCalibrationFishLocaly = (url_input_video, dir, model, cms) =
 export const pictureCalibrationFishAwsS3 = (url_input_video, model, cms) => flask_api.post(`/picturecalibrationfishawss3`, { url_input_video, model, cms })
 
 export const imageVideoLocaly = (url_input_video, dir) => flask_api.post(`/imagevideolocaly`, { url_input_video, dir })
-export const imageVideoAwsS3 = (url_input_video, dir) => flask_api.post(`/imagevideoawss3`, { url_input_video, dir })
+export const imageVideoAwsS3 = (url_input_video) => flask_api.post(`/imagevideoawss3`, { url_input_video })
 
 const apis = {
   createSubmit,

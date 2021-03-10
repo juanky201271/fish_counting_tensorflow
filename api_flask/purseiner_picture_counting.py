@@ -6,7 +6,6 @@
 
 import tensorflow as tf
 import glob, os
-import shutil
 import boto3
 
 from utils import backbone
@@ -46,15 +45,16 @@ def purseiner_picture_counting_process(url_input_video, model, type, width_cms, 
 
     archive = BytesIO()
     for page in pages:
-        for obj_key in page['Contents']:
-            obj = s3.get_object(Bucket=os.environ.get("AWS_BUCKET"), Key=obj_key['Key'])
-            s3.delete_object(Bucket=os.environ.get("AWS_BUCKET"), Key=obj_key['Key'])
-            _, name = obj_key['Key'].split('/images/object')
-            name = 'object' + name
-            image = obj['Body'].read()
-            print(name)
-            with ZipFile(archive, 'a') as zip_archive:
-                zip_archive.writestr(name, image)
+        if ('Contents' in page):
+            for obj_key in page['Contents']:
+                obj = s3.get_object(Bucket=os.environ.get("AWS_BUCKET"), Key=obj_key['Key'])
+                s3.delete_object(Bucket=os.environ.get("AWS_BUCKET"), Key=obj_key['Key'])
+                _, name = obj_key['Key'].split('/images/object')
+                name = 'object' + name
+                image = obj['Body'].read()
+                print(name)
+                with ZipFile(archive, 'a') as zip_archive:
+                    zip_archive.writestr(name, image)
 
     s3.put_object(Bucket=os.environ.get("AWS_BUCKET"), Key=name_file_zip, Body=archive.getvalue(), ContentType='application/zip', ACL='public-read')
     archive.close()

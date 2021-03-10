@@ -120,6 +120,7 @@ class SubmitFile extends Component {
     }
 
     handleUpload = async e => {
+      this.setState({ isLoading: true })
       const name = "File_" + Date.now() + '_' + this.state.selectedFile.name
       let _id, dir
       const payload = this.payload(name)
@@ -161,13 +162,14 @@ class SubmitFile extends Component {
         .catch(e => console.log('Upload file ERROR: ', e))
       const type = this.state.selectedFile.type.split('/')[0]
       if (type === 'video') {
-        await api.imageVideoAwsS3(uploadedFile, dir)
+        await api.imageVideoAwsS3(uploadedFile)
           .then(res => {
             this.setState({ firstImageVideo: res.data.name })
           })
           .catch(e => console.log('Image Video file ERROR: ', e))
       }
 
+      this.setState({ isLoading: false })
     }
 
     handleCalibration = async e => {
@@ -300,7 +302,7 @@ class SubmitFile extends Component {
     }
 
     handleCancel = e => {
-      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, })
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, firstImageVideo: '' })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
       }
@@ -377,7 +379,7 @@ class SubmitFile extends Component {
         process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile :
         ''
       const image_video = this.state.firstImageVideo ?
-        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/first_frame_video.png' :
+        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_first_frame_video.png' :
         ''
       const imageCalibration = this.state.uploadedFileCalibration ?
         process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.uploadedFileCalibration :
@@ -387,7 +389,7 @@ class SubmitFile extends Component {
         process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png' :
         ''
       const videoResult = this.state.firstImageVideo ?
-        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/last_frame_video.png' :
+        process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_last_frame_video.png' :
         ''
       const imageCalibrationResult = this.state.resultFileCalibration ?
         process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + this.state.resultFileCalibration :
