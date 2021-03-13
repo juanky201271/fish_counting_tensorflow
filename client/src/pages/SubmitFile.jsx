@@ -246,7 +246,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'models/' + model, width_cms, width_pxs_x_cm)
+        await api.videoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -261,7 +261,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'models/' + model, width_cms, width_pxs_x_cm)
+        await api.videoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
@@ -276,7 +276,7 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'models/' + model, width_cms, width_pxs_x_cm)
+        await api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
             this.setState({ total_fish: res.data.total_fish })
           })
