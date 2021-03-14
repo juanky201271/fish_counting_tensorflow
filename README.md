@@ -56,6 +56,8 @@ Si te he invitado tendras usuario (USER en la variable MONGODB_URI) y clave (PAS
 ### (venv) $ `pip install pillow`
 ### (venv) $ `pip install tf-models-official`
 ### (venv) $ `pip install opencv-contrib-python`
+### (venv) $ `pip install boto3`
+### (venv) $ `pip install smart-open`
 ### `venv\Scripts\deactivate`
 ### `cd..`
 ### `npm run start-api` (alternativa: `cd api_flask` `venv\Scripts\activate` `flask run`)
