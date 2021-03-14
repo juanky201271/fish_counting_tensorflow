@@ -196,7 +196,7 @@ class SubmitFile extends Component {
         })
         .catch(e => console.log('Upload Calibration file ERROR: ', e))
 
-      await api.pictureCalibrationFishAwsS3(uploadedFileCalibration, this.state.model, this.state.cms)
+      await api.pictureCalibrationFishAwsS3(uploadedFileCalibration, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + this.state.model, this.state.cms)
         .then(res => {
           console.log(res.data)
           this.setState({
