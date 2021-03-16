@@ -290,6 +290,9 @@ class SubmitFile extends Component {
       this.setState({ isLoading: true })
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
+      console.log(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link)
+      console.log(process.env.REACT_APP_AWS_BUCKET)
+
       if (dir !== null) {
         await api.pictureCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
