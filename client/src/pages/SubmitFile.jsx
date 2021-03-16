@@ -59,7 +59,6 @@ class SubmitFile extends Component {
         this.setState({ isLoading: true })
         await api.getModelsAwsS3()
                 .then(res => {
-                  console.log(res)
                   this.setState({ models: res.data.data })
                 })
                 .catch(err => {
@@ -74,7 +73,6 @@ class SubmitFile extends Component {
     }
 
     changeLanguage = async ({ detail }) => {
-      console.log(detail)
       this.setState({
         errors: errors_lang[detail],
         labels: labels_lang[detail],
@@ -155,7 +153,6 @@ class SubmitFile extends Component {
       let uploadedFile = ''
       await api.createUploadFileAwsS3(formData, dir)
         .then(res => {
-          console.log(res)
           uploadedFile = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + res.data.originalname
           this.setState({ uploadedFile: res.data.originalname })
         })
@@ -198,7 +195,6 @@ class SubmitFile extends Component {
 
       await api.pictureCalibrationFishAwsS3(uploadedFileCalibration, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + this.state.model, this.state.cms)
         .then(res => {
-          console.log(res.data)
           this.setState({
             total_fishCalibration: res.data.total_fish,
             width_pxs_x_cm: res.data.width_pxs_x_cm === '' ? null : res.data.width_pxs_x_cm,
@@ -289,9 +285,6 @@ class SubmitFile extends Component {
     handlePictureProcess = async e => {
       this.setState({ isLoading: true })
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
-
-      console.log(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link)
-      console.log(process.env.REACT_APP_AWS_BUCKET)
 
       if (dir !== null) {
         await api.pictureCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)

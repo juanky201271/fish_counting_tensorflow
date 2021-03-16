@@ -21,7 +21,6 @@ createUploadFileLocaly = async (req, res, next) => {
 }
 
 const uploadFile = async params => {
-  console.log(params)
   return new Promise ((resolve, reject) => {
     const s3params = {
       Bucket: params.bucket,
@@ -162,7 +161,6 @@ createDirLocaly = async (req, res) => {
 }
 
 const createDir = async params => {
-  console.log(params)
   return new Promise ((resolve, reject) => {
     const s3params = {
       Bucket: params.bucket,

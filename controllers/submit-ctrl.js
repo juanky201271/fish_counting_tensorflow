@@ -174,7 +174,6 @@ getModelsLocaly = async (req, res) => {
 }
 
 const listDirectories  = async params => {
-  console.log(params)
   return new Promise ((resolve, reject) => {
     const s3params = {
       Bucket: params.bucket,
@@ -192,7 +191,6 @@ const listDirectories  = async params => {
 }
 
 const objectExits = async params => {
-  console.log(params)
   return new Promise ((resolve, reject) => {
     const s3params = {
       Bucket: params.bucket,
