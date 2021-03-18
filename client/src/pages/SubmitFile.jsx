@@ -57,13 +57,24 @@ class SubmitFile extends Component {
 
     componentDidMount = async () => {
         this.setState({ isLoading: true })
-        await api.getModelsAwsS3()
-                .then(res => {
-                  this.setState({ models: res.data.data })
-                })
-                .catch(err => {
-                  console.log(err)
-                })
+        //await api.getModelsAwsS3()
+        //        .then(res => {
+        //          this.setState({ models: res.data.data })
+        //        })
+        //        .catch(err => {
+        //          console.log(err)
+        //        })
+        this.setState({
+          models: [
+            {
+              ckpt_dir: false,
+              frozen_inference_graph: true,
+              saved_model_dir: false,
+              saved_model_root: false,
+              model: process.env.REACT_APP_CURR_MODEL,
+            }
+          ]
+        })
         window.addEventListener('changeLanguage', this.changeLanguage);
         this.setState({ isLoading: false })
     }
@@ -193,17 +204,18 @@ class SubmitFile extends Component {
         })
         .catch(e => console.log('Upload Calibration file ERROR: ', e))
 
-      await api.pictureCalibrationFishAwsS3(uploadedFileCalibration, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + this.state.model, this.state.cms)
+      api.pictureCalibrationFishAwsS3(uploadedFileCalibration, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + this.state.model, this.state.cms)
         .then(res => {
           this.setState({
             total_fishCalibration: res.data.total_fish,
             width_pxs_x_cm: res.data.width_pxs_x_cm === '' ? null : res.data.width_pxs_x_cm,
             resultFileCalibration: res.data.resultFileCalibration,
+            isLoading: false,
           })
           if (res.data.total_fish !== null && (res.data.total_fish > 1 || res.data.total_fish === 0)) {
             this.setState(
               {
-                errorCalibration: this.state.errors['only_one_fish']
+                errorCalibration: this.state.errors['only_one_fish'],
               },
               () => {
                 setTimeout(() => { this.setState({ errorCalibration: null }) }, 5000)
@@ -211,9 +223,15 @@ class SubmitFile extends Component {
             )
           }
         })
-        .catch(e => console.log('Picture Calibration Fish ERROR: ', e))
-
-      this.setState({ isLoading: false })
+        .catch(e => {
+          console.log('Picture Calibration Fish ERROR: ', e)
+          this.setState({
+            errorCalibration: this.state.errors['long_process'], isLoading: false,
+          },
+          () => {
+            setTimeout(() => { this.setState({ errorCalibration: null }) }, 5000)
+          })
+        })
     }
 
     payload = (name) => {
@@ -242,14 +260,20 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
+        api.videoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
-            this.setState({ total_fish: res.data.total_fish })
+            this.setState({ total_fish: res.data.total_fish, isLoading: false, })
           })
-          .catch(e => console.log('Video Roi Count Fish ERROR: ', e))
+          .catch(e => {
+            console.log('Video Roi Count Fish ERROR: ', e)
+            this.setState({
+              error: this.state.errors['long_process'], isLoading: false,
+            },
+            () => {
+              setTimeout(() => { this.setState({ error: null }) }, 5000)
+            })
+          })
       }
-
-      this.setState({ isLoading: false })
     }
 
     handleVideoProcess = async e => {
@@ -257,14 +281,20 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.videoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
+        api.videoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
-            this.setState({ total_fish: res.data.total_fish })
+            this.setState({ total_fish: res.data.total_fish, isLoading: false, })
           })
-          .catch(e => console.log('Video Count Fish ERROR: ', e))
+          .catch(e => {
+            console.log('Video Count Fish ERROR: ', e)
+            this.setState({
+              error: this.state.errors['long_process'], isLoading: false,
+            },
+            () => {
+              setTimeout(() => { this.setState({ error: null }) }, 5000)
+            })
+          })
       }
-
-      this.setState({ isLoading: false })
     }
 
     handleWebcamProcess = async e => {
@@ -272,14 +302,20 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
+        api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
-            this.setState({ total_fish: res.data.total_fish })
+            this.setState({ total_fish: res.data.total_fish, isLoading: false, })
           })
-          .catch(e => console.log('Webcam Count Fish ERROR: ', e))
+          .catch(e => {
+            console.log('Webcam Count Fish ERROR: ', e)
+            this.setState({
+              error: this.state.errors['long_process'], isLoading: false,
+            },
+            () => {
+              setTimeout(() => { this.setState({ error: null }) }, 5000)
+            })
+          })
       }
-
-      this.setState({ isLoading: false })
     }
 
     handlePictureProcess = async e => {
@@ -287,14 +323,20 @@ class SubmitFile extends Component {
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
-        await api.pictureCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
+        api.pictureCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
-            this.setState({ total_fish: res.data.total_fish })
+            this.setState({ total_fish: res.data.total_fish, isLoading: false, })
           })
-          .catch(e => console.log('Picture Count Fish ERROR: ', e))
+          .catch(e => {
+            console.log('Picture Count Fish ERROR: ', e)
+            this.setState({
+              error: this.state.errors['long_process'], isLoading: false,
+            },
+            () => {
+              setTimeout(() => { this.setState({ error: null }) }, 5000)
+            })
+          })
       }
-
-      this.setState({ isLoading: false })
     }
 
     handleCancel = e => {

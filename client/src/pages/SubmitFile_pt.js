@@ -2,6 +2,7 @@ const errors = {
   only_valid_files: 'Selecione apenas imagens ou vídeos para enviar',
   only_images: 'Carregue apenas imagens para calibração',
   only_one_fish: 'Selecione uma imagem com apenas um peixe',
+  long_process: 'Processo muito caro, tente novamente após alguns minutos',
 
 };
 
