@@ -354,7 +354,7 @@ class SubmitFile extends Component {
         error: this.state.errors['waiting'],
       },
       () => {
-        setTimeout(() => { this.setState({ error: null }) }, 1000)
+        setTimeout(() => { this.setState({ error: null }) }, 2000)
       })
       console.log('buscando en s3')
       const csv = 'submits/' + this.state.dir + '/' +  this.state.uploadedFile + '_csv_result.csv'
