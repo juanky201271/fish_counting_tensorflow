@@ -5,7 +5,8 @@ const api = axios.create({
 })
 
 const flask_api = axios.create({
-  baseURL: process.env.REACT_APP_FLASK_API // flask
+  baseURL: process.env.REACT_APP_FLASK_API, // flask
+  timeout: 29000,
 })
 
 export const createSubmit = payload => api.post(`/submit`, payload)
@@ -23,7 +24,8 @@ export const createUploadResultLocaly = payload => api.post(`/uploadresultlocaly
 export const createUploadResultAwsS3 = payload => api.post(`/uploadresultawss3`, payload)
 export const createDirLocaly = dir => api.post(`/createdirlocaly`, { dir: dir })
 export const createDirAwsS3 = dir => api.post(`/createdirawss3`, { dir: dir })
-export const fileExitsAwsS3 = payload => api.post(`/fileexits`, payload)
+export const fileExitsAwsS3 = payload => api.post(`/fileexitsawss3`, payload)
+export const fileExitsFilterAwsS3 = payload => api.post(`/fileexitsfilterawss3`, payload)
 
 export const getTime = () => flask_api.get(`/time`)
 
@@ -62,6 +64,7 @@ const apis = {
   createDirLocaly,
   createDirAwsS3,
   fileExitsAwsS3,
+  fileExitsFilterAwsS3,
 
   getTime,
   videoRoiCountFishAwsS3,

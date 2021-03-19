@@ -4,6 +4,7 @@ const errors = {
   only_one_fish: 'Please select an image with just one fish',
   long_process: 'Very complex process, wait for it to finish or cancel',
   waiting: '... You can wait or cancel ...',
+  error_process: 'The process has failed, try again in a few minutes',
 
 };
 

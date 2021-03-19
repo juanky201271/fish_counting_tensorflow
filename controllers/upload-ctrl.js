@@ -227,6 +227,65 @@ fileExitsAwsS3 = async (req, res) => {
     })
 }
 
+const listObjectFilter  = async params => {
+  return new Promise ((resolve, reject) => {
+    const s3params = {
+      Bucket: params.bucket,
+      MaxKeys: 10,
+      Delimiter: '/',
+      Prefix: params.filter,
+    }
+    s3.listObjectsV2 (s3params, (err, data) => {
+      if (err) {
+        reject (err)
+      }
+      resolve (data)
+    })
+  })
+}
+
+fileExitsFilterAwsS3 = async (req, res) => {
+  await listObjectFilter({ bucket: req.body.bucket, filter: req.body.filter })
+    .then(data => {
+      const objs = data.CommonPrefixes
+      let resultFileCalibration = ''
+      let total_fishCalibration = ''
+      let width_pxs_x_cm = ''
+      if (objs.length > 0) {
+        for (i = 0; i < objs.length; i++) {
+          const obj = objs[i]
+          console.log(obj)
+          resultFileCalibration = obj.Prefix
+          total_fishCalibration = obj.Prefix.replace(req.body.filter + '__', '').split('__')[0] || ''
+          width_pxs_x_cm = obj.Prefix.replace(req.body.filter + '__', '').split('__')[1] || ''
+          if (resultFileCalibration && total_fishCalibration && width_pxs_x_cm) {
+            break
+          } else {
+            resultFileCalibration = ''
+            total_fishCalibration = ''
+            width_pxs_x_cm = ''
+          }
+        }
+      }
+
+      if (resultFileCalibration && total_fishCalibration && width_pxs_x_cm) {
+        return res.status(201).json({
+          success: true,
+          resultFileCalibration,
+          total_fishCalibration,
+          width_pxs_x_cm,
+          message: 'Aws S3 File exists!',
+        })
+      } else {
+        return res.status(400).json({ success: false, error: 'Object doen not found!', })
+      }
+    })
+    .catch(err => {
+      console.log('object exits error - ', err)
+      return res.status(400).json({ success: false, error: err, })
+    })
+}
+
 module.exports = {
   createUploadFileLocaly,
   createUploadFileAwsS3,
@@ -239,4 +298,5 @@ module.exports = {
   createDirLocaly,
   createDirAwsS3,
   fileExitsAwsS3,
+  fileExitsFilterAwsS3,
 }
