@@ -50,9 +50,11 @@ class SubmitFile extends Component {
             width_pxs_x_cm: null, // with calibration
             errors: errors_lang[this.props.parentState.language],
             labels: labels_lang[this.props.parentState.language],
+            cancelarWaiting: false,
         }
         this.uploadInputRef = React.createRef()
         this.uploadInputRefCalibration = React.createRef()
+        this.interval = null
     }
 
     componentDidMount = async () => {
@@ -267,11 +269,13 @@ class SubmitFile extends Component {
           .catch(e => {
             console.log('Video Roi Count Fish ERROR: ', e)
             this.setState({
-              error: this.state.errors['long_process'], isLoading: false,
+              error: this.state.errors['long_process'], //isLoading: false,
+              cancelarWaiting: true,
             },
             () => {
               setTimeout(() => { this.setState({ error: null }) }, 5000)
             })
+            this.interval = setInterval(this.s3Demon, 5000)
           })
       }
     }
@@ -288,11 +292,13 @@ class SubmitFile extends Component {
           .catch(e => {
             console.log('Video Count Fish ERROR: ', e)
             this.setState({
-              error: this.state.errors['long_process'], isLoading: false,
+              error: this.state.errors['long_process'], //isLoading: false,
+              cancelarWaiting: true,
             },
             () => {
               setTimeout(() => { this.setState({ error: null }) }, 5000)
             })
+            this.interval = setInterval(this.s3Demon, 5000)
           })
       }
     }
@@ -309,11 +315,13 @@ class SubmitFile extends Component {
           .catch(e => {
             console.log('Webcam Count Fish ERROR: ', e)
             this.setState({
-              error: this.state.errors['long_process'], isLoading: false,
+              error: this.state.errors['long_process'], //isLoading: false,
+              cancelarWaiting: true,
             },
             () => {
               setTimeout(() => { this.setState({ error: null }) }, 5000)
             })
+            this.interval = setInterval(this.s3Demon, 5000)
           })
       }
     }
@@ -330,20 +338,94 @@ class SubmitFile extends Component {
           .catch(e => {
             console.log('Picture Count Fish ERROR: ', e)
             this.setState({
-              error: this.state.errors['long_process'], isLoading: false,
+              error: this.state.errors['long_process'], //isLoading: false,
+              cancelarWaiting: true,
             },
             () => {
               setTimeout(() => { this.setState({ error: null }) }, 5000)
             })
+            this.interval = setInterval(this.s3Demon, 5000)
           })
       }
     }
 
+    s3Demon = async () => {
+      this.setState({
+        error: this.state.errors['waiting'],
+      },
+      () => {
+        setTimeout(() => { this.setState({ error: null }) }, 1000)
+      })
+      console.log('buscando en s3')
+      const csv = 'submits/' + this.state.dir + '/' +  this.state.uploadedFile + '_csv_result.csv'
+      const video = 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_video_result.mp4'
+      const image = 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png'
+      const zip = 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_images_zip_result.zip'
+      const type = this.state.selectedFile.type.split('/')[0] || ''
+      let csv_exists = false
+      let video_exists = false
+      let image_exists = false
+      let zip_exists = false
+      await api.fileExitsAwsS3({ bucket: process.env.REACT_APP_AWS_BUCKET, file: csv })
+        .then(res => {
+          csv_exists = res.data.success
+        })
+        .catch(err => {
+          if (err && err.code !== 'NotFound') {
+            console.log('object csv exits error - ', err)
+          }
+        })
+      if (type === 'image') {
+        await api.fileExitsAwsS3({ bucket: process.env.REACT_APP_AWS_BUCKET, file: image })
+          .then(res => {
+            image_exists = res.data.success
+          })
+          .catch(err => {
+            if (err && err.code !== 'NotFound') {
+              console.log('object image exits error - ', err)
+            }
+          })
+      } else {
+        await api.fileExitsAwsS3({ bucket: process.env.REACT_APP_AWS_BUCKET, file: video })
+          .then(res => {
+            video_exists = res.data.success
+          })
+          .catch(err => {
+            if (err && err.code !== 'NotFound') {
+              console.log('object video exits error - ', err)
+            }
+          })
+      }
+      await api.fileExitsAwsS3({ bucket: process.env.REACT_APP_AWS_BUCKET, file: zip })
+        .then(res => {
+          zip_exists = res.data.success
+        })
+        .catch(err => {
+          if (err && err.code !== 'NotFound') {
+            console.log('object zip exits error - ', err)
+          }
+        })
+
+      if (type === 'image') {
+        if (csv_exists && image_exists && zip_exists) {
+          this.setState({ isLoading: false, total_fish: 0, cancelarWaiting: false, })
+          clearInterval(this.interval)
+        }
+      } else {
+        if (csv_exists && video_exists && zip_exists) {
+          this.setState({ isLoading: false, total_fish: 0, cancelarWaiting: false, })
+          clearInterval(this.interval)
+        }
+      }
+      console.log(csv_exists, video_exists, image_exists, zip_exists)
+    }
+
     handleCancel = e => {
-      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, firstImageVideo: '' })
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, firstImageVideo: '', isLoading: false, cancelarWaiting: false, })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
       }
+      clearInterval(this.interval)
     }
 
     handleCancelCalibration = e => {
@@ -504,7 +586,7 @@ class SubmitFile extends Component {
     render() {
       console.log('submit file state', this.state)
       console.log('submit file props', this.props)
-        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, } = this.state
+        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, } = this.state
         const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
         const fileData = this.fileData()
         const imageData = this.imageData()
@@ -535,9 +617,7 @@ class SubmitFile extends Component {
                   </div>
                 </div>
                 <div className="submitfile__header--error">
-                  {error && (
-                    <div className="submitfile__header--error--label-red">{error}</div>
-                  )}
+                  <div className="submitfile__header--error--label-red">{error ? error : ''}</div>
                 </div>
 
                 <div className="submitfile__header--select-model">
@@ -566,7 +646,7 @@ class SubmitFile extends Component {
                     </div>
 
                     <div className="submitfile__col-33-buttons">
-                      <button className="submitfile__button-cancel btn" id="processButton" onClick={this.handleCancel} disabled={isLoading || !model} >{this.state.labels['tit_cancel'](total_fish)}</button>
+                      <button className="submitfile__button-cancel btn" id="processButton" onClick={this.handleCancel} disabled={(isLoading || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
                     </div>
                   </div>
                 </div>
@@ -609,9 +689,7 @@ class SubmitFile extends Component {
                         </div>
                       </div>
                       <div className="submitfile__header--error">
-                        {errorCalibration && (
-                          <div className="submitfile__header--error--label-red">{errorCalibration}</div>
-                        )}
+                        <div className="submitfile__header--error--label-red">{errorCalibration ? errorCalibration : ''}</div>
                       </div>
                     </>
                   )

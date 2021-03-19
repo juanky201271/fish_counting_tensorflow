@@ -2,7 +2,8 @@ const errors = {
   only_valid_files: 'Please select only images or videos to upload',
   only_images: 'Please upload only images for calibration',
   only_one_fish: 'Please select an image with just one fish',
-  long_process: 'Process too expensive, try again after a few minutes',
+  long_process: 'Very complex process, wait for it to finish or cancel',
+  waiting: '... You can wait or cancel ...',
 
 };
 

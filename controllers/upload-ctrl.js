@@ -191,6 +191,42 @@ createDirAwsS3 = async (req, res) => {
     })
 }
 
+const objectExits = async params => {
+  return new Promise ((resolve, reject) => {
+    const s3params = {
+      Bucket: params.bucket,
+      Key: params.file,
+    }
+    s3.headObject (s3params, (err, data) => {
+      if (err) {
+        reject (err)
+      }
+      resolve (data)
+    })
+  })
+}
+
+fileExitsAwsS3 = async (req, res) => {
+  await objectExits({ bucket: req.body.bucket, file: req.body.file })
+    .then(data => {
+      return res.status(201).json({
+        success: true,
+        message: 'Aws S3 File exists!',
+      })
+    })
+    .catch(err => {
+      if (err && err.code !== 'NotFound') {
+        console.log('object exits error - ', err)
+        return res.status(400).json({ success: null, error: err, })
+      } else {
+        return res.status(201).json({
+          success: false,
+          message: 'Aws S3 File does not exists!',
+        })
+      }
+    })
+}
+
 module.exports = {
   createUploadFileLocaly,
   createUploadFileAwsS3,
@@ -202,4 +238,5 @@ module.exports = {
   uploadResultAwsS3,
   createDirLocaly,
   createDirAwsS3,
+  fileExitsAwsS3,
 }

@@ -21,8 +21,9 @@ export const createUploadFileLocaly = (payload, dir) => api.post(`/uploadfileloc
 export const createUploadFileAwsS3 = (payload, dir) => api.post(`/uploadfileawss3`, payload, { headers: { dir: dir } })
 export const createUploadResultLocaly = payload => api.post(`/uploadresultlocaly`, payload)
 export const createUploadResultAwsS3 = payload => api.post(`/uploadresultawss3`, payload)
-export const createDirLocaly = dir => api.post(`/createdirlocaly/`, { dir: dir })
-export const createDirAwsS3 = dir => api.post(`/createdirawss3/`, { dir: dir })
+export const createDirLocaly = dir => api.post(`/createdirlocaly`, { dir: dir })
+export const createDirAwsS3 = dir => api.post(`/createdirawss3`, { dir: dir })
+export const fileExitsAwsS3 = payload => api.post(`/fileexits`, payload)
 
 export const getTime = () => flask_api.get(`/time`)
 
@@ -60,6 +61,7 @@ const apis = {
   createUploadResultAwsS3,
   createDirLocaly,
   createDirAwsS3,
+  fileExitsAwsS3,
 
   getTime,
   videoRoiCountFishAwsS3,

@@ -10,5 +10,6 @@ uploadRouter.post('/uploadresultlocaly', UploadCtrl.uploadResultLocaly.single('m
 uploadRouter.post('/uploadresultawss3', UploadCtrl.uploadResultAwsS3.single('myResult'), UploadCtrl.createUploadResultAwsS3)
 uploadRouter.post('/createdirlocaly', UploadCtrl.createDirLocaly)
 uploadRouter.post('/createdirawss3', UploadCtrl.createDirAwsS3)
+uploadRouter.post('/fileexits', UploadCtrl.fileExitsAwsS3)
 
 module.exports = uploadRouter

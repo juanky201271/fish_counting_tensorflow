@@ -2,7 +2,8 @@ const errors = {
   only_valid_files: 'Veuillez sélectionner uniquement des images ou des vidéos à télécharger',
   only_images: "Veuillez télécharger uniquement des images pour l'étalonnage",
   only_one_fish: 'Veuillez sélectionner une image avec un seul poisson',
-  long_process: 'Processus trop cher, réessayez après quelques minutes',
+  long_process: "Processus très complexe, attendez qu'il se termine ou annulez",
+  waiting: '... Tu peux attendre ou annuler ...',
 
 };
 
