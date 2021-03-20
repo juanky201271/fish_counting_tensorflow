@@ -291,7 +291,7 @@ module.exports = function(io) {
 
     console.log(req.body.key, req.body.action)
     const uploadedFile = req.body.key.split('amazonaws.com/')[1] || ''
-    io.emit("logging", { uploadedFile, action: req.body.action })
+    io.emit("logging", { uploadedFile, action: req.body.action, info: req.body.info })
     return res.status(201).json({ success: true, error: 'Log saved!', })
 
   }
