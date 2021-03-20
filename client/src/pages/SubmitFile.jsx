@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router'
 import api from '../api'
+import { socket } from '../components'
 
 import './SubmitFile.scss'
 import { errors as errors_es, labels as labels_es } from './SubmitFile_es.js'
@@ -52,6 +53,7 @@ class SubmitFile extends Component {
             labels: labels_lang[this.props.parentState.language],
             cancelarWaiting: false,
             cancelarWaitingCalibration: false,
+            log: '',
         }
         this.uploadInputRef = React.createRef()
         this.uploadInputRefCalibration = React.createRef()
@@ -80,6 +82,11 @@ class SubmitFile extends Component {
           ]
         })
         window.addEventListener('changeLanguage', this.changeLanguage);
+        socket.on("logging", (updatedFile, action) => {
+          if (updatedFile === this.state.uploadedFile or uploadedFile === this.state.uploadedFileCalibration) {
+            this.setState({ log: action })
+          }
+        })
         this.setState({ isLoading: false })
     }
 
@@ -710,7 +717,7 @@ class SubmitFile extends Component {
     render() {
       console.log('submit file state', this.state)
       console.log('submit file props', this.props)
-        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration } = this.state
+        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log } = this.state
         const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
         const fileData = this.fileData()
         const imageData = this.imageData()
@@ -860,6 +867,8 @@ class SubmitFile extends Component {
                 <div className="submitfile__header-right--file">
                   {fileData}
                 </div>
+
+                <div>{log}</div>
               </div>
             </div>
         )

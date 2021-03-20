@@ -9,6 +9,11 @@ const PORT = process.env.PORT || 8000 // express
 const bodyParser = require('body-parser')
 const mongoose = require("mongoose")
 const cors = require("cors")
+const http = require("http").createServer(app)
+const socketIo = require("socket.io")
+
+const io = socketIo(http)
+
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
 const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
@@ -19,14 +24,16 @@ const db = require('./db')
 const AWS = require("aws-sdk")
 
 AWS.config.getCredentials(function(err) {
-  if (err) console.log(err.stack);
-  // credentials not loaded
-  else {
-    console.log("Access key:", AWS.config.credentials.accessKeyId);
+  if (err) console.log(err.stack) {
+    // credentials not loaded
+    console.log('aws - credentials not loaded')
+  } else {
+    //console.log("Access key:", AWS.config.credentials.accessKeyId);
+    console.log('aws - credentials loaded')
   }
 })
 
-console.log("Region: ", AWS.config.region)
+//console.log("Region: ", AWS.config.region)
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
@@ -63,11 +70,18 @@ app.use('/api', uploadRouter)
 
 if (process.env.NODE_ENV == "production") {
   app.use(express.static(path.join(__dirname, "client/build")))
-  app.use(express.static(path.join(__dirname, "client/public")))
+  //app.use(express.static(path.join(__dirname, "client/public")))
 
   app.use(function(req, res) {
   	res.sendFile(path.join(__dirname, '../client/build/index.html'))
   })
 }
 
-app.listen(PORT, () => console.log(`Server on Port ${PORT}`))
+const server = http.listen(PORT, () => console.log(`Server on Port ${PORT}`))
+
+io.on("connection", (socket) => {
+  socket.on('logging', function (updatedFile, action) {
+    io.sockets.emit('logging', updatedFile, action)
+    console.log('emit', updatedFile, action)
+  })
+}
