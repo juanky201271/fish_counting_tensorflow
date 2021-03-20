@@ -290,8 +290,8 @@ module.exports = function(io) {
   logging = async (req, res) => {
 
     console.log(req.body.key, req.body.action)
-    const updatedFile = req.body.key.split('amazonaws.com/')[1] || ''
-    io.emit("logging", { updatedFile: updatedFile, action: req.body.action })
+    const uploadedFile = req.body.key.split('amazonaws.com/')[1] || ''
+    io.emit("logging", { uploadedFile, action: req.body.action })
     return res.status(201).json({ success: true, error: 'Log saved!', })
 
   }
