@@ -54,6 +54,7 @@ class SubmitFile extends Component {
             cancelarWaiting: false,
             cancelarWaitingCalibration: false,
             log: 'waiting',
+            info: '',
         }
         this.uploadInputRef = React.createRef()
         this.uploadInputRefCalibration = React.createRef()
@@ -63,7 +64,7 @@ class SubmitFile extends Component {
           const uploadedFileState = 'submits/' + this.state.dir + '/' + this.state.uploadedFile
           const uploadedFileCalibrationState = 'submits/' + this.state.dir + '/' + this.state.uploadedFileCalibration
           if (params.uploadedFile === uploadedFileState || params.uploadedFile === uploadedFileCalibrationState) {
-            this.setState({ log: params.action })
+            this.setState({ log: params.action, info: params.info ? params.info : '' })
           } else {
             console.log('socket no match', params)
           }
@@ -721,7 +722,7 @@ class SubmitFile extends Component {
     render() {
       console.log('submit file state', this.state)
       console.log('submit file props', this.props)
-        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log } = this.state
+        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info } = this.state
         const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
         const fileData = this.fileData()
         const imageData = this.imageData()
@@ -849,7 +850,7 @@ class SubmitFile extends Component {
                     <>{this.state.labels['tit_lab_results']}</>
                   :
                     isLoading ?
-                      <>{this.state.labels['tit_lab_processing'] + ' [' + this.state.labels[log] + ']'}</>
+                      <>{this.state.labels['tit_lab_processing'] + ' [' + this.state.labels[log] + info ? ' {' + info + '}' : '' + ']'}</>
                     :
                       uploadedFile ?
                         <>{this.state.labels['tit_lab_sel_typ_process']}</>
