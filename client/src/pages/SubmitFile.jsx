@@ -82,8 +82,8 @@ class SubmitFile extends Component {
           ]
         })
         window.addEventListener('changeLanguage', this.changeLanguage);
-        socket.on("logging", (updatedFile, action) => {
-          if (updatedFile === this.state.uploadedFile || uploadedFile === this.state.uploadedFileCalibration) {
+        socket.on("logging", (uploadedFile, action) => {
+          if (uploadedFile === this.state.uploadedFile || uploadedFile === this.state.uploadedFileCalibration) {
             this.setState({ log: action })
           }
         })

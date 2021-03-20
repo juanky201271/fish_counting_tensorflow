@@ -296,7 +296,7 @@ module.exports = function(io) {
 
   }
 
-  return = {
+  return {
     createUploadFileLocaly,
     createUploadFileAwsS3,
     uploadFileLocaly,

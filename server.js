@@ -19,14 +19,14 @@ const session = require("express-session")
 const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
 
 const submitRouter = require('./routes/submit-router')
-const uploadRouter = require('./routes/upload-router')
+const uploadRouter = require('./routes/upload-router')(io)
 const db = require('./db')
 const AWS = require("aws-sdk")
 
 AWS.config.getCredentials(function(err) {
-  if (err) console.log(err.stack) {
+  if (err) {
     // credentials not loaded
-    console.log('aws - credentials not loaded')
+    console.log('aws - credentials not loaded - ',err.stack)
   } else {
     //console.log("Access key:", AWS.config.credentials.accessKeyId);
     console.log('aws - credentials loaded')
@@ -66,8 +66,6 @@ app.use(bodyParser.json())
 app.use('/api', submitRouter)
 app.use('/api', uploadRouter)
 
-
-
 if (process.env.NODE_ENV == "production") {
   app.use(express.static(path.join(__dirname, "client/build")))
   //app.use(express.static(path.join(__dirname, "client/public")))
@@ -84,4 +82,4 @@ io.on("connection", (socket) => {
     io.sockets.emit('logging', updatedFile, action)
     console.log('emit', updatedFile, action)
   })
-}
+})
