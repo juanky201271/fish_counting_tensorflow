@@ -62,6 +62,8 @@ class SubmitFile extends Component {
         socket.on("logging", (uploadedFile, action) => {
           if (uploadedFile === this.state.uploadedFile || uploadedFile === this.state.uploadedFileCalibration) {
             this.setState({ log: action })
+          } else {
+            console.log(uploadedFile, action)
           }
         })
     }
