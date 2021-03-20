@@ -59,6 +59,11 @@ class SubmitFile extends Component {
         this.uploadInputRefCalibration = React.createRef()
         this.interval = null
         this.intervalCalibration = null
+        socket.on("logging", (uploadedFile, action) => {
+          if (uploadedFile === this.state.uploadedFile || uploadedFile === this.state.uploadedFileCalibration) {
+            this.setState({ log: action })
+          }
+        })
     }
 
     componentDidMount = async () => {
@@ -82,11 +87,6 @@ class SubmitFile extends Component {
           ]
         })
         window.addEventListener('changeLanguage', this.changeLanguage);
-        socket.on("logging", (uploadedFile, action) => {
-          if (uploadedFile === this.state.uploadedFile || uploadedFile === this.state.uploadedFileCalibration) {
-            this.setState({ log: action })
-          }
-        })
         this.setState({ isLoading: false })
     }
 
