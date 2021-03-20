@@ -510,10 +510,10 @@ class SubmitFile extends Component {
 
     s3DemonCalibration = async () => {
       this.setState({
-        error: this.state.errors['waiting'],
+        errorCalibration: this.state.errors['waiting'],
       },
       () => {
-        setTimeout(() => { this.setState({ error: null }) }, 2000)
+        setTimeout(() => { this.setState({ errorCalibration: null }) }, 2000)
       })
       console.log('buscando en s3')
       const image_filter = 'submits/' + this.state.uploadedFileCalibration
@@ -552,10 +552,11 @@ class SubmitFile extends Component {
     }
 
     handleCancelCalibration = e => {
-      this.setState({ uploadedFileCalibration: '', selectedFileCalibration: '', resultFileCalibration: '', total_fishCalibration: null, cms: null, width_pxs_x_cm: null, isLoading: false, })
+      this.setState({ uploadedFileCalibration: '', selectedFileCalibration: '', resultFileCalibration: '', total_fishCalibration: null, cms: null, width_pxs_x_cm: null, isLoading: false, cancelarWaitingCalibration: false, })
       if (this.uploadInputRefCalibration.current) {
         this.uploadInputRefCalibration.current.value = ''
       }
+      clearInterval(this.intervalCalibration)
     }
 
     handleList = e => {
@@ -709,7 +710,7 @@ class SubmitFile extends Component {
     render() {
       console.log('submit file state', this.state)
       console.log('submit file props', this.props)
-        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, } = this.state
+        const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration } = this.state
         const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
         const fileData = this.fileData()
         const imageData = this.imageData()
@@ -769,7 +770,7 @@ class SubmitFile extends Component {
                     </div>
 
                     <div className="submitfile__col-33-buttons">
-                      <button className="submitfile__button-cancel btn" id="processButton" onClick={this.handleCancel} disabled={(isLoading || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
+                      <button className="submitfile__button-cancel btn" id="cancelButton" onClick={this.handleCancel} disabled={(isLoading || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
                     </div>
                   </div>
                 </div>
@@ -803,12 +804,14 @@ class SubmitFile extends Component {
                               className="submitfile__header--calibration--input-number form-control"
                               id="InputNumberCalibration"
                               type="number"
+                              value={cms ? cms : ''}
                               onChange={this.handleChangeInputNumberCalibration}
                               disabled={isLoading || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
                           />
                         </div>
                         <div className="submitfile__col-33">
                           <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading || !model ? true : selectedFileCalibration && cms && (!uploadedFileCalibration || resultFileCalibration)  ? false : true} >{this.state.labels['tit_calibrate']}</button>
+                          <button className="submitfile__button-cancel btn" id="cancelCalibrationButton" onClick={this.handleCancelCalibration} disabled={(isLoading || !model) && !cancelarWaitingCalibration} >{this.state.labels['tit_cancel'](total_fish)}</button>
                         </div>
                       </div>
                       <div className="submitfile__header--error">

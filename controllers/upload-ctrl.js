@@ -247,17 +247,16 @@ const listObjectFilter  = async params => {
 fileExitsFilterAwsS3 = async (req, res) => {
   await listObjectFilter({ bucket: req.body.bucket, filter: req.body.filter })
     .then(data => {
-      const objs = data.CommonPrefixes
+      const objs = data.Contents
       let resultFileCalibration = ''
       let total_fishCalibration = ''
       let width_pxs_x_cm = ''
       if (objs.length > 0) {
         for (i = 0; i < objs.length; i++) {
           const obj = objs[i]
-          console.log(obj)
-          resultFileCalibration = obj.Prefix
-          total_fishCalibration = obj.Prefix.replace(req.body.filter + '__', '').split('__')[0] || ''
-          width_pxs_x_cm = obj.Prefix.replace(req.body.filter + '__', '').split('__')[1] || ''
+          resultFileCalibration = obj.Key
+          total_fishCalibration = obj.Key.replace(req.body.filter + '__', '').split('__')[0] || ''
+          width_pxs_x_cm = obj.Key.replace(req.body.filter + '__', '').split('__')[1] || ''
           if (resultFileCalibration && total_fishCalibration && width_pxs_x_cm) {
             break
           } else {
@@ -277,13 +276,20 @@ fileExitsFilterAwsS3 = async (req, res) => {
           message: 'Aws S3 File exists!',
         })
       } else {
-        return res.status(400).json({ success: false, error: 'Object doen not found!', })
+        return res.status(201).json({ success: false, error: 'Object doen not found!', })
       }
     })
     .catch(err => {
       console.log('object exits error - ', err)
       return res.status(400).json({ success: false, error: err, })
     })
+}
+
+logging = async (req, res) => {
+
+  console.log(req.body.key, req.body.action)
+  return res.status(201).json({ success: true, error: 'Log saved!', })
+
 }
 
 module.exports = {
@@ -299,4 +305,5 @@ module.exports = {
   createDirAwsS3,
   fileExitsAwsS3,
   fileExitsFilterAwsS3,
+  logging,
 }
