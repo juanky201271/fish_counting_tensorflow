@@ -65,6 +65,8 @@ const labels = {
   tit_lab_upload: 'Carregue o arquivo...',
   tit_lab_sel_file: 'Selecione o arquivo para processar...',
   tit_lab_sel_model: 'Selecione o modelo para usar...',
+
+  start: 'Começar',
 };
 
 export { errors, labels };
