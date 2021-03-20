@@ -61,10 +61,11 @@ class SubmitFile extends Component {
         this.intervalCalibration = null
         socket.on("logging", params => {
           const uploadedFileState = 'submits/' + this.state.dir + '/' + this.state.uploadedFile
-          if (params.uploadedFile === uploadedFileState || params.uploadedFile === uploadedFileState) {
+          const uploadedFileCalibrationState = 'submits/' + this.state.dir + '/' + this.state.uploadedFileCalibration
+          if (params.uploadedFile === uploadedFileState || params.uploadedFile === uploadedFileCalibrationState) {
             this.setState({ log: params.action })
           } else {
-            console.log('socket no match', uploadedFile)
+            console.log('socket no match', params)
           }
         })
     }
