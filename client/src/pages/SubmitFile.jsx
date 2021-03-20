@@ -53,7 +53,7 @@ class SubmitFile extends Component {
             labels: labels_lang[this.props.parentState.language],
             cancelarWaiting: false,
             cancelarWaitingCalibration: false,
-            log: null,
+            log: 'waiting',
         }
         this.uploadInputRef = React.createRef()
         this.uploadInputRefCalibration = React.createRef()
@@ -144,7 +144,7 @@ class SubmitFile extends Component {
     }
 
     handleUpload = async e => {
-      this.setState({ isLoading: true, log: null, })
+      this.setState({ isLoading: true, log: 'waiting', })
 
       const name = "File_" + Date.now() + '_' + this.state.selectedFile.name
       let _id, dir
@@ -209,7 +209,7 @@ class SubmitFile extends Component {
         return;
       }
 
-      this.setState({ isLoading: true, log: null, })
+      this.setState({ isLoading: true, log: 'waiting', })
 
       const name = "FileCalibration_" + Date.now() + '_' + this.state.selectedFileCalibration.name
       const dir = ''
@@ -305,7 +305,7 @@ class SubmitFile extends Component {
     }
 
     handleVideoRoiProcess = async e => {
-      this.setState({ isLoading: true, log: null, })
+      this.setState({ isLoading: true, log: 'waiting', })
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
@@ -343,7 +343,7 @@ class SubmitFile extends Component {
     }
 
     handleVideoProcess = async e => {
-      this.setState({ isLoading: true, log: null, })
+      this.setState({ isLoading: true, log: 'waiting', })
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
@@ -381,7 +381,7 @@ class SubmitFile extends Component {
     }
 
     handleWebcamProcess = async e => {
-      this.setState({ isLoading: true, log: null, })
+      this.setState({ isLoading: true, log: 'waiting', })
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
@@ -419,7 +419,7 @@ class SubmitFile extends Component {
     }
 
     handlePictureProcess = async e => {
-      this.setState({ isLoading: true, log: null, })
+      this.setState({ isLoading: true, log: 'waiting', })
       const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {

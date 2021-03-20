@@ -66,7 +66,15 @@ const labels = {
   tit_lab_sel_file: 'Selecione o arquivo para processar...',
   tit_lab_sel_model: 'Selecione o modelo para usar...',
 
+  waiting: 'Esperando',
   start: 'Começar',
+  detecting: 'Detecção',
+  drawing: 'Desenho',
+  saving: 'Salvando',
+  reading: 'Lendo video',
+  writing: 'Escrevendo quadros',
+  end: 'Fim',
+
 };
 
 export { errors, labels };
