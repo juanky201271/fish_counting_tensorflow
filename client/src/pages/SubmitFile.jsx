@@ -64,7 +64,7 @@ class SubmitFile extends Component {
           const uploadedFileState = 'submits/' + this.state.dir + '/' + this.state.uploadedFile
           const uploadedFileCalibrationState = 'submits/' + this.state.dir + '/' + this.state.uploadedFileCalibration
           if (params.uploadedFile === uploadedFileState || params.uploadedFile === uploadedFileCalibrationState) {
-            this.setState({ log: params.action, info: params.info ? params.info : '' })
+            this.setState({ log: params.action, info: params.info ? ' {' + params.info + '}' : '' })
           } else {
             console.log('socket no match', params)
           }
@@ -850,7 +850,7 @@ class SubmitFile extends Component {
                     <>{this.state.labels['tit_lab_results']}</>
                   :
                     isLoading ?
-                      <>{this.state.labels['tit_lab_processing'] + ' [' + this.state.labels[log] + info ? ' {' + info + '}' : '' + ']'}</>
+                      <>{this.state.labels['tit_lab_processing'] + ' [' + this.state.labels[log] + info + ']'}</>
                     :
                       uploadedFile ?
                         <>{this.state.labels['tit_lab_sel_typ_process']}</>
