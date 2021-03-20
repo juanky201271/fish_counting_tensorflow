@@ -849,7 +849,7 @@ class SubmitFile extends Component {
                     <>{this.state.labels['tit_lab_results']}</>
                   :
                     isLoading ?
-                      <>{this.state.labels['tit_lab_processing'] + log ? ' [' + this.state.labels[log] + ']' : ''}</>
+                      <>{this.state.labels['tit_lab_processing'] + ' [' + this.state.labels[log] + ']'}</>
                     :
                       uploadedFile ?
                         <>{this.state.labels['tit_lab_sel_typ_process']}</>
