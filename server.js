@@ -77,9 +77,9 @@ if (process.env.NODE_ENV == "production") {
 
 const server = http.listen(PORT, () => console.log(`Server on Port ${PORT}`))
 
-io.on("connection", (socket) => {
-  socket.on('logging', function (updatedFile, action) {
-    io.sockets.emit('logging', updatedFile, action)
-    console.log('emit', updatedFile, action)
-  })
-})
+//io.on("connection", (socket) => {
+//  socket.on('logging', function (updatedFile, action) {
+//    io.sockets.emit('logging', updatedFile, action)
+//    console.log('emit', updatedFile, action)
+//  })
+//})
