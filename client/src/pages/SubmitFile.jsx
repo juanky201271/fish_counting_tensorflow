@@ -83,11 +83,11 @@ class SubmitFile extends Component {
         this.setState({
           models: [
             {
-              ckpt_dir: false,
-              frozen_inference_graph: true,
-              saved_model_dir: false,
-              saved_model_root: false,
-              model: process.env.REACT_APP_CURR_MODEL,
+              ckpt_dir: process.env.REACT_APP_CURR_MODEL.split('#')[0] === 'ckpt_dir' ? true : false,
+              frozen_inference_graph: process.env.REACT_APP_CURR_MODEL.split('#')[0] === 'frozen_inference_graph' ? true : false,
+              saved_model_dir: process.env.REACT_APP_CURR_MODEL.split('#')[0] === 'saved_model_dir' ? true : false,
+              saved_model_root: process.env.REACT_APP_CURR_MODEL.split('#')[0] === 'saved_model_root' ? true : false,
+              model: process.env.REACT_APP_CURR_MODEL.split('#')[0],
             }
           ]
         })
