@@ -69,6 +69,7 @@ const labels = {
   waiting: 'Attendant',
   start: 'Début',
   detecting: 'Détecter',
+  tracking: 'Le suivi',
   drawing: 'Dessin',
   saving: 'Économie',
   reading: 'Lecture de la vidéo',

@@ -69,6 +69,7 @@ const labels = {
   waiting: 'Waiting',
   start: 'Start',
   detecting: 'Detecting',
+  tracking: 'Tracking',
   drawing: 'Drawing',
   saving: 'Saving',
   reading: 'Reading video',

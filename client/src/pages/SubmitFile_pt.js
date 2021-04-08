@@ -69,6 +69,7 @@ const labels = {
   waiting: 'Esperando',
   start: 'Começar',
   detecting: 'Detecção',
+  tracking: 'Rastreamento',
   drawing: 'Desenho',
   saving: 'Salvando',
   reading: 'Lendo video',
