@@ -12,7 +12,7 @@
   "author": "juanky201271",
   "license": "ISC",
   "engines": {
-    "node": "15.x",
+    "node": "15.14.0",
   },
   "dependencies": {
     "aws-sdk": "^2.868.0",
