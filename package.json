@@ -5,15 +5,14 @@
   "main": "server.js",
   "scripts": {
     "start": "npx nodemon",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=true npm install --prefix client && npm run build --prefix client",
     "start-api": "cd api_flask && venv\\Scripts\\flask run --no-debugger"
   },
   "keywords": [],
   "author": "juanky201271",
   "license": "ISC",
   "engines": {
-    "node": "13.9.x",
-    "npm": "6.13.x"
+    "node": "15.x",
   },
   "dependencies": {
     "aws-sdk": "^2.868.0",
