@@ -221,6 +221,7 @@ class SubmitFile extends Component {
           })
       }
 
+/*
       if (!is_error) {
         const type = this.state.selectedFile.type.split('/')[0]
         if (type === 'video') {
@@ -231,6 +232,7 @@ class SubmitFile extends Component {
             .catch(e => console.log('Image Video file ERROR: ', e))
         }
       }
+*/
 
       this.setState({ isLoading: false })
     }
