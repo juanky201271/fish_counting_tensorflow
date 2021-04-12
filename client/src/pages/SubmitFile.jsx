@@ -388,7 +388,7 @@ class SubmitFile extends Component {
             width_pxs_x_cm: width_pxs_x_cm,
             log: 'waiting',
             info: '',
-            times: 0,
+            times: 1,
           }
         )
         this.setState({
@@ -456,7 +456,7 @@ class SubmitFile extends Component {
             width_pxs_x_cm: width_pxs_x_cm,
             log: 'waiting',
             info: '',
-            times: 0,
+            times: 1,
           }
         )
         this.setState({
@@ -524,7 +524,7 @@ class SubmitFile extends Component {
             width_pxs_x_cm: width_pxs_x_cm,
             log: 'waiting',
             info: '',
-            times: 0,
+            times: 1,
           }
         )
         this.setState({
@@ -592,7 +592,7 @@ class SubmitFile extends Component {
             width_pxs_x_cm: width_pxs_x_cm,
             log: 'waiting',
             info: '',
-            times: 0,
+            times: 1,
           }
         )
         this.setState({
@@ -613,7 +613,12 @@ class SubmitFile extends Component {
 
       for (let i = 0; i < cola.length; i++) {
         if (uploadedFile === cola[i].uploadedFile) {
-          if (cola[i].times >= 5) return
+          if (cola[i].times >= 6) {
+            cola[i].info = 'ERROR'
+            this.setState({ cola: cola })
+            return
+          }
+          cola[i].info = 'trying ' + str(cola[i].times)  + '/5 times'
           cola[i].times += 1
           this.setState({ cola: cola })
           if (cola[i].log === 'waiting') {
