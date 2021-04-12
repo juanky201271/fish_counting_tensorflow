@@ -618,7 +618,7 @@ class SubmitFile extends Component {
             this.setState({ cola: cola })
             return
           }
-          cola[i].info = 'trying ' + str(cola[i].times)  + '/5 times'
+          cola[i].info = 'trying ' + cola[i].times  + '/5 times'
           cola[i].times += 1
           this.setState({ cola: cola })
           if (cola[i].log === 'waiting') {
