@@ -616,16 +616,18 @@ class SubmitFile extends Component {
           if (cola[i].times >= 5) return
           cola[i].times += 1
           this.setState({ cola: cola })
-          api[cola[i].api](process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + cola[i].model, cola[i].width_cms, cola[i].width_pxs_x_cm)
-            .then(res => {
-              //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
-            })
-            .catch(e => {
-              console.log('Rerun Process ERROR: ', e.response, e.request, e.message, e)
+          if (cola[i].log === 'waiting') {
+            api[cola[i].api](process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + cola[i].model, cola[i].width_cms, cola[i].width_pxs_x_cm)
+              .then(res => {
+                //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
+              })
+              .catch(e => {
+                console.log('Rerun Process ERROR: ', e.response, e.request, e.message, e)
 
-              this.reRunProcess(uploadedFile)
+                this.reRunProcess(uploadedFile)
 
-            })
+              })
+          }
         }
       }
 
