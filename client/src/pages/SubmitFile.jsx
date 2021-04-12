@@ -211,7 +211,7 @@ class SubmitFile extends Component {
         )
         await api.createUploadFileAwsS3(formData, dir)
           .then(res => {
-            uploadedFile = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + res.data.originalname
+            //uploadedFile = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + res.data.originalname
             this.setState({ uploadedFile: res.data.originalname })
           })
           .catch(e => {
@@ -613,15 +613,16 @@ class SubmitFile extends Component {
 
       for (let i = 0; i < cola.length; i++) {
         if (uploadedFile === cola[i].uploadedFile) {
-          if (cola[i].times >= 6) {
-            cola[i].info = 'ERROR'
-            this.setState({ cola: cola })
-            return
-          }
-          cola[i].info = 'trying ' + cola[i].times  + '/5 times'
-          cola[i].times += 1
-          this.setState({ cola: cola })
           if (cola[i].log === 'waiting') {
+            if (cola[i].times >= 6) {
+              cola[i].info = 'ERROR'
+              this.setState({ cola: cola })
+              return
+            }
+            cola[i].info = 'trying ' + cola[i].times  + '/5 times'
+            cola[i].times += 1
+            this.setState({ cola: cola })
+
             api[cola[i].api](process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + cola[i].model, cola[i].width_cms, cola[i].width_pxs_x_cm)
               .then(res => {
                 //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
@@ -632,6 +633,8 @@ class SubmitFile extends Component {
                 this.reRunProcess(uploadedFile)
 
               })
+          } else {
+            return
           }
         }
       }
