@@ -11,6 +11,7 @@ const errors = {
 const labels = {
   // fileData
   tit_down: 'DESCARGAS',
+  tit_cola: 'COLA DE PROCESOS',
   tit_processed: (type) => {
     return (type === 'image' ?
       'Imagen procesada' :

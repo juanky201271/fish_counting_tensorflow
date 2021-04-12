@@ -11,6 +11,7 @@ const errors = {
 const labels = {
   // fileData
   tit_down: 'DOWNLOADS',
+  tit_cola: 'PROCESS QUEUE',
   tit_processed: (type) => {
     return ('Processed ' + type)
   },

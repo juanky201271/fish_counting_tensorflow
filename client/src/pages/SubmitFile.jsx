@@ -27,51 +27,74 @@ class SubmitFile extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            selectedFile: '',
-            uploadedFile: '',
-            firstImageVideo: '',
-            isLoading: false,
-            authenticated: '',
-            twitterId: '',
-            ip: '',
-            user: '',
-            total_fish: null,
-            _id: null,
-            dir: null,
-            error: null,
-            errorCalibration: null,
-            model: '',
-            models: null,
-            selectedFileCalibration: '',
-            uploadedFileCalibration: '',
-            resultFileCalibration: '',
-            total_fishCalibration: null,
-            cms: null,
-            width_cms: 250, // without calibration
-            width_pxs_x_cm: null, // with calibration
-            errors: errors_lang[this.props.parentState.language],
-            labels: labels_lang[this.props.parentState.language],
-            cancelarWaiting: false,
-            cancelarWaitingCalibration: false,
-            log: 'waiting',
-            info: '',
+          isLoading: false,
+          authenticated: '',
+          twitterId: '',
+          ip: '',
+          user: '',
+
+          selectedFile: '',
+          uploadedFile: '',
+          total_fish: null,
+          _id: null,
+          dir: null,
+          error: null,
+          cancelarWaiting: false,
+
+          model: '',
+          models: null,
+
+          selectedFileCalibration: '',
+          uploadedFileCalibration: '',
+          resultFileCalibration: '',
+          total_fishCalibration: null,
+          errorCalibration: null,
+          cancelarWaitingCalibration: false,
+          log: 'waiting',
+          info: '',
+          cms: null,
+          width_cms: 250, // without calibration
+          width_pxs_x_cm: null, // with calibration
+
+          errors: errors_lang[this.props.parentState.language],
+          labels: labels_lang[this.props.parentState.language],
+
+          indexCola: -1,
+          cola: [],
         }
         this.uploadInputRef = React.createRef()
         this.uploadInputRefCalibration = React.createRef()
         this.interval = null
         this.intervalCalibration = null
+
         socket.on("logging", params => {
-          const uploadedFileState = 'submits/' + this.state.dir + '/' + this.state.uploadedFile
-          const uploadedFileCalibrationState = 'submits/' + this.state.uploadedFileCalibration
-          if (params.uploadedFile === uploadedFileState || params.uploadedFile === uploadedFileCalibrationState) {
-            this.setState({ log: params.action, info: params.info ? ' {' + params.info + '}' : '' })
-          } else {
-            console.log('socket no match', params)
+          const cola = this.state.cola || []
+          console.log('log:', cola.length, cola)
+          console.log('params:', params)
+          if (cola.length > 0) {
+            for (let i = 0; i < cola.length; i++) {
+              const uploadedFileState = 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile
+              if (params.uploadedFile === uploadedFileState) {
+                cola[i].log = params.action
+                cola[i].info = params.info ? ' {' + params.info + '}' : ''
+                this.setState({ cola: cola })
+              } else {
+                console.log('socket no match', params)
+              }
+            }
+          }
+          if (this.state.uploadedFileCalibration) {
+            const uploadedFileCalibrationState = 'submits/' + this.state.uploadedFileCalibration
+            if (params.uploadedFile === uploadedFileCalibrationState) {
+              this.setState({ log: params.action, info: params.info ? ' {' + params.info + '}' : '' })
+            } else {
+              console.log('socket no match calibration', params)
+            }
           }
         })
     }
 
-    componentDidMount = async () => {
+    componentDidMount = () => {
         this.setState({ isLoading: true })
         //await api.getModelsAwsS3()
         //        .then(res => {
@@ -102,11 +125,11 @@ class SubmitFile extends Component {
         this.setState({ isLoading: false })
     }
 
-    componentWillUnmount = async () => {
+    componentWillUnmount = () => {
       window.removeEventListener('changeLanguage', this.changeLanguage);
     }
 
-    changeLanguage = async ({ detail }) => {
+    changeLanguage = ({ detail }) => {
       this.setState({
         errors: errors_lang[detail],
         labels: labels_lang[detail],
@@ -203,7 +226,7 @@ class SubmitFile extends Component {
         if (type === 'video') {
           await api.imageVideoAwsS3(uploadedFile)
             .then(res => {
-              this.setState({ firstImageVideo: res.data.name })
+              this.setState({ render: 'now : ' + Date.now() })
             })
             .catch(e => console.log('Image Video file ERROR: ', e))
         }
@@ -312,156 +335,248 @@ class SubmitFile extends Component {
       }
     }
 
-    handleVideoRoiProcess = async e => {
-      this.setState({ isLoading: true, log: 'waiting', })
-      const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
+    handleVideoRoiProcess = e => {
+      this.setState({ isLoading: true })
+      const { selectedFile, uploadedFile, _id, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
         api.videoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
-            this.setState({ total_fish: res.data.total_fish, isLoading: false, })
+            //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
           })
           .catch(e => {
             console.log('Video Roi Count Fish ERROR: ', e.response, e.request, e.message, e)
 
-            if (e.request.timeout === 29000) {
-              this.setState({
-                error: this.state.errors['long_process'], //isLoading: false,
-                cancelarWaiting: true,
-              },
-              () => {
-                setTimeout(() => { this.setState({ error: null }) }, 5000)
-              })
-              this.interval = setInterval(this.s3Demon, 5000)
-            } else {
-              this.setState({
-                error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, firstImageVideo: '', isLoading: false, cancelarWaiting: false,
-              },
-              () => {
-                setTimeout(() => { this.setState({ error: null }) }, 5000)
-              })
-              if (this.uploadInputRef.current) {
-                this.uploadInputRef.current.value = ''
-              }
-              clearInterval(this.interval)
-            }
+            //if (e.request.timeout === 29000) {
+            //  this.setState({
+            //    error: this.state.errors['long_process'], //isLoading: false,
+            //    cancelarWaiting: true,
+            //  },
+            //  () => {
+            //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+            //  })
+            //  this.interval = setInterval(this.s3Demon, 5000)
+            //} else {
+            //  this.setState({
+            //    error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false,
+            //  },
+            //  () => {
+            //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+            //  })
+            //  if (this.uploadInputRef.current) {
+            //    this.uploadInputRef.current.value = ''
+            //  }
+            //  clearInterval(this.interval)
+            //}
 
           })
+        // lo añado a la cola de procesos
+        const cola = this.state.cola || []
+        cola.push(
+          {
+            selectedFile: selectedFile,
+            uploadedFile: uploadedFile,
+            total_fish: 0,
+            _id: _id,
+            dir: dir,
+            log: 'waiting',
+            info: '',
+          }
+        )
+        this.setState({
+            error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          },
+          () => {
+            setTimeout(() => { this.setState({ error: null }) }, 5000)
+        })
+        if (this.uploadInputRef.current) {
+          this.uploadInputRef.current.value = ''
+        }
       }
+      this.setState({ isLoading: false })
     }
 
     handleVideoProcess = async e => {
       this.setState({ isLoading: true, log: 'waiting', })
-      const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
+      const { selectedFile, uploadedFile, _id, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
         api.videoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
-            this.setState({ total_fish: res.data.total_fish, isLoading: false, })
+            //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
           })
           .catch(e => {
             console.log('Video Count Fish ERROR: ', e.response, e.request, e.message, e)
 
-            if (e.request.timeout === 29000) {
-              this.setState({
-                error: this.state.errors['long_process'], //isLoading: false,
-                cancelarWaiting: true,
-              },
-              () => {
-                setTimeout(() => { this.setState({ error: null }) }, 5000)
-              })
-              this.interval = setInterval(this.s3Demon, 5000)
-            } else {
-              this.setState({
-                error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, firstImageVideo: '', isLoading: false, cancelarWaiting: false,
-              },
-              () => {
-                setTimeout(() => { this.setState({ error: null }) }, 5000)
-              })
-              if (this.uploadInputRef.current) {
-                this.uploadInputRef.current.value = ''
-              }
-              clearInterval(this.interval)
-            }
+            //if (e.request.timeout === 29000) {
+            //  this.setState({
+            //    error: this.state.errors['long_process'], //isLoading: false,
+            //    cancelarWaiting: true,
+            //  },
+            //  () => {
+            //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+            //  })
+            //  this.interval = setInterval(this.s3Demon, 5000)
+            //} else {
+            //  this.setState({
+            //    error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false,
+            //  },
+            //  () => {
+            //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+            //  })
+            //  if (this.uploadInputRef.current) {
+            //    this.uploadInputRef.current.value = ''
+            //  }
+            //  clearInterval(this.interval)
+            //}
 
           })
+        // lo añado a la cola de procesos
+        const cola = this.state.cola || []
+        cola.push(
+          {
+            selectedFile: selectedFile,
+            uploadedFile: uploadedFile,
+            total_fish: 0,
+            _id: _id,
+            dir: dir,
+            log: 'waiting',
+            info: '',
+          }
+        )
+        this.setState({
+            error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          },
+          () => {
+            setTimeout(() => { this.setState({ error: null }) }, 5000)
+        })
+        if (this.uploadInputRef.current) {
+          this.uploadInputRef.current.value = ''
+        }
       }
+      this.setState({ isLoading: false })
     }
 
     handleWebcamProcess = async e => {
       this.setState({ isLoading: true, log: 'waiting', })
-      const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
+      const { selectedFile, uploadedFile, _id, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
         api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
-            this.setState({ total_fish: res.data.total_fish, isLoading: false, })
+            //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
           })
           .catch(e => {
             console.log('Webcam Count Fish ERROR: ', e.response, e.request, e.message, e)
 
-            if (e.request.timeout === 29000) {
-              this.setState({
-                error: this.state.errors['long_process'], //isLoading: false,
-                cancelarWaiting: true,
-              },
-              () => {
-                setTimeout(() => { this.setState({ error: null }) }, 5000)
-              })
-              this.interval = setInterval(this.s3Demon, 5000)
-            } else {
-              this.setState({
-                error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, firstImageVideo: '', isLoading: false, cancelarWaiting: false,
-              },
-              () => {
-                setTimeout(() => { this.setState({ error: null }) }, 5000)
-              })
-              if (this.uploadInputRef.current) {
-                this.uploadInputRef.current.value = ''
-              }
-              clearInterval(this.interval)
-            }
+            //if (e.request.timeout === 29000) {
+            //  this.setState({
+            //    error: this.state.errors['long_process'], //isLoading: false,
+            //    cancelarWaiting: true,
+            //  },
+            //  () => {
+            //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+            //  })
+            //  this.interval = setInterval(this.s3Demon, 5000)
+            //} else {
+            //  this.setState({
+            //    error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false,
+            //  },
+            //  () => {
+            //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+            //  })
+            //  if (this.uploadInputRef.current) {
+            //    this.uploadInputRef.current.value = ''
+            //  }
+            //  clearInterval(this.interval)
+            //}
 
           })
+        // lo añado a la cola de procesos
+        const cola = this.state.cola || []
+        cola.push(
+          {
+            selectedFile: selectedFile,
+            uploadedFile: uploadedFile,
+            total_fish: 0,
+            _id: _id,
+            dir: dir,
+            log: 'waiting',
+            info: '',
+          }
+        )
+        this.setState({
+            error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          },
+          () => {
+            setTimeout(() => { this.setState({ error: null }) }, 5000)
+        })
+        if (this.uploadInputRef.current) {
+          this.uploadInputRef.current.value = ''
+        }
       }
+      this.setState({ isLoading: false })
     }
 
     handlePictureProcess = async e => {
       this.setState({ isLoading: true, log: 'waiting', })
-      const { uploadedFile, dir, model, width_cms, width_pxs_x_cm } = this.state
+      const { selectedFile, uploadedFile, _id, dir, model, width_cms, width_pxs_x_cm } = this.state
 
       if (dir !== null) {
         api.pictureCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
           .then(res => {
-            this.setState({ total_fish: res.data.total_fish, isLoading: false, })
+            //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
           })
           .catch(e => {
             console.log('Picture Count Fish ERROR: ', e.response, e.request, e.message, e)
 
-            if (e.request.timeout === 29000) {
-              this.setState({
-                error: this.state.errors['long_process'], //isLoading: false,
-                cancelarWaiting: true,
-              },
-              () => {
-                setTimeout(() => { this.setState({ error: null }) }, 5000)
-              })
-              this.interval = setInterval(this.s3Demon, 5000)
-            } else {
-              this.setState({
-                error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, firstImageVideo: '', isLoading: false, cancelarWaiting: false,
-              },
-              () => {
-                setTimeout(() => { this.setState({ error: null }) }, 5000)
-              })
-              if (this.uploadInputRef.current) {
-                this.uploadInputRef.current.value = ''
-              }
-              clearInterval(this.interval)
-            }
+            //if (e.request.timeout === 29000) {
+            //  this.setState({
+            //    error: this.state.errors['long_process'], //isLoading: false,
+            //    cancelarWaiting: true,
+            //  },
+            //  () => {
+            //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+            //  })
+            //  this.interval = setInterval(this.s3Demon, 5000)
+            //} else {
+            //  this.setState({
+            //    error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false,
+            //  },
+            //  () => {
+            //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+            //  })
+            //  if (this.uploadInputRef.current) {
+            //    this.uploadInputRef.current.value = ''
+            //  }
+            //  clearInterval(this.interval)
+            //}
 
           })
+        // lo añado a la cola de procesos
+        const cola = this.state.cola || []
+        cola.push(
+          {
+            selectedFile: selectedFile,
+            uploadedFile: uploadedFile,
+            total_fish: 0,
+            _id: _id,
+            dir: dir,
+            log: 'waiting',
+            info: '',
+          }
+        )
+        this.setState({
+            error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          },
+          () => {
+            setTimeout(() => { this.setState({ error: null }) }, 5000)
+        })
+        if (this.uploadInputRef.current) {
+          this.uploadInputRef.current.value = ''
+        }
       }
+      this.setState({ isLoading: false })
     }
 
     s3Demon = async () => {
@@ -563,7 +678,7 @@ class SubmitFile extends Component {
     }
 
     handleCancel = e => {
-      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, firstImageVideo: '', isLoading: false, cancelarWaiting: false, })
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false, })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
       }
@@ -641,7 +756,7 @@ class SubmitFile extends Component {
       const image = this.state.uploadedFile ?
         process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile :
         ''
-      const image_video = this.state.firstImageVideo ?
+      const image_video = this.state.uploadedFile ?
         process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_first_frame_video.png' :
         ''
       const imageCalibration = this.state.uploadedFileCalibration ?
@@ -651,7 +766,7 @@ class SubmitFile extends Component {
       const imageResult = this.state.uploadedFile ?
         process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png' :
         ''
-      const videoResult = this.state.firstImageVideo ?
+      const videoResult = this.state.uploadedFile ?
         process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_last_frame_video.png' :
         ''
       const imageCalibrationResult = this.state.resultFileCalibration ?
@@ -700,6 +815,87 @@ class SubmitFile extends Component {
       }
     }
 
+    colaData = () => {
+
+      if (this.state.cola.length > 0) {
+        return (
+          <div className="submitfile__col">
+            <div className="submitfile__title--green">
+              {this.state.labels['tit_cola']}
+            </div>
+            <hr />
+            {this.state.cola.map(
+              ele =>
+                (<>
+                  <div className="submitfile__col">
+                    {ele.uploadedFile + ' - ' + ele.log + (ele.info ? ' - ' + ele.info : '')}
+                  </div>
+                  <div className="submitfile__col">
+                    {ele.log === 'end' ? this.colaFileData(ele) : ''}
+                  </div>
+                  <hr />
+                  <hr />
+                </>)
+              )
+            }
+          </div>
+        )
+      } else {
+        return (
+          <div></div>
+        )
+      }
+
+    }
+
+    colaFileData = (state) => {
+      const file = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' +  state.uploadedFile
+      const csv = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' +  state.uploadedFile + '_csv_result.csv'
+      const video = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' + state.uploadedFile + '_video_result.mp4'
+      const image = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' + state.uploadedFile + '_image_result.png'
+      const zip = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' + state.uploadedFile + '_images_zip_result.zip'
+      if (state.total_fish !== null) {
+        const type = state.selectedFile.type.split('/')[0] || ''
+        return (
+          <div className="submitfile__col">
+            {/*
+            <div className="submitfile__title--green">
+              {this.state.labels['tit_down']}
+            </div>
+            <hr />
+            */}
+            <div className="submitfile__col-67">
+              <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_processed'](type)}</a>
+              <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_table']}</a>
+              <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_det_images']}</a>
+            </div>
+          </div>
+        )
+      } else if (state.uploadedFile !== '') {
+        const type = state.selectedFile.type.split('/')[0] || ''
+        return (
+          <div className="submitfile__col">
+            <div className="submitfile__title--green">
+              {this.state.labels['tit_fil_details'](type)}
+            </div>
+            <hr />
+            <div className="submitfile__col">
+              <div className="submitfile__text">{this.state.labels['tit_fil_name'](state.selectedFile.name)}</div>
+              <div className="submitfile__text">{this.state.labels['tit_fil_type'](state.selectedFile.type)}</div>
+              <div className="submitfile__text">{this.state.labels['tit_fil_size'](state.selectedFile.size)}</div>
+              <div className="submitfile__text--green">
+                <a href={file} rel="noopener noreferrer" target="_blank">{this.state.labels['tit_dow_uploaded']}</a>
+              </div>
+            </div>
+          </div>
+        )
+      } else {
+        return (
+          <div></div>
+        )
+      }
+    }
+
     createSelectItems = () => {
       const { models } = this.state
       let items = []
@@ -733,6 +929,7 @@ class SubmitFile extends Component {
         const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
         const fileData = this.fileData()
         const imageData = this.imageData()
+        const colaData = this.colaData()
 
         return (
             <div className="submitfile">
@@ -878,6 +1075,10 @@ class SubmitFile extends Component {
 
                 <div className="submitfile__header-right--file">
                   {fileData}
+                </div>
+
+                <div className="submitfile__header-right--file">
+                  {colaData}
                 </div>
 
               </div>
