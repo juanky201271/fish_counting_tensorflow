@@ -174,6 +174,23 @@ class SubmitFile extends Component {
     }
 
     handleUpload = async e => {
+
+      if (this.selectedFile.size > 30000000) {
+        this.setState(
+          {
+            error: this.state.errors['max_size_file'],
+            uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false,
+          },
+          () => {
+            setTimeout(() => { this.setState({ error: null }) }, 5000)
+          }
+        )
+        if (this.uploadInputRef.current) {
+          this.uploadInputRef.current.value = ''
+        }
+        return
+      }
+
       this.setState({ isLoading: true, log: 'waiting', })
 
       const name = "File_" + Date.now() + '_' + this.state.selectedFile.name
@@ -238,7 +255,23 @@ class SubmitFile extends Component {
 
     handleCalibration = async e => {
       if (!this.state.selectedFileCalibration || !this.state.cms || !this.state.model) {
-        return;
+        return
+      }
+
+      if (this.selectedFileCalibration.size > 30000000) {
+        this.setState(
+          {
+            errorCalibration: this.state.errors['max_size_file'],
+            uploadedFileCalibration: '', selectedFileCalibration: '', resultFileCalibration: '', total_fishCalibration: null, cms: null, width_pxs_x_cm: null, isLoading: false, cancelarWaitingCalibration: false,
+          },
+          () => {
+            setTimeout(() => { this.setState({ errorCalibration: null }) }, 5000)
+          }
+        )
+        if (this.uploadInputRefCalibration.current) {
+          this.uploadInputRefCalibration.current.value = ''
+        }
+        return
       }
 
       this.setState({ isLoading: true, log: 'waiting', })

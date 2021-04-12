@@ -6,6 +6,7 @@ const errors = {
   waiting: '... Você pode espere ou cancele ...',
   error_process: 'O processo falhou, tente novamente em alguns minutos',
   process_queue: 'Processo iniciado, verifique a fila de processo para ver seu status',
+  max_size_file: 'Tamanho máximo do arquivo 30 Mb',
 
 };
 

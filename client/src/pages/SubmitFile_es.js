@@ -6,6 +6,7 @@ const errors = {
   waiting: '... Puedes esperar o cancelar ...',
   error_process: 'El proceso ha fallado, intentar de nuevo en unos minutos',
   process_queue: 'Proceso lanzado, checkear la cola de procesos para ver su estado',
+  max_size_file: 'Tamaño maximo de fichero 30 Mb',
 
 };
 
