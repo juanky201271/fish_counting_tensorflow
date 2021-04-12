@@ -5,6 +5,7 @@ const errors = {
   long_process: 'Proceso muy complejo, esperar a que termine o cancelar',
   waiting: '... Puedes esperar o cancelar ...',
   error_process: 'El proceso ha fallado, intentar de nuevo en unos minutos',
+  process_queue: 'Proceso lanzado, checkear la cola de procesos para ver su estado',
 
 };
 

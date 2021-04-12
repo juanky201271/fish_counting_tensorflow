@@ -59,7 +59,6 @@ class SubmitFile extends Component {
           errors: errors_lang[this.props.parentState.language],
           labels: labels_lang[this.props.parentState.language],
 
-          indexCola: -1,
           cola: [],
         }
         this.uploadInputRef = React.createRef()
@@ -349,6 +348,8 @@ class SubmitFile extends Component {
           .catch(e => {
             console.log('Video Roi Count Fish ERROR: ', e.response, e.request, e.message, e)
 
+            this.reRunProcess(uploadedFile)
+
             //if (e.request.timeout === 29000) {
             //  this.setState({
             //    error: this.state.errors['long_process'], //isLoading: false,
@@ -376,17 +377,22 @@ class SubmitFile extends Component {
         const cola = this.state.cola || []
         cola.push(
           {
+            api: 'videoRoiCountFishAwsS3',
             selectedFile: selectedFile,
             uploadedFile: uploadedFile,
             total_fish: 0,
             _id: _id,
             dir: dir,
+            model: model,
+            width_cms: width_cms,
+            width_pxs_x_cm: width_pxs_x_cm,
             log: 'waiting',
             info: '',
+            times: 0,
           }
         )
         this.setState({
-            error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+            error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
           },
           () => {
             setTimeout(() => { this.setState({ error: null }) }, 5000)
@@ -398,7 +404,7 @@ class SubmitFile extends Component {
       this.setState({ isLoading: false })
     }
 
-    handleVideoProcess = async e => {
+    handleVideoProcess = e => {
       this.setState({ isLoading: true, log: 'waiting', })
       const { selectedFile, uploadedFile, _id, dir, model, width_cms, width_pxs_x_cm } = this.state
 
@@ -410,6 +416,8 @@ class SubmitFile extends Component {
           .catch(e => {
             console.log('Video Count Fish ERROR: ', e.response, e.request, e.message, e)
 
+            this.reRunProcess(uploadedFile)
+
             //if (e.request.timeout === 29000) {
             //  this.setState({
             //    error: this.state.errors['long_process'], //isLoading: false,
@@ -437,17 +445,22 @@ class SubmitFile extends Component {
         const cola = this.state.cola || []
         cola.push(
           {
+            api: 'videoCountFishAwsS3',
             selectedFile: selectedFile,
             uploadedFile: uploadedFile,
             total_fish: 0,
             _id: _id,
             dir: dir,
+            model: model,
+            width_cms: width_cms,
+            width_pxs_x_cm: width_pxs_x_cm,
             log: 'waiting',
             info: '',
+            times: 0,
           }
         )
         this.setState({
-            error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+            error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
           },
           () => {
             setTimeout(() => { this.setState({ error: null }) }, 5000)
@@ -459,7 +472,7 @@ class SubmitFile extends Component {
       this.setState({ isLoading: false })
     }
 
-    handleWebcamProcess = async e => {
+    handleWebcamProcess = e => {
       this.setState({ isLoading: true, log: 'waiting', })
       const { selectedFile, uploadedFile, _id, dir, model, width_cms, width_pxs_x_cm } = this.state
 
@@ -471,6 +484,8 @@ class SubmitFile extends Component {
           .catch(e => {
             console.log('Webcam Count Fish ERROR: ', e.response, e.request, e.message, e)
 
+            this.reRunProcess(uploadedFile)
+
             //if (e.request.timeout === 29000) {
             //  this.setState({
             //    error: this.state.errors['long_process'], //isLoading: false,
@@ -498,17 +513,22 @@ class SubmitFile extends Component {
         const cola = this.state.cola || []
         cola.push(
           {
+            api: 'webcamCountFishAwsS3',
             selectedFile: selectedFile,
             uploadedFile: uploadedFile,
             total_fish: 0,
             _id: _id,
             dir: dir,
+            model: model,
+            width_cms: width_cms,
+            width_pxs_x_cm: width_pxs_x_cm,
             log: 'waiting',
             info: '',
+            times: 0,
           }
         )
         this.setState({
-            error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+            error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
           },
           () => {
             setTimeout(() => { this.setState({ error: null }) }, 5000)
@@ -520,7 +540,7 @@ class SubmitFile extends Component {
       this.setState({ isLoading: false })
     }
 
-    handlePictureProcess = async e => {
+    handlePictureProcess = e => {
       this.setState({ isLoading: true, log: 'waiting', })
       const { selectedFile, uploadedFile, _id, dir, model, width_cms, width_pxs_x_cm } = this.state
 
@@ -531,6 +551,8 @@ class SubmitFile extends Component {
           })
           .catch(e => {
             console.log('Picture Count Fish ERROR: ', e.response, e.request, e.message, e)
+
+            this.reRunProcess(uploadedFile)
 
             //if (e.request.timeout === 29000) {
             //  this.setState({
@@ -559,17 +581,22 @@ class SubmitFile extends Component {
         const cola = this.state.cola || []
         cola.push(
           {
+            api: 'pictureCountFishAwsS3',
             selectedFile: selectedFile,
             uploadedFile: uploadedFile,
             total_fish: 0,
             _id: _id,
             dir: dir,
+            model: model,
+            width_cms: width_cms,
+            width_pxs_x_cm: width_pxs_x_cm,
             log: 'waiting',
             info: '',
+            times: 0,
           }
         )
         this.setState({
-            error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+            error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
           },
           () => {
             setTimeout(() => { this.setState({ error: null }) }, 5000)
@@ -579,6 +606,29 @@ class SubmitFile extends Component {
         }
       }
       this.setState({ isLoading: false })
+    }
+
+    reRunProcess = uploadedFile => {
+      const cola = this.state.cola || []
+
+      for (let i = 0; i < cola.length; i++) {
+        if (uploadedFile === cola[i].uploadedFile) {
+          if (cola[i].times >= 5) return
+          cola[i].times += 1
+          this.setState({ cola: cola })
+          api[cola[i].api](process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + cola[i].model, cola[i].width_cms, cola[i].width_pxs_x_cm)
+            .then(res => {
+              //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
+            })
+            .catch(e => {
+              console.log('Rerun Process ERROR: ', e.response, e.request, e.message, e)
+
+              this.reRunProcess(uploadedFile)
+
+            })
+        }
+      }
+
     }
 
     s3Demon = async () => {

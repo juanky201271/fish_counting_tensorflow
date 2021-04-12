@@ -5,6 +5,7 @@ const errors = {
   long_process: "Processus très complexe, attendez qu'il se termine ou annulez",
   waiting: '... Tu peux attendre ou annuler ...',
   error_process: 'Le processus a échoué, réessayez dans quelques minutes',
+  process_queue: "Processus lancé, vérifiez la file d'attente du processus pour voir son état",
 
 };
 

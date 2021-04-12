@@ -6,7 +6,7 @@ const api = axios.create({
 
 const flask_api = axios.create({
   baseURL: process.env.REACT_APP_FLASK_API, // flask
-  //timeout: 29000,
+  timeout: 29000,
 })
 
 export const createSubmit = payload => api.post(`/submit`, payload)
