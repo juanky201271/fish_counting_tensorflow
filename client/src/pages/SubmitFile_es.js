@@ -83,6 +83,9 @@ const labels = {
   reading: 'Layendo video',
   writing: 'Escribiendo fotogramas',
   end: 'Fin',
+  error: 'ERROR',
+  tried: 'intento',
+  times: 'veces',
 
 };
 

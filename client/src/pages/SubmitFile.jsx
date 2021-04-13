@@ -648,11 +648,11 @@ class SubmitFile extends Component {
         if (uploadedFile === cola[i].uploadedFile) {
           if (cola[i].log === 'waiting') {
             if (cola[i].times >= 6) {
-              cola[i].info = 'ERROR'
+              cola[i].info = this.state.labels['error']
               this.setState({ cola: cola })
               return
             }
-            cola[i].info = 'trying ' + cola[i].times  + '/5 times'
+            cola[i].info = this.state.labels['tried'] + ' ' + cola[i].times  + ' / 5 ' + this.state.labels['times']
             cola[i].times += 1
             this.setState({ cola: cola })
 
@@ -923,7 +923,7 @@ class SubmitFile extends Component {
               ele =>
                 (<>
                   <div className="submitfile__col">
-                    {ele.uploadedFile + ' - ' + ele.log + (ele.info ? ' - ' + ele.info : '')}
+                    {ele.uploadedFile + ' - ' + this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '')}
                   </div>
                   <div className="submitfile__col">
                     {ele.log === 'end' ? this.colaFileData(ele) : ''}

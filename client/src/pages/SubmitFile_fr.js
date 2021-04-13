@@ -78,6 +78,9 @@ const labels = {
   reading: 'Lecture de la vidéo',
   writing: 'Écriture de cadres',
   end: 'Finir',
+  error: 'ERREUR',
+  tried: 'a tenté',
+  times: 'fois',
 
 };
 

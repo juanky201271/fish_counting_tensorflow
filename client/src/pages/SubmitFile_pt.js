@@ -78,6 +78,9 @@ const labels = {
   reading: 'Lendo video',
   writing: 'Escrevendo quadros',
   end: 'Fim',
+  error: 'ERRO',
+  tried: 'tentou',
+  times: 'vezes',
 
 };
 

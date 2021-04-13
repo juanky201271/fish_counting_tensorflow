@@ -78,6 +78,9 @@ const labels = {
   reading: 'Reading video',
   writing: 'Writting frames',
   end: 'End',
+  error: 'ERROR',
+  tried: 'tried',
+  times: 'times',
 
 };
 
