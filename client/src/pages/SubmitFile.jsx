@@ -175,7 +175,7 @@ class SubmitFile extends Component {
 
     handleUpload = async e => {
 
-      if (this.selectedFile.size > 30000000) {
+      if (this.state.selectedFile.size > 30000000) {
         this.setState(
           {
             error: this.state.errors['max_size_file'],
@@ -258,7 +258,7 @@ class SubmitFile extends Component {
         return
       }
 
-      if (this.selectedFileCalibration.size > 30000000) {
+      if (this.state.selectedFileCalibration.size > 30000000) {
         this.setState(
           {
             errorCalibration: this.state.errors['max_size_file'],
