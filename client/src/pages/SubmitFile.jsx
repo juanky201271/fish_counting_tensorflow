@@ -111,6 +111,7 @@ class SubmitFile extends Component {
                 saved_model_dir: process.env.REACT_APP_CURR_MODEL_0.split('#')[1] === 'saved_model_dir' ? true : false,
                 saved_model_root: process.env.REACT_APP_CURR_MODEL_0.split('#')[1] === 'saved_model_root' ? true : false,
                 model: process.env.REACT_APP_CURR_MODEL_0.split('#')[0],
+                model_txt: process.env.REACT_APP_CURR_MODEL_0.split('#')[2],
               },
               {
                 ckpt_dir: process.env.REACT_APP_CURR_MODEL_1.split('#')[1] === 'ckpt_dir' ? true : false,
@@ -118,6 +119,7 @@ class SubmitFile extends Component {
                 saved_model_dir: process.env.REACT_APP_CURR_MODEL_1.split('#')[1] === 'saved_model_dir' ? true : false,
                 saved_model_root: process.env.REACT_APP_CURR_MODEL_1.split('#')[1] === 'saved_model_root' ? true : false,
                 model: process.env.REACT_APP_CURR_MODEL_1.split('#')[0],
+                model_txt: process.env.REACT_APP_CURR_MODEL_1.split('#')[2],
               }
             ]
           })
@@ -130,6 +132,7 @@ class SubmitFile extends Component {
                 saved_model_dir: process.env.REACT_APP_CURR_MODEL_0.split('#')[1] === 'saved_model_dir' ? true : false,
                 saved_model_root: process.env.REACT_APP_CURR_MODEL_0.split('#')[1] === 'saved_model_root' ? true : false,
                 model: process.env.REACT_APP_CURR_MODEL_0.split('#')[0],
+                model_txt: process.env.REACT_APP_CURR_MODEL_0.split('#')[2],
               }
             ]
           })
@@ -1009,24 +1012,10 @@ class SubmitFile extends Component {
     createSelectItems = () => {
       const { models } = this.state
       let items = []
-      items.push(<option key={'empty#empty'} value={''}>{this.state.labels['tit_sel_placeholder']}</option>)
+      items.push(<option key={'#'} value={''}>{this.state.labels['tit_sel_placeholder']}</option>)
       if (models) {
         models.forEach((model, i) => {
-          if (model.saved_model_root) {
-            items.push(<option key={model.model + '#saved_model_root'} value={model.model + '#saved_model_root'}>{model.model + ' - saved_model (root)'}</option>)
-          }
-          if (model.saved_model_dir) {
-            items.push(<option key={model.model + '#saved_model_dir'} value={model.model + '#saved_model_dir'}>{model.model + ' - saved_model (dir)'}</option>)
-          }
-          if (model.frozen_inference_graph) {
-            items.push(<option key={model.model + '#frozen_inference_graph'} value={model.model + '#frozen_inference_graph'}>{model.model + ' - frozen_inference_graph'}</option>)
-          }
-          //if (model.ckpt_root) {
-          //  items.push(<option key={model.model + '#ckpt_root'} value={model.model + '#ckpt_root'}>{model.model + ' - checkpoints (root)'}</option>)
-          //}
-          if (model.ckpt_dir) {
-            items.push(<option key={model.model + '#ckpt_dir'} value={model.model + '#ckpt_dir'}>{model.model + ' - checkpoints (dir)'}</option>)
-          }
+          items.push(<option key={model.model + '#saved_model_root'} value={model.model + '#saved_model_root'}>{model.model_txt}</option>)
         })
       }
       return items
