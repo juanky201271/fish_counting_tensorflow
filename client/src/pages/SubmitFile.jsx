@@ -3,6 +3,8 @@ import { withRouter } from 'react-router'
 import api from '../api'
 import { socket } from '../components'
 
+import alert from '../assets/images/alert.png'
+
 import './SubmitFile.scss'
 import { errors as errors_es, labels as labels_es } from './SubmitFile_es.js'
 import { errors as errors_en, labels as labels_en } from './SubmitFile_en.js'
@@ -936,12 +938,21 @@ class SubmitFile extends Component {
             <div className="submitfile__title--green">
               {this.state.labels['tit_cola']}
             </div>
-            <hr />
+            <div className="submitfile__attention">
+              <div className="submitfile__attention--image"><img src={alert} alt="AI peces" /></div>
+              <div className="submitfile__attention--text">
+                <span className="submitfile__title--green"><strong>{this.state.labels['tit_attention'] + ' '}</strong></span>
+                {this.state.labels['tit_attention_text'] + ' '}
+                <span className="submitfile__text--green"><a href="mailto:aipeces@disroot.org">aipeces@disroot.org</a></span>
+              </div>
+            </div>
             {this.state.cola.map(
               ele =>
                 (<>
                   <div className="submitfile__col">
-                    {ele.uploadedFile + ' - ' + this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '')}
+                    <strong>
+                      {ele.uploadedFile + ' - ' + this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '')}
+                    </strong>
                   </div>
                   <div className="submitfile__col">
                     {ele.log === 'end' ? this.colaFileData(ele) : ''}
@@ -970,18 +981,10 @@ class SubmitFile extends Component {
       if (state.total_fish !== null) {
         const type = state.selectedFile.type.split('/')[0] || ''
         return (
-          <div className="submitfile__col">
-            {/*
-            <div className="submitfile__title--green">
-              {this.state.labels['tit_down']}
-            </div>
-            <hr />
-            */}
-            <div className="submitfile__col-67">
-              <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_processed'](type)}</a>
-              <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_table']}</a>
-              <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_det_images']}</a>
-            </div>
+          <div className="submitfile__row-buttons-queue">
+            <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_processed'](type)}</a>
+            <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_table']}</a>
+            <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_det_images']}</a>
           </div>
         )
       } else if (state.uploadedFile !== '') {
@@ -1038,6 +1041,13 @@ class SubmitFile extends Component {
                   {this.state.labels['tit_obj_det_tool']}
                 </div>
 
+                <div className="submitfile__header--select-model">
+                  <div className="submitfile__title">{this.state.labels['tit_sel_model']}</div>
+                  <select name="models" id="listModels" onChange={this.handleList} disabled={isLoading}>
+                    {this.createSelectItems()}
+                  </select>
+                </div>
+
                 <div className="submitfile__header--upload-file">
                   <div className="submitfile__col-67">
                     <div className="submitfile__title">{this.state.labels['tit_select']}</div>
@@ -1057,13 +1067,6 @@ class SubmitFile extends Component {
                 </div>
                 <div className="submitfile__header--error">
                   <div className="submitfile__header--error--label-red">{error ? error : ''}</div>
-                </div>
-
-                <div className="submitfile__header--select-model">
-                  <div className="submitfile__title">{this.state.labels['tit_sel_model']}</div>
-                  <select name="models" id="listModels" onChange={this.handleList} disabled={isLoading}>
-                    {this.createSelectItems()}
-                  </select>
                 </div>
 
                 <div className="submitfile__header--buttons">
@@ -1169,7 +1172,7 @@ class SubmitFile extends Component {
                 </div>
 
                 <div className="submitfile__header-right--image">
-                  {imageData}
+                  {/* imageData */}
                 </div>
 
                 <div className="submitfile__header-right--file">

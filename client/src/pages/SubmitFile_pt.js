@@ -14,11 +14,13 @@ const labels = {
   // fileData
   tit_down: 'TRANSFERÊNCIAS',
   tit_cola: 'PROCESS QUEUE',
+  tit_attention: 'ATENÇÃO!!',
+  tit_attention_text: 'Se a espécie de sua foto ou vídeo não foi detectada, continue enviando imagens até que o sistema aprenda a identificá-la. Se você quiser agilizar o processo, envie uma mensagem para',
   tit_processed: (type) => {
-    return ((type === 'image' ? 'Imagem' : 'Vídeo').concat(' processada'))
+    return ((type === 'image' ? 'img - Imagem' : 'vid - Vídeo').concat(' processada'))
   },
-  tit_table: 'Tabela de espécies/tamanho',
-  tit_det_images: 'Imagens de detecções individuais',
+  tit_table: 'csv - Tabela de espécies/tamanho',
+  tit_det_images: 'zip - Imagens de detecções individuais',
   tit_fil_details: (type) => {
     return (`Detalhes do arquivo (${type === 'image' ? 'Imagem' : 'Vídeo'}):`)
   },
