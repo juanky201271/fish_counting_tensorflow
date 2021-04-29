@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Link } from 'react-router-dom'
 import detectBrowserLanguage from 'detect-browser-language'
 import { withRouter } from 'react-router'
 
 import { NavBar, Logo } from '../components'
-import { SubmitFile, AboutUs } from '../pages'
+import { SubmitFile, AboutUs, Terms, Privacy } from '../pages'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './normalize.css'
@@ -79,6 +79,8 @@ class App extends Component {
                   <Switch>
                     <Route path="/" exact render={() => <SubmitFile parentState={{ authenticated, twitterId, ip, user, language }} />} />
                     <Route path="/aboutus" exact render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                    <Route path="/terms" exact render={() => <Terms parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                    <Route path="/privacy" exact render={() => <Privacy parentState={{ authenticated, twitterId, ip, user, language }} />} />
                   </Switch>
                   <div className="app__footer">
                     <div className="app__footer--left">
@@ -87,9 +89,23 @@ class App extends Component {
                     </div>
                     <div className="app__footer--right">
                       <div className="app__footer--right-left">
-                        <p style={{ color: '#0091a8' }}>{this.state.labels['tit_abo_us']}</p>
-                        <p>{this.state.labels['tit_pri_policy']}</p>
-                        <p>{this.state.labels['tit_leg_warning']}</p>
+
+                        <div className="app__footer--right-left-link-green">
+                          <Link to={{ pathname: "/aboutus" }}>
+                            {this.state.labels['tit_abo_us']}
+                          </Link>
+                        </div>
+                        <div className="app__footer--right-left-link-white">
+                          <Link to={{ pathname: "/terms" }}>
+                            {this.state.labels['tit_ter_conditions']}
+                          </Link>
+                        </div>
+                        <div className="app__footer--right-left-link-white">
+                          <Link to={{ pathname: "/privacy" }}>
+                            {this.state.labels['tit_pri_policy']}
+                          </Link>
+                        </div>
+
                       </div>
                       <div className="app__footer--right-right">
                         <div className="app__footer--right-right-rect-blue"></div>

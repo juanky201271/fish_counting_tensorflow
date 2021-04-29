@@ -91,6 +91,21 @@
         display: flex;
         flex-direction: column;
         align-self: flex-start;
+
+        &-link-green {
+          a {
+            color: #0091a8;
+            text-decoration: none;
+            cursor: pointer;
+          }
+        }
+        &-link-white {
+          a {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+          }
+        }
       }
       &-right {
         width: auto;

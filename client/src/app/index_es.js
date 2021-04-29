@@ -7,6 +7,7 @@ const labels = {
   tit_abo_us: 'SOBRE NOSOTROS',
   tit_pri_policy: 'Política de privacidad',
   tit_leg_warning: 'Aviso Legal',
+  tit_ter_conditions: 'Términos y condiciones',
 };
 
 export { labels };
