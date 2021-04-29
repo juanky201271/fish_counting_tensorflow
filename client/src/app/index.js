@@ -112,7 +112,7 @@ class App extends Component {
                         <div>
                           <p>
                             {this.state.labels['tit_email']}<br />
-                            <a href="mailto:aipeces@disroot.org">aipeces@disroot.org</a>
+                            <a href="mailto:info@aipeces.io">info@aipeces.io</a>
                           </p>
                         </div>
                       </div>

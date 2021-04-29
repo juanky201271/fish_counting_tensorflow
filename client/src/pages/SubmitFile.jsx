@@ -943,7 +943,7 @@ class SubmitFile extends Component {
               <div className="submitfile__attention--text">
                 <span className="submitfile__title--green"><strong>{this.state.labels['tit_attention'] + ' '}</strong></span>
                 {this.state.labels['tit_attention_text'] + ' '}
-                <span className="submitfile__text--green"><a href="mailto:aipeces@disroot.org">aipeces@disroot.org</a></span>
+                <span className="submitfile__text--green"><a href="mailto:info@aipeces.io">info@aipeces.io</a></span>
               </div>
             </div>
             {this.state.cola.map(
