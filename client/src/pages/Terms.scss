@@ -54,6 +54,8 @@
       display: block;
       width: 100%;
       color: #444;
+      text-align: justify;
+      text-justify: inter-word;
 
       @media(min-width: 300px) {
         padding: 10px;
