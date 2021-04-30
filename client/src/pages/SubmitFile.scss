@@ -521,24 +521,7 @@
       font-size: 12px;
     }
 
-    @media(min-width: 300px) {
-      display: flex;
-      flex-direction: row;
-
-      &--image {
-        display: flex;
-
-        img {
-          width: 75px;
-          height: 75px;
-        }
-      }
-      &--text {
-        padding: 10px;
-        font-size: 12.5px;
-      }
-    }
-    @media(min-width: 500px) {
+    @media(min-width: 370px) {
       display: flex;
       flex-direction: row;
 
@@ -551,34 +534,69 @@
         }
       }
       &--text {
-        padding: 10px;
+        font-size: 12.5px;
+      }
+    }
+
+    @media(min-width: 420px) {
+
+      &--image {
+
+        img {
+          width: 85px;
+          height: 85px;
+        }
+      }
+      &--text {
+        font-size: 13px;
+      }
+    }
+
+    @media(min-width: 470px) {
+
+      &--image {
+
+        img {
+          width: 65px;
+          height: 65px;
+        }
+      }
+      &--text {
+        font-size: 13px;
+      }
+    }
+
+    @media(min-width: 620px) {
+
+      &--image {
+
+        img {
+          width: 50px;
+          height: 50px;
+        }
+      }
+      &--text {
+        font-size: 13px;
+      }
+    }
+
+    @media(min-width: 890px) {
+
+      &--image {
+
+        img {
+          width: 30px;
+          height: 30px;
+        }
+      }
+      &--text {
         font-size: 13px;
       }
     }
 
     @media(min-width: 1024px) {
-      display: flex;
-      flex-direction: row;
 
       &--image {
-        display: flex;
-
-        img {
-          width: 75px;
-          height: 75px;
-        }
-      }
-      &--text {
-        padding: 10px;
-        font-size: 12.5px;
-      }
-    }
-    @media(min-width: 1400px) {
-      display: flex;
-      flex-direction: row;
-
-      &--image {
-        display: flex;
 
         img {
           width: 100px;
@@ -586,10 +604,67 @@
         }
       }
       &--text {
-        padding: 10px;
+        font-size: 12.5px;
+      }
+    }
+
+    @media(min-width: 1290px) {
+
+      &--image {
+
+        img {
+          width: 85px;
+          height: 85px;
+        }
+      }
+      &--text {
         font-size: 13px;
       }
     }
+
+    @media(min-width: 1525px) {
+
+      &--image {
+
+        img {
+          width: 65px;
+          height: 65px;
+        }
+      }
+      &--text {
+        font-size: 13px;
+      }
+    }
+
+    @media(min-width: 1925px) {
+
+      &--image {
+
+        img {
+          width: 50px;
+          height: 50px;
+        }
+      }
+      &--text {
+        font-size: 13px;
+      }
+    }
+
+    @media(min-width: 2610px) {
+
+      &--image {
+
+        img {
+          width: 30px;
+          height: 30px;
+        }
+      }
+      &--text {
+        font-size: 13px;
+      }
+    }
+
+
 
   }
 

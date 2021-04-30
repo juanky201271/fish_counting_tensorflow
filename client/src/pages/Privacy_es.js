@@ -14,11 +14,12 @@ Todos los datos anteriores se conservan indefinidamente, a menos que se solicite
 Los datos que se encuentran en la sección anterior "Datos personales recopilados". La sección no se comparte con ninguna otra entidad.</p>
 
 <p><strong>Sus derechos con sus datos</strong><br />
-Si desea ver todos los datos que tenemos sobre usted, haga una solicitud a <a href="mailto:info@aipeces.io">info@aipeces.io</a>.<br />
+Si desea ver todos los datos que tenemos sobre usted, haga una solicitud a <a href="mailto:info@aipeces.io">info@aipeces.io</a>.
+<br />
 Si desea que todos sus datos se eliminen permanentemente, para que nunca más se vuelvan a ver en nuestro sitio web solicite este servicio a <a href="mailto:info@aipeces.io">info@aipeces.io</a>.</p>
 
 <p><strong>Reanudando la política de privacidad original:</strong><br />
-AIpeces ("nosotros" o "nuestro") opera el sitio web <a href="http://aipeces.io" target="_blank" rel="noopener noreferrer">http://aipeces.io</a> (el "Servicio").
+<span>AIpeces</span> ("nosotros" o "nuestro") opera el sitio web <a href="http://aipeces.io" target="_blank" rel="noopener noreferrer">http://aipeces.io</a> (el "Servicio").
 <br /><br />
 Esta página le informa sobre nuestras políticas con respecto a la recopilación, el uso y la divulgación de información personal cuando utiliza nuestro Servicio.
 <br /><br />

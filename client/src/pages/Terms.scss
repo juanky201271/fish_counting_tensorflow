@@ -41,7 +41,6 @@
 
       @media(min-width: 1024px) {
         display: flex;
-        background-color: white;
         opacity: 0.6;
         padding-left: 20px;
       }
@@ -72,6 +71,9 @@
       }
       li {
         margin-left: 20px;
+      }
+      span {
+        color: #0091a8;
       }
     }
   }
