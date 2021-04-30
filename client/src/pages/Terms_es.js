@@ -1,7 +1,7 @@
 const labels = {
   terms_title: 'TÉRMINOS Y CONDICIONES',
   terms_text: <div><p>
-Leer estos Términos y condiciones detenidamente antes de utilizar el sitio web <a href="http://aipeces.io" target="_blank" rel="noopener noreferrer">http://aipeces.io</a> (el "Servicio") operado por AIpeces ("nosotros").
+Leer estos Términos y condiciones detenidamente antes de utilizar el sitio web <a href="http://aipeces.io" target="_blank" rel="noopener noreferrer">http://aipeces.io</a> (el "Servicio") operado por <span>AIpeces</span> ("nosotros").
 <br /><br />
 Su acceso y uso del Servicio está condicionado a su aceptación y cumplimiento de estos Términos. Estos Términos se aplican a todos los visitantes, usuarios y otras personas que deseen acceder o utilizar el Servicio.
 <br /><br />
@@ -26,11 +26,10 @@ Si desea que se eliminen sus datos/cuenta de aipeces.io, puede enviar una solici
 Nos reservamos el derecho de rechazar el servicio, cancelar cuentas, eliminar o editar contenido o cancelar pedidos a nuestro exclusivo criterio.
 <br /><br />
 SOBRE LOS DERECHOS DE AUTOR Y DERECHOS AFINES EN EL MERCADO ÚNICO DIGITAL<br />
-Es política de AIpeces responder a los avisos de supuestas infracciones de derechos de autor que incumplan con la DIRECTIVA DEL PARLAMENTO EUROPEO Y DEL CONSEJO sobre los derechos de autor y derechos afines en el mercado único digital y por la que se modifican las Directivas96/9/CE y2001/29/CE.
+Es política de <span>AIpeces</span> responder a los avisos de supuestas infracciones de derechos de autor que incumplan con la DIRECTIVA DEL PARLAMENTO EUROPEO Y DEL CONSEJO sobre los derechos de autor y derechos afines en el mercado único digital y por la que se modifican las Directivas96/9/CE y2001/29/CE.
 <br /><br />
 PROPIEDAD INTELECTUAL<br />
-El Servicio y su contenido, características y funcionalidad originales son y seguirán siendo propiedad exclusiva de AIpeces. El Servicio está protegido por derechos de autor, marcas comerciales y otras leyes tanto de la Unión Europea como de otros
-países. Nuestras marcas comerciales e imagen comercial no se pueden utilizar en relación con ningún producto o servicio sin el consentimiento previo por escrito de AIpeces.
+El Servicio y su contenido, características y funcionalidad originales son y seguirán siendo propiedad exclusiva de <span>AIpeces</span>. El Servicio está protegido por derechos de autor, marcas comerciales y otras leyes tanto de la Unión Europea como de otros países. Nuestras marcas comerciales e imagen comercial no se pueden utilizar en relación con ningún producto o servicio sin el consentimiento previo por escrito de <span>AIpeces</span>.
 <br /><br />
 CANCELACIÓN<br />
 Podemos rescindir o suspender su cuenta y prohibir el acceso al Servicio de inmediato, sin previo aviso ni responsabilidad, bajo nuestro exclusivo criterio, por cualquier motivo y sin limitación, incluido, entre otros, el incumplimiento de los Términos.
@@ -41,18 +40,18 @@ Todas las disposiciones de los Términos que por su naturaleza deberían sobrevi
 limitaciones de responsabilidad.
 <br /><br />
 INDEMNIZACIÓN<br />
-Usted acepta defender, indemnizar y eximir de responsabilidad a AIpeces y a sus licenciatarios y otorgantes de licencias, y a sus empleados, contratistas, agentes, funcionarios y directores, de y contra todos y cada uno de los reclamos, daños,
+Usted acepta defender, indemnizar y eximir de responsabilidad a <span>AIpeces</span> y a sus licenciatarios y otorgantes de licencias, y a sus empleados, contratistas, agentes, funcionarios y directores, de y contra todos y cada uno de los reclamos, daños,
 obligaciones, pérdidas, responsabilidades, costos o deudas y gastos. (incluidos, entre otros, los honorarios de abogados), que resulten o se deriven de a) su uso y acceso al Servicio, por parte de usted o de cualquier persona que utilice su cuenta y
 contraseña, o b) un incumplimiento de estos Términos.
 <br /><br />
 LIMITACIÓN DE RESPONSABILIDAD<br />
-En ningún caso AIpeces, ni sus directores, empleados, socios, agentes, proveedores o afiliados, serán responsables de ningún daño indirecto, incidental, especial, consecuente o punitivo, incluidos, entre otros, la pérdida de ganancias, datos, uso, buena voluntad, u otras pérdidas intangibles, que resulten de (i) su acceso o uso o incapacidad para acceder o usar el Servicio; (ii) cualquier conducta o contenido de un tercero en el Servicio; (iii) cualquier contenido obtenido del Servicio; y (iv) acceso no autorizado, uso o alteración de sus transmisiones o contenido, ya sea por garantía, contrato, agravio (incluida la negligencia) o cualquier otra teoría legal, ya sea que se nos haya informado o no de la posibilidad de dicho daño, e incluso si se determina que un recurso establecido en este documento no ha cumplido su propósito esencial.
+En ningún caso <span>AIpeces</span>, ni sus directores, empleados, socios, agentes, proveedores o afiliados, serán responsables de ningún daño indirecto, incidental, especial, consecuente o punitivo, incluidos, entre otros, la pérdida de ganancias, datos, uso, buena voluntad, u otras pérdidas intangibles, que resulten de (i) su acceso o uso o incapacidad para acceder o usar el Servicio; (ii) cualquier conducta o contenido de un tercero en el Servicio; (iii) cualquier contenido obtenido del Servicio; y (iv) acceso no autorizado, uso o alteración de sus transmisiones o contenido, ya sea por garantía, contrato, agravio (incluida la negligencia) o cualquier otra teoría legal, ya sea que se nos haya informado o no de la posibilidad de dicho daño, e incluso si se determina que un recurso establecido en este documento no ha cumplido su propósito esencial.
 <br /><br />
 DESCARGO DE RESPONSABILIDAD<br />
 Su uso del Servicio es bajo su propio riesgo. El Servicio se proporciona "TAL CUAL" y "SEGÚN DISPONIBILIDAD". El Servicio se proporciona sin garantías de ningún tipo, ya sean expresas o implícitas, incluidas, entre otras, las garantías implícitas de
 comerciabilidad, idoneidad para un propósito particular, no infracción o curso de ejecución.
 <br /><br />
-AIpeces no garantiza que a) el Servicio funcionará de manera ininterrumpida, segura o estará disponible en cualquier momento o lugar en particular; b) se corregirán los errores o defectos; c) el Servicio está libre de virus u otros componentes dañinos; o d) los resultados del uso del Servicio cumplirán con sus requisitos.
+<span>AIpeces</span> no garantiza que a) el Servicio funcionará de manera ininterrumpida, segura o estará disponible en cualquier momento o lugar en particular; b) se corregirán los errores o defectos; c) el Servicio está libre de virus u otros componentes dañinos; o d) los resultados del uso del Servicio cumplirán con sus requisitos.
 <br /><br />
 EXCLUSIONES<br />
 Algunas jurisdicciones no permiten la exclusión de ciertas garantías o la exclusión o limitación de responsabilidad por daños consecuentes o incidentales, por lo que es posible que las limitaciones anteriores no se apliquen en su caso.
