@@ -17,10 +17,10 @@ const labels = {
   tit_attention: 'ATTENTION!!',
   tit_attention_text: "Si l'espèce de votre photo ou vidéo n'a pas été détectée, veuillez continuer à télécharger des images jusqu'à ce que le système apprenne à l'identifier. Si vous souhaitez accélérer le processus, veuillez envoyer un message à",
   tit_processed: (type) => {
-    return ((type === 'image' ? 'img - image' : 'vid - vidéo').concat(' traitée'))
+    return ((type === 'image' ? 'Image' : 'Vidéo').concat(' traitée'))
   },
-  tit_table: 'csv - Tableau des espèces / tailles',
-  tit_det_images: 'zip - Images de détections individuelles',
+  tit_table: 'Tableau des espèces / tailles',
+  tit_det_images: 'Images de détections individuelles',
   tit_fil_details: (type) => {
     return (`Détails du fichier (${type === 'image' ? 'image' : 'vidéo'}):`)
   },

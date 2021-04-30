@@ -17,10 +17,10 @@ const labels = {
   tit_attention: 'ATTENTION!!',
   tit_attention_text: 'If the species of your photo or video has not been detected, please continue uploading images until the system learns to identify it. If you want to speed up the process please send a message to',
   tit_processed: (type) => {
-    return ((type === 'image' ? 'img - Processed ' : 'vid - Processed ') + type)
+    return ((type === 'image' ? 'Processed ' : 'Processed ') + type)
   },
-  tit_table: 'csv - Species/Size table',
-  tit_det_images: 'zip - Individual detections images',
+  tit_table: 'Species/Size table',
+  tit_det_images: 'Individual detections images',
   tit_fil_details: (type) => {
     return (`File details (${type}):`)
   },
