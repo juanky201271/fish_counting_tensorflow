@@ -835,7 +835,7 @@ class SubmitFile extends Component {
               {this.state.labels['tit_down']}
             </div>
             <hr />
-            <div className="submitfile__col-67">
+            <div className="submitfile__col-75">
               <a className="submitfile__button-picture btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_processed'](type)}</a>
               <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_table']}</a>
               <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_det_images']}</a>
@@ -931,7 +931,6 @@ class SubmitFile extends Component {
     }
 
     colaData = () => {
-
       if (this.state.cola.length > 0) {
         return (
           <div className="submitfile__col">
@@ -941,14 +940,14 @@ class SubmitFile extends Component {
             <div className="submitfile__attention">
               <div className="submitfile__attention--image"><img src={alert} alt="AI peces" /></div>
               <div className="submitfile__attention--text">
-                <span className="submitfile__title--green"><strong>{this.state.labels['tit_attention'] + ' '}</strong></span>
+                <span className="submitfile__text--green"><strong>{this.state.labels['tit_attention'] + ' '}</strong></span>
                 {this.state.labels['tit_attention_text'] + ' '}
                 <span className="submitfile__text--green"><a href="mailto:info@aipeces.io">info@aipeces.io</a></span>
               </div>
             </div>
             {this.state.cola.map(
-              ele =>
-                (<>
+              ele => {
+                return (<>
                   <div className="submitfile__col">
                     <strong>
                       {ele.uploadedFile + ' - ' + this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '')}
@@ -960,7 +959,7 @@ class SubmitFile extends Component {
                   <hr />
                   <hr />
                 </>)
-              )
+              })
             }
           </div>
         )
@@ -1049,7 +1048,7 @@ class SubmitFile extends Component {
                 </div>
 
                 <div className="submitfile__header--upload-file">
-                  <div className="submitfile__col-67">
+                  <div className="submitfile__col-75">
                     <div className="submitfile__title">{this.state.labels['tit_select']}</div>
                     <input
                         className="submitfile__header--upload-file--input-file form-control"
@@ -1061,7 +1060,7 @@ class SubmitFile extends Component {
                         disabled={isLoading || !model ? true : uploadedFile ? true : false}
                     />
                   </div>
-                  <div className="submitfile__col-33">
+                  <div className="submitfile__col-25">
                     <button className="submitfile__button-upload btn" id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >{this.state.labels['tit_upload']}</button>
                   </div>
                 </div>
@@ -1075,7 +1074,7 @@ class SubmitFile extends Component {
                   </div>
 
                   <div className="submitfile__row-buttons">
-                    <div className="submitfile__row-67">
+                    <div className="submitfile__row-75">
                       <div className="submitfile__col-50">
                         <button className="submitfile__button-video btn" id="processVideoRoiButton" onClick={this.handleVideoRoiProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >{this.state.labels['tit_roi_video']}</button>
                         <button className="submitfile__button-video btn" id="processWebcamButton" onClick={this.handleWebcamProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >{this.state.labels['tit_web_cam']}</button>
@@ -1087,7 +1086,7 @@ class SubmitFile extends Component {
                       </div>
                     </div>
 
-                    <div className="submitfile__col-33-buttons">
+                    <div className="submitfile__col-25-buttons">
                       <button className="submitfile__button-cancel btn" id="cancelButton" onClick={this.handleCancel} disabled={(isLoading || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
                     </div>
                   </div>
@@ -1106,7 +1105,7 @@ class SubmitFile extends Component {
                         {this.state.labels['tit_tex_sel_calibration']}
                       </div>
                       <div className="submitfile__row">
-                        <div className="submitfile__col-67">
+                        <div className="submitfile__col-75">
                           <div className="submitfile__text--green">{this.state.labels['tit_sel_calibration']}</div>
                           <input
                               className="submitfile__header--calibration--input-file form-control"
@@ -1127,7 +1126,7 @@ class SubmitFile extends Component {
                               disabled={isLoading || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
                           />
                         </div>
-                        <div className="submitfile__col-33">
+                        <div className="submitfile__col-25">
                           <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading || !model ? true : selectedFileCalibration && cms && (!uploadedFileCalibration || resultFileCalibration)  ? false : true} >{this.state.labels['tit_calibrate']}</button>
                           <button className="submitfile__button-cancel btn" id="cancelCalibrationButton" onClick={this.handleCancelCalibration} disabled={(isLoading || !model) && !cancelarWaitingCalibration} >{this.state.labels['tit_cancel'](total_fish)}</button>
                         </div>
