@@ -1,6 +1,7 @@
 require("dotenv").config()
 const cookieSession = require("cookie-session")
 const path = require("path")
+const sslRedirect = require('heroku-ssl-redirect')
 const express = require("express")
 const multer = require('multer')
 const app = express()
@@ -37,6 +38,8 @@ AWS.config.getCredentials(function(err) {
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
+app.use(sslRedirect())
+
 app.use(
   cookieSession({
     name: "session",
@@ -65,15 +68,6 @@ app.use(bodyParser.json())
 
 app.use('/api', submitRouter)
 app.use('/api', uploadRouter)
-
-app.get('*', function(req, res, next) {
-  console.log(req.headers.host, req.url)
-  if (req.headers.host !== 'localhost:8000' && (req.headers.host !== 'aipeces.io' || req.protocol !== 'https')) {
-    res.redirect("https://aipeces.io" + req.url)
-  } else {
-    return next()
-  }
-})
 
 if (process.env.NODE_ENV == "production") {
   app.use(express.static(path.join(__dirname, "client/build")))
