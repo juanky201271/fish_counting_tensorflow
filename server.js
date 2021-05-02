@@ -1,7 +1,7 @@
 require("dotenv").config()
 const cookieSession = require("cookie-session")
 const path = require("path")
-const sslRedirect = require('heroku-ssl-redirect')
+const sslRedirect = require('express-https-redirect')
 const express = require("express")
 const multer = require('multer')
 const app = express()
@@ -38,7 +38,7 @@ AWS.config.getCredentials(function(err) {
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
-app.use(sslRedirect())
+app.use('/', sslRedirect())
 
 app.use(
   cookieSession({
