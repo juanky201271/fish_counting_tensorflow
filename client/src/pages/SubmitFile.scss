@@ -99,7 +99,7 @@
         font-size: 12px;
 
         @media(min-width: 300px) {
-          width: 67%;
+          width: 70%;
         }
         @media(min-width: 768px) {
           font-size: 15px;
@@ -405,13 +405,13 @@
     }
   }
 
-  &__col-67 {
+  &__col-75 {
     display: block;
 
     @media(min-width: 300px) {
       display: flex;
       flex-direction: column;
-      width: 67%;
+      width: 75%;
     }
   }
 
@@ -426,18 +426,18 @@
     }
   }
 
-  &__col-33 {
+  &__col-25 {
     display: block;
 
     @media(min-width: 300px) {
       display: flex;
       flex-direction: column;
-      width: 33%;
+      width: 25%;
       margin-left: 10px;
     }
   }
 
-  &__col-33-buttons {
+  &__col-25-buttons {
     display: block;
 
     @media(min-width: 300px) {
@@ -448,7 +448,7 @@
     @media(min-width: 500px) {
       display: flex;
       flex-direction: column;
-      width: 33%;
+      width: 25%;
     }
   }
 
@@ -461,7 +461,7 @@
     }
   }
 
-  &__row-67 {
+  &__row-75 {
     display: block;
 
     @media(min-width: 300px) {
@@ -472,7 +472,7 @@
     @media(min-width: 500px) {
       display: flex;
       flex-direction: row;
-      width: 67%;
+      width: 75%;
     }
   }
 
