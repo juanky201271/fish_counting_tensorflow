@@ -66,6 +66,15 @@ app.use(bodyParser.json())
 app.use('/api', submitRouter)
 app.use('/api', uploadRouter)
 
+app.get('*', function(req, res, next) {
+  console.log(req.headers.host, req.url)
+  if (req.headers.host !== 'localhost:8000' && (req.headers.host !== 'aipeces.io' || req.protocol !== 'https')) {
+    res.redirect("https://aipeces.io" + req.url)
+  } else {
+    return next()
+  }
+})
+
 if (process.env.NODE_ENV == "production") {
   app.use(express.static(path.join(__dirname, "client/build")))
   //app.use(express.static(path.join(__dirname, "client/public")))
