@@ -21,6 +21,17 @@ createSubmit = async (req, res) => {
     return res.status(400).json({ success: false, error: 'You must provide a correct json submit', })
   }
 
+  var ipAddr = req.headers["x-forwarded-for"]
+  if (ipAddr){
+    var list = ipAddr.split(",")
+    ipAddr = list[list.length-1]
+  } else {
+    ipAddr = req.connection.remoteAddress
+  }
+
+  submit.ip = ipAddr || '...'
+  submit.ip_city = req.ipInfo.city || ''
+  submit.ip_country = req.ipInfo.country || ''
   await submit
   .save()
   .then(() => {

@@ -5,6 +5,7 @@ const sslRedirect = require('express-https-redirect')
 const express = require("express")
 const multer = require('multer')
 const app = express()
+const expressip = require('express-ip')
 const PORT = process.env.PORT || 8000 // express
 //const passport = require("passport")
 const bodyParser = require('body-parser')
@@ -39,6 +40,8 @@ AWS.config.getCredentials(function(err) {
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 app.use('/', sslRedirect())
+
+app.use(expressip().getIpInfoMiddleware);
 
 app.use(
   cookieSession({
