@@ -85,7 +85,25 @@ class SubmitFile extends Component {
             if (params.uploadedFile === uploadedFileState) {
               if (params.info) {
                 //video
-
+                const n_frames = parseInt(params.info.split('/')[0])
+                const t_frames = parseInt(params.info.split('/')[1])
+                const incremento = parseInt((80 / t_frames) / 4)
+                if (params.action === 'start') {
+                  cola[i].porc = "5%"
+                } else if (params.action === 'end' || params.action === 'ERROR') {
+                  cola[i].porc = "100%"
+                } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writting') {
+                  //sumar incremento
+                  if (parseInt(cola[i].porc.split("%")[0]) < 90) {
+                    cola[i].porc = (parseInt(cola[i].porc.split("%")[0]) + incremento).toString().concat('%')
+                  }
+                  console.log('......video........', params.action, params.info, cola[i].porc)
+                } else {
+                  //sumar 5
+                  if (parseInt(cola[i].porc.split("%")[0]) < 100) {
+                    cola[i].porc = (parseInt(cola[i].porc.split("%")[0]) + 5).toString().concat('%')
+                  }
+                }
               } else {
                 //image
                 if (params.action === 'start') {
@@ -121,7 +139,7 @@ class SubmitFile extends Component {
               this.setState(
                 { cola: cola },
                 function() {
-                  if (params.action === 'detecting') {
+                  if (params.action === 'detecting' && !params.info) { // solo detecting e imagen
                     this.intervals[i] = setTimeout(function() { this.porcentaje(i) }.bind(this), 1000)
                   }
                 }
@@ -145,7 +163,7 @@ class SubmitFile extends Component {
   porcentaje = i => {
     const cola = this.state.cola || []
     const action = cola[i].log
-    console.log('..............', cola[i].log, cola[i].porc)
+    console.log('......image........', cola[i].log, cola[i].porc)
     //sumar 2 cada segundo
     if (parseInt(cola[i].porc.split("%")[0]) < 85) {
       if (cola[i].log === 'detecting') {
