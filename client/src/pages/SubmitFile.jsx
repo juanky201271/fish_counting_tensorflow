@@ -1306,11 +1306,11 @@ class SubmitFile extends Component {
           </div>
 
           <div className="submitfile__header-right--file">
-            {fileData}
+            {colaData}
           </div>
 
           <div className="submitfile__header-right--file">
-            {colaData}
+            {fileData}
           </div>
 
         </div>
