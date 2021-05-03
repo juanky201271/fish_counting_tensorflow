@@ -292,37 +292,11 @@
     @media(min-width: 768px) {
       font-size: 16px;
     }
-  }
 
-  &__button-picture {
-    margin-left: 0px;
-    margin-right: 10px;
-    margin-top: 0px;
-    margin-bottom: 10px;
-    background-color: #d68977;
-    border: none;
-    color: white;
-    padding: 10px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 13px;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    &:hover, &:visited {
+      background-color: #d68977;
+    }
 
-    @media(min-width: 300px) {
-      margin-left: 10px;
-      margin-right: 10px;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      width: auto;
-      max-width: 300px;
-    }
-    @media(min-width: 768px) {
-      font-size: 16px;
-    }
   }
 
   &__button-cancel {
