@@ -1069,8 +1069,6 @@ class SubmitFile extends Component {
                 {/* <div className="submitfile__row"> */}
                   {/* <div style={{ fontSize: '10px' }}>{ele.porc}</div> */}
                   <div style={w}>
-                    <hr style={{ borderTop: '5px dashed #0091a8' }} />
-                    <hr style={{ borderTop: '5px dotted #0091a8' }} />
                     <hr style={{ borderTop: '5px solid #0091a8' }} />
                   </div>
                 {/* </div> */}
