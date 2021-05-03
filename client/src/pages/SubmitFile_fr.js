@@ -15,7 +15,7 @@ const labels = {
   tit_down: 'TÉLÉCHARGEMENTS',
   tit_cola: 'FILE DE PROCESSUS',
   tit_attention: 'ATTENTION!!',
-  tit_attention_text: "Si l'espèce de votre photo ou vidéo n'a pas été détectée, veuillez continuer à télécharger des images jusqu'à ce que le système apprenne à l'identifier. Si vous souhaitez accélérer le processus, veuillez envoyer un message à",
+  tit_attention_text: "Si l'espèce de votre photo ou vidéo n'a pas été détectée, veuillez continuer à télécharger des images jusqu'à ce que le système apprenne à l'identifier. Si vous souhaitez accélérer le processus, envoyer un message à",
   tit_processed: (type) => {
     return ((type === 'image' ? 'Image' : 'Vidéo').concat(' traitée'))
   },

@@ -15,7 +15,7 @@ const labels = {
   tit_down: 'DOWNLOADS',
   tit_cola: 'PROCESS QUEUE',
   tit_attention: 'ATTENTION!!',
-  tit_attention_text: 'If the species of your photo or video has not been detected, please continue uploading images until the system learns to identify it. If you want to speed up the process please send a message to',
+  tit_attention_text: 'If the species of your photo or video has not been detected, please continue uploading images until the system learns to identify it. If you want to speed up the process send a message to',
   tit_processed: (type) => {
     return ((type === 'image' ? 'Processed ' : 'Processed ') + type)
   },

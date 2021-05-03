@@ -15,7 +15,7 @@ const labels = {
   tit_down: 'DESCARGAS',
   tit_cola: 'COLA DE PROCESOS',
   tit_attention: '¡¡ATENCIÓN!!',
-  tit_attention_text: 'Si la especie de tu foto o video no ha sido detectada, por favor continua cargando imágenes hasta que el sistema aprenda a identificarla. Si quieres acelerar el proceso por favor envía un mensaje a',
+  tit_attention_text: 'Si la especie de tu foto o video no ha sido detectada, por favor continua cargando imágenes hasta que el sistema aprenda a identificarla. Si quieres acelerar el proceso envía un mensaje a',
   tit_processed: (type) => {
     return (type === 'image' ? 'Imagen procesada' : 'Video procesado')
   },
