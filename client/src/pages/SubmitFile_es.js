@@ -80,7 +80,7 @@ const labels = {
   tracking: 'Seguimiento',
   drawing: 'Dibujando',
   saving: 'Grabando',
-  reading: 'Layendo video',
+  reading: 'Leyendo video',
   writing: 'Escribiendo fotogramas',
   end: 'Fin',
   error: 'ERROR',

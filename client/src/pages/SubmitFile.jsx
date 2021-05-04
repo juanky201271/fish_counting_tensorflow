@@ -83,49 +83,49 @@ class SubmitFile extends Component {
           for (let i = 0; i < cola.length; i++) {
             const uploadedFileState = 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile
             if (params.uploadedFile === uploadedFileState) {
-              if (params.info) {
+              if (cola[i].selectedFile.type.split('/')[0] === 'video') {
                 //video
-                const n_frames = parseInt(params.info.split('/')[0])
-                const t_frames = parseInt(params.info.split('/')[1])
-                const incremento = parseInt((80 / t_frames) / 4)
                 if (params.action === 'start') {
-                  cola[i].porc = "5%"
+                  cola[i].porc = 5
                 } else if (params.action === 'end' || params.action === 'ERROR') {
-                  cola[i].porc = "100%"
-                } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writting') {
+                  cola[i].porc = 100
+                } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
+                  const n_frames = parseInt(params.info.split('/')[0])
+                  const t_frames = parseInt(params.info.split('/')[1])
+                  const incremento = (80 / t_frames) / 4
                   //sumar incremento
-                  if (parseInt(cola[i].porc.split("%")[0]) < 90) {
-                    cola[i].porc = (parseInt(cola[i].porc.split("%")[0]) + incremento).toString().concat('%')
+                  if (cola[i].porc < 90) {
+                    cola[i].porc = cola[i].porc + incremento
                   }
-                  console.log('......video........', params.action, params.info, cola[i].porc)
+                  console.log('......video........', params.action, params.info, cola[i].porc, incremento)
                 } else {
                   //sumar 5
-                  if (parseInt(cola[i].porc.split("%")[0]) < 100) {
-                    cola[i].porc = (parseInt(cola[i].porc.split("%")[0]) + 5).toString().concat('%')
+                  if (cola[i].porc < 100) {
+                    cola[i].porc = cola[i].porc + 5
                   }
                 }
               } else {
                 //image
                 if (params.action === 'start') {
-                  cola[i].porc = "5%"
+                  cola[i].porc = 5
                 } else if (params.action === 'end' || params.action === 'ERROR') {
-                  cola[i].porc = "100%"
+                  cola[i].porc = 100
                   if (this.intervals[i]) {
                     clearTimeout(this.intervals[i])
                     this.intervals[i] = null
                   }
                 } else if (params.action === 'detecting') {
                   //sumar 2
-                  if (parseInt(cola[i].porc.split("%")[0]) < 85) {
-                    cola[i].porc = (parseInt(cola[i].porc.split("%")[0]) + 2).toString().concat('%')
+                  if (cola[i].porc < 90) {
+                    cola[i].porc = cola[i].porc + 2
                   } else {
                     clearTimeout(this.intervals[i])
                     this.intervals[i] = null
                   }
                 } else {
                   //sumar 5
-                  if (parseInt(cola[i].porc.split("%")[0]) < 100) {
-                    cola[i].porc = (parseInt(cola[i].porc.split("%")[0]) + 5).toString().concat('%')
+                  if (cola[i].porc < 100) {
+                    cola[i].porc = cola[i].porc + 5
                   } else {
                     clearTimeout(this.intervals[i])
                     this.intervals[i] = null
@@ -139,14 +139,15 @@ class SubmitFile extends Component {
               this.setState(
                 { cola: cola },
                 function() {
-                  if (params.action === 'detecting' && !params.info) { // solo detecting e imagen
+                  if (params.action === 'detecting' && cola[i].selectedFile.type.split('/')[0] === 'image') { // solo detecting e imagen
                     this.intervals[i] = setTimeout(function() { this.porcentaje(i) }.bind(this), 1000)
                   }
                 }
               )
-            } else {
-              console.log('socket no match', params)
             }
+            //else {
+            //  console.log('socket no match', params)
+            //}
           }
         }
         if (this.state.uploadedFileCalibration) {
@@ -163,25 +164,25 @@ class SubmitFile extends Component {
   porcentaje = i => {
     const cola = this.state.cola || []
     const action = cola[i].log
-    console.log('......image........', cola[i].log, cola[i].porc)
     //sumar 2 cada segundo
-    if (parseInt(cola[i].porc.split("%")[0]) < 85) {
+    if (cola[i].porc < 90) {
       if (cola[i].log === 'detecting') {
-        cola[i].porc = (parseInt(cola[i].porc.split("%")[0]) + 2).toString().concat('%')
+        cola[i].porc = cola[i].porc + 2
       } else {
         clearTimeout(this.intervals[i])
         this.intervals[i] = null
-        cola[i].porc = "85%"
+        cola[i].porc = 90
       }
     } else {
       clearTimeout(this.intervals[i])
       this.intervals[i] = null
     }
+    console.log('......image........', cola[i].log, cola[i].porc)
     const porc = cola[i].porc
     this.setState(
       { cola: cola },
       function() {
-        if (action === 'detecting' && parseInt(porc.split("%")[0]) < 85) {
+        if (action === 'detecting' && porc < 90) {
           this.intervals[i] = setTimeout(function() { this.porcentaje(i) }.bind(this), 1000)
         }
       }
@@ -1074,7 +1075,7 @@ class SubmitFile extends Component {
           {this.state.cola.map(
             ele => {
               //const w = { alignSelf: 'flex-start', width: ele.porc ? ele.porc : '0%', marginLeft: '5px', marginTop: '5px' }
-              const w = { alignSelf: 'flex-start', width: ele.porc ? ele.porc : '0%', marginTop: '5px' }
+              const w = { alignSelf: 'flex-start', width: ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%', marginTop: '5px' }
               return (<>
                 <div className="submitfile__col">
                   <strong>
@@ -1170,7 +1171,7 @@ class SubmitFile extends Component {
 
   render() {
     console.log('submit file state', this.state)
-    console.log('submit file props', this.props)
+    //console.log('submit file props', this.props)
     const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info } = this.state
     const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
     const fileData = this.fileData()
