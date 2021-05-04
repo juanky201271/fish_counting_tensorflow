@@ -1018,27 +1018,29 @@ class SubmitFile extends Component {
     const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
     const typeCalibration = this.state.selectedFileCalibration ? this.state.selectedFileCalibration.type.split('/')[0] : ''
 
-    if (this.state.total_fish !== null) {
-      if (type === 'image') {
-        return (
-          <img src={imageResult} alt="" />
-        )
-      } else {
-        return (
-          <img src={videoResult} alt="" />
-        )
-      }
-    } else if (this.state.uploadedFile) {
-      if (type === 'image') {
-        return (
-          <img src={image} alt="" />
-        )
-      } else {
-        return (
-          <img src={image_video} alt="" />
-        )
-      }
-    } else if (this.state.total_fishCalibration !== null) {
+    //if (this.state.total_fish !== null) {
+    //  if (type === 'image') {
+    //    return (
+    //      <img src={imageResult} alt="" />
+    //    )
+    //  } else {
+    //    return (
+    //      <img src={videoResult} alt="" />
+    //    )
+    //  }
+    //} else if (this.state.uploadedFile) {
+    //  if (type === 'image') {
+    //    return (
+    //      <img src={image} alt="" />
+    //    )
+    //  } else {
+    //    return (
+    //      <img src={image_video} alt="" />
+    //    )
+    //  }
+    //} else
+
+    if (this.state.total_fishCalibration !== null) {
       if (typeCalibration === 'image') {
         return (
           <img src={imageCalibrationResult} alt="" />
@@ -1319,7 +1321,7 @@ class SubmitFile extends Component {
           </div>
 
           <div className="submitfile__header-right--image">
-            {/* imageData */}
+            {imageData}
           </div>
 
           <div className="submitfile__header-right--file">
