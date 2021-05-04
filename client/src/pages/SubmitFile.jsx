@@ -97,7 +97,7 @@ class SubmitFile extends Component {
                   if (cola[i].porc < 90) {
                     cola[i].porc = cola[i].porc + incremento
                   }
-                  console.log('......video........', params.action, params.info, cola[i].porc, incremento)
+                  //console.log('......video........', params.action, params.info, cola[i].porc, incremento)
                 } else {
                   //sumar 5
                   if (cola[i].porc < 100) {
@@ -177,7 +177,7 @@ class SubmitFile extends Component {
       clearTimeout(this.intervals[i])
       this.intervals[i] = null
     }
-    console.log('......image........', cola[i].log, cola[i].porc)
+    //console.log('......image........', cola[i].log, cola[i].porc)
     const porc = cola[i].porc
     this.setState(
       { cola: cola },
