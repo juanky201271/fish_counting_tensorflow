@@ -1079,7 +1079,7 @@ class SubmitFile extends Component {
               return (<>
                 <div className="submitfile__col">
                   <strong>
-                    {ele.uploadedFile + ' - ' + this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '')}
+                    {ele.uploadedFile + ' - ' + this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '') + ' - ' + (ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%')}
                   </strong>
                 </div>
                 <div className="submitfile__col">
