@@ -433,14 +433,18 @@ class SubmitFile extends Component {
             total_fishCalibration: res.data.total_fish,
             width_pxs_x_cm: res.data.width_pxs_x_cm === '' ? null : res.data.width_pxs_x_cm,
             resultFileCalibration: res.data.resultFileCalibration, isLoading: false,
-          })
+          },
+          () => {
+            setTimeout(() => { this.setState({ uploadedFileCalibration:'', resultFileCalibration:''  }) }, 5000)
+          }
+        )
           if (res.data.total_fish !== null && (res.data.total_fish > 1 || res.data.total_fish === 0)) {
             this.setState(
               {
                 errorCalibration: this.state.errors['only_one_fish'],
               },
               () => {
-                setTimeout(() => { this.setState({ errorCalibration: null }) }, 5000)
+                setTimeout(() => { this.setState({ errorCalibration: null, uploadedFileCalibration:'', resultFileCalibration:''  }) }, 5000)
               }
             )
           }
