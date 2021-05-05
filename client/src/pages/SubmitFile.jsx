@@ -82,7 +82,7 @@ class SubmitFile extends Component {
         if (cola.length > 0) {
           for (let i = 0; i < cola.length; i++) {
             const uploadedFileState = 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile
-            if (params.uploadedFile === uploadedFileState && cola[i].log !== 'end') {
+            if (params.uploadedFile === uploadedFileState && cola[i].log !== 'end' && cola[i].log !== 'ERROR') {
               // si ya esta finalizado no hacer nada
               if (cola[i].selectedFile.type.split('/')[0] === 'video') {
                 //video
