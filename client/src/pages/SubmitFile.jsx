@@ -809,16 +809,22 @@ class SubmitFile extends Component {
           cola[i].times += 1
           this.setState({ cola: cola })
 
-          api[cola[i].api](process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + cola[i].model, cola[i].width_cms, cola[i].width_pxs_x_cm)
-            .then(res => {
+          //api[cola[i].api](process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + cola[i].model, cola[i].width_cms, cola[i].width_pxs_x_cm)
+          //  .then(res => {
               //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
-            })
-            .catch(e => {
-              console.log('Rerun Process ERROR: ', e.response, e.request, e.message, e)
+          //  })
+          //  .catch(e => {
+          //    console.log('Rerun Process ERROR: ', e.response, e.request, e.message, e)
 
-              this.reRunProcess(uploadedFile)
+          //    this.reRunProcess(uploadedFile)
 
-            })
+          //  })
+
+          // voy a simular el lanzamiento del proceso, 29 segundos despues.
+          setTimeout(function () {
+            this.reRunProcess(uploadedFile)
+          }, 29000)
+
         } else {
           return
         }
