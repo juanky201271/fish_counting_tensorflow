@@ -85,6 +85,7 @@ class SubmitFile extends Component {
             if (params.uploadedFile === uploadedFileState && cola[i].log !== 'end') {
               // si ya esta finalizado no hacer nada
               // si ha dado error pero al final el proceso se lanza, recibir las notificaciones, ¿por qué no?
+              let incremento
               if (cola[i].selectedFile.type.split('/')[0] === 'video') {
                 //video
                 if (params.action === 'start') {
@@ -94,18 +95,18 @@ class SubmitFile extends Component {
                 } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
                   const n_frames = parseInt(params.info.split('/')[0])
                   const t_frames = parseInt(params.info.split('/')[1])
-                  const incremento = (80 / t_frames) / 4
+                  incremento = (80 / t_frames) / 3
                   //sumar incremento
                   if (cola[i].porc < 90) {
                     cola[i].porc = cola[i].porc + incremento
                   }
-                  //console.log('......video........', params.action, params.info, cola[i].porc, incremento)
                 } else {
                   //sumar 5
                   if (cola[i].porc < 100) {
                     cola[i].porc = cola[i].porc + 5
                   }
                 }
+                console.log('......video........', params.action, params.info, cola[i].porc, incremento ? incremento : 0)
               } else {
                 //image
                 if (params.action === 'start') {
