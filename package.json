@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "AIPeces",
   "version": "1.0.0",
   "description": "Fish Counting",
   "main": "server.js",

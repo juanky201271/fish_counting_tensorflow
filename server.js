@@ -1,3 +1,5 @@
+// juanky201271 - AIPeces - 2021
+
 require("dotenv").config()
 const cookieSession = require("cookie-session")
 const path = require("path")

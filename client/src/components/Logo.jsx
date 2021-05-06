@@ -1,3 +1,5 @@
+// juanky201271 - AIPeces - 2021
+
 import React, { Component } from 'react'
 import { withRouter } from 'react-router'
 import logo from '../assets/images/logo-white.png'
