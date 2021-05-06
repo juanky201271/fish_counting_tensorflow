@@ -823,7 +823,7 @@ class SubmitFile extends Component {
           // voy a simular el lanzamiento del proceso, 29 segundos despues.
           setTimeout(function () {
             this.reRunProcess(uploadedFile)
-          }, 29000)
+          }.bind(this), 29000)
 
         } else {
           return
