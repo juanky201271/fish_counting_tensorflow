@@ -1091,8 +1091,9 @@ class SubmitFile extends Component {
             ele => {
               //const w = { alignSelf: 'flex-start', width: ele.porc ? ele.porc : '0%', marginLeft: '5px', marginTop: '5px' }
               const w = { alignSelf: 'flex-start', width: ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%', marginTop: '5px' }
+              const c = { color: ele.log === 'waiting' ? 'red' : ele.log === 'end' ? 'green' : 'black' }
               return (<>
-                <div className="submitfile__col">
+                <div className="submitfile__col" style={c}>
                   <strong>
                     {ele.uploadedFile + ' - ' + this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '') + ' - ' + (ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%')}
                   </strong>
