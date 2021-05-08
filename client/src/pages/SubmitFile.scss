@@ -20,6 +20,22 @@
     margin-right: 11%;
   }
 
+  .opt-selected {
+    background-color: #ededed;
+    border: 2px solid #0091a8;
+    cursor: inherit;
+  }
+
+  .opt-no-selected {
+    background-color: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+
+    &:hover {
+      border: 1px dotted #0091a8;
+    }
+  }
+
   &__header {
     display: block;
     width: 100%;
@@ -55,6 +71,8 @@
       margin-top: 10px;
       display: block;
       width: 100%;
+      padding-left: 2px;
+      padding-bottom: 2px;
 
       @media(min-width: 300px) {
         display: flex;
@@ -73,7 +91,39 @@
         }
       }
     }
-    &--error {
+    &--error-upload {
+      height: 15px;
+
+      &--label-red {
+        margin-left: 20px;
+        color: red;
+      }
+    }
+    &--webcam {
+      margin-top: 10px;
+      display: block;
+      width: 100%;
+      padding-left: 2px;
+      padding-bottom: 2px;
+
+      @media(min-width: 300px) {
+        display: flex;
+        flex-direction: row;
+      }
+      @media(min-width: 1024px) {
+        margin-top: 30px;
+        padding-right: 50px;
+      }
+
+      &--input-file {
+        font-size: 12px;
+
+        @media(min-width: 768px) {
+          font-size: 15px;
+        }
+      }
+    }
+    &--error-webcam {
       height: 15px;
 
       &--label-red {

@@ -74,6 +74,10 @@ const labels = {
   tit_lab_sel_file: 'Seleccionar archivo para procesar...',
   tit_lab_sel_model: 'Seleccionar modelo para usar...',
 
+  tit_webcam: 'Usar una WebCam or CCTV conectada',
+  tit_select_webcam: 'Seleccionar!',
+  tit_selected_webcam: 'Seleccionada',
+
   waiting: 'Esperando',
   start: 'Inicio',
   detecting: 'Detectando',

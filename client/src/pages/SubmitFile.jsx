@@ -42,7 +42,8 @@ class SubmitFile extends Component {
         total_fish: null,
         _id: null,
         dir: null,
-        error: null,
+        errorUpload: null,
+        errorWebcam: null,
         cancelarWaiting: false,
 
         model: '',
@@ -64,6 +65,9 @@ class SubmitFile extends Component {
         labels: labels_lang[this.props.parentState.language],
 
         cola: [],
+
+        optUpload: false,
+        optWebCam: false,
       }
       this.uploadInputRef = React.createRef()
       this.uploadInputRefCalibration = React.createRef()
@@ -261,10 +265,10 @@ class SubmitFile extends Component {
       this.uploadInputRef.current.value = ''
       this.setState(
         {
-          error: this.state.errors['only_valid_files']
+          errorUpload: this.state.errors['only_valid_files']
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
         }
       )
       return
@@ -297,11 +301,11 @@ class SubmitFile extends Component {
     if (this.state.selectedFile.size > 30000000) {
       this.setState(
         {
-          error: this.state.errors['max_size_file'],
+          errorUpload: this.state.errors['max_size_file'],
           uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
         }
       )
       if (this.uploadInputRef.current) {
@@ -566,10 +570,10 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorUpload: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
       })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
@@ -639,10 +643,10 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorUpload: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
       })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
@@ -712,10 +716,10 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorWebcam: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
       })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
@@ -785,10 +789,10 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorUpload: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
       })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
@@ -836,6 +840,7 @@ class SubmitFile extends Component {
 
   }
 
+/*
   s3Demon = async () => {
     this.setState({
       error: this.state.errors['waiting'],
@@ -898,6 +903,7 @@ class SubmitFile extends Component {
     }
     console.log(csv_exists, video_exists, image_exists, zip_exists)
   }
+*/
 
   s3DemonCalibration = async () => {
     this.setState({
@@ -952,7 +958,7 @@ class SubmitFile extends Component {
 
   handleList = e => {
     if (!e.target.value) {
-      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, model: '', })
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, model: '', optUpload: false, optWebCam: false, })
       this.uploadInputRef.current.value = ''
     } else {
       this.setState({ model: e.target.value })
@@ -1189,10 +1195,22 @@ class SubmitFile extends Component {
     }
   }
 
+  handleOptUpload = () => {
+    if (this.state.model) {
+      this.setState({ optUpload: true, optWebCam: false })
+    }
+  }
+
+  handleOptWebcam = () => {
+    if (this.state.model) {
+      this.setState({ optWebCam: true, optUpload: false })
+    }
+  }
+
   render() {
     console.log('submit file state', this.state)
     //console.log('submit file props', this.props)
-    const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info } = this.state
+    const { isLoading, selectedFile, uploadedFile, total_fish, errorUpload, errorWebcam, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info, optUpload, optWebCam } = this.state
     const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
     const fileData = this.fileData()
     const imageData = this.imageData()
@@ -1213,7 +1231,7 @@ class SubmitFile extends Component {
             </select>
           </div>
 
-          <div className="submitfile__header--upload-file">
+          <div className={"submitfile__header--upload-file " + (optUpload ? "opt-selected" : "opt-no-selected")} onClick={this.handleOptUpload}>
             <div className="submitfile__col-75">
               <div className="submitfile__title">{this.state.labels['tit_select']}</div>
               <input
@@ -1223,15 +1241,27 @@ class SubmitFile extends Component {
                   accept='image/*|video/*'
                   onChange={this.handleChangeInputUpload}
                   ref={this.uploadInputRef}
-                  disabled={isLoading || !model ? true : uploadedFile ? true : false}
+                  disabled={isLoading || !model ? true : !uploadedFile && optUpload ? false : true}
               />
             </div>
             <div className="submitfile__col-25">
-              <button className="submitfile__button-upload btn" id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >{this.state.labels['tit_upload']}</button>
+              <button className="submitfile__button-upload btn" id="uploadButton" onClick={optUpload ? this.handleUpload : this.handleOptUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : !optUpload ? false : selectedFile && !uploadedFile && optUpload ? false : true} >{optUpload ? this.state.labels['tit_upload'] : this.state.labels['tit_select_webcam']}</button>
             </div>
           </div>
-          <div className="submitfile__header--error">
-            <div className="submitfile__header--error--label-red">{error ? error : ''}</div>
+          <div className="submitfile__header--error-upload">
+            <div className="submitfile__header--error-upload--label-red">{errorUpload ? errorUpload : ''}</div>
+          </div>
+
+          <div className={"submitfile__header--webcam " + (optWebCam ? "opt-selected" : "opt-no-selected")} onClick={this.handleOptWebcam}>
+            <div className="submitfile__col-75">
+              <div className="submitfile__title">{this.state.labels['tit_webcam']}</div>
+            </div>
+            <div className="submitfile__col-25">
+              <button className="submitfile__button-upload btn" id="webcamButton" onClick={this.handleOptWebcam} ref={this.webcamButtonRef} disabled={isLoading || !model ? true : false} >{optWebCam ? this.state.labels['tit_selected_webcam'] : this.state.labels['tit_select_webcam']}</button>
+            </div>
+          </div>
+          <div className="submitfile__header--error-webcam">
+            <div className="submitfile__header--error-webcam--label-red">{errorWebcam ? errorWebcam : ''}</div>
           </div>
 
           <div className="submitfile__header--buttons">
