@@ -21,18 +21,34 @@
   }
 
   .opt-selected {
+    display: block;
+    width: 100%;
     background-color: #ededed;
     border: 2px solid #0091a8;
     cursor: inherit;
+    padding: 2px;
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: row;
+    }
   }
 
   .opt-no-selected {
+    display: block;
+    width: 100%;
     background-color: transparent;
     border: 1px solid transparent;
     cursor: pointer;
+    padding: 2px;
 
     &:hover {
       border: 1px dotted #0091a8;
+    }
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: row;
     }
   }
 
