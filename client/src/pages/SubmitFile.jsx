@@ -1,6 +1,7 @@
 // juanky201271 - AIPeces - 2021
 
 import React, { Component } from 'react'
+import Webcam from 'react-webcam'
 import { withRouter } from 'react-router'
 import api from '../api'
 import { socket } from '../components'
@@ -68,6 +69,8 @@ class SubmitFile extends Component {
 
         optUpload: false,
         optWebCam: false,
+        devices: [],
+        device: null,
       }
       this.uploadInputRef = React.createRef()
       this.uploadInputRefCalibration = React.createRef()
@@ -75,6 +78,7 @@ class SubmitFile extends Component {
       this.processWebcamButtonRef = React.createRef()
       this.processVideoButtonRef = React.createRef()
       this.processPictureButtonRef = React.createRef()
+      this.webcamRef = React.createRef()
       this.interval = null
       this.intervalCalibration = null
 
@@ -970,41 +974,63 @@ class SubmitFile extends Component {
   }
 
   fileData = () => {
-    const file = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile
-    const csv = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile + '_csv_result.csv'
-    const video = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_video_result.mp4'
-    const image = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png'
-    const zip = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_images_zip_result.zip'
-    if (this.state.total_fish !== null) {
-      const type = this.state.selectedFile.type.split('/')[0] || ''
+    const file = this.state.uploadedFile ? process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile : ''
+    if (this.state.optUpload) {
+      const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
       return (
         <div className="submitfile__col">
           <div className="submitfile__title--green">
-            {this.state.labels['tit_down']}
-          </div>
-          <hr />
-          <div className="submitfile__col-75">
-            <a className="submitfile__button-video btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_processed'](type)}</a>
-            <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_table']}</a>
-            <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_det_images']}</a>
-          </div>
-        </div>
-      )
-    } else if (this.state.uploadedFile !== '') {
-      const type = this.state.selectedFile.type.split('/')[0] || ''
-      return (
-        <div className="submitfile__col">
-          <div className="submitfile__title--green">
-            {this.state.labels['tit_fil_details'](type)}
+            {this.state.labels['tit_fil_details'](type ? type : '---')}
           </div>
           <hr />
           <div className="submitfile__col">
-            <div className="submitfile__text">{this.state.labels['tit_fil_name'](this.state.selectedFile.name)}</div>
-            <div className="submitfile__text">{this.state.labels['tit_fil_type'](this.state.selectedFile.type)}</div>
-            <div className="submitfile__text">{this.state.labels['tit_fil_size'](this.state.selectedFile.size)}</div>
-            <div className="submitfile__text--green">
-              <a href={file} rel="noopener noreferrer" target="_blank">{this.state.labels['tit_dow_uploaded']}</a>
-            </div>
+            <div className="submitfile__text">{this.state.labels['tit_fil_name'](this.state.selectedFile ? this.state.selectedFile.name : '---')}</div>
+            <div className="submitfile__text">{this.state.labels['tit_fil_type'](this.state.selectedFile ? this.state.selectedFile.type : '---')}</div>
+            <div className="submitfile__text">{this.state.labels['tit_fil_size'](this.state.selectedFile ? this.state.selectedFile.size : '---')}</div>
+            {file && (
+              <div className="submitfile__text--green">
+                <a href={file} rel="noopener noreferrer" target="_blank">{this.state.labels['tit_dow_uploaded']}</a>
+              </div>
+            )}
+          </div>
+        </div>
+      )
+    } else {
+      return (
+        <div></div>
+      )
+    }
+  }
+
+  handleDevices = mediaDevices => {
+    this.setState({
+      devices: mediaDevices.filter(({ kind }) => kind === "videoinput"),
+    })
+  }
+
+
+  webcamData = () => {
+    if (this.state.optWebCam) {
+      navigator.mediaDevices.enumerateDevices().then(this.handleDevices)
+      return (
+        <div className="submitfile__col">
+          <div className="submitfile__title--green">
+            {this.state.labels['tit_camera']}
+          </div>
+          <hr />
+          <div className="submitfile__col">
+            {this.state.devices.map((device, key) => (
+              <>
+                <Webcam
+                  className="submitfile__header--box-webcam"
+                  audio={false}
+                  ref={this.webcamRef}
+                  screenshotFormat="image/jpeg"
+                  videoConstraints={{ deviceId: device.deviceId }}
+                />
+                { 'Device ' + key + ' - ' + (device.label ? device.label : '') }
+              </>
+            ))}
           </div>
         </div>
       )
@@ -1195,14 +1221,16 @@ class SubmitFile extends Component {
     }
   }
 
-  handleOptUpload = () => {
-    if (this.state.model) {
+  handleOptUpload = (e) => {
+    if (this.state.model && !this.state.optUpload) {
+      e.preventDefault()
       this.setState({ optUpload: true, optWebCam: false })
     }
   }
 
-  handleOptWebcam = () => {
-    if (this.state.model) {
+  handleOptWebcam = (e) => {
+    if (this.state.model && !this.state.optWebCam) {
+      e.preventDefault()
       this.setState({ optWebCam: true, optUpload: false })
     }
   }
@@ -1215,6 +1243,7 @@ class SubmitFile extends Component {
     const fileData = this.fileData()
     const imageData = this.imageData()
     const colaData = this.colaData()
+    const webcamData = this.webcamData()
 
     return (
       <div className="submitfile">
@@ -1241,7 +1270,8 @@ class SubmitFile extends Component {
                   accept='image/*|video/*'
                   onChange={this.handleChangeInputUpload}
                   ref={this.uploadInputRef}
-                  disabled={isLoading || !model ? true : !uploadedFile && optUpload ? false : true}
+                  onClick={optUpload ? null : this.handleOptUpload}
+                  disabled={isLoading || !model ? true : !optUpload ? false : !uploadedFile && optUpload ? false : true}
               />
             </div>
             <div className="submitfile__col-25">
@@ -1250,6 +1280,9 @@ class SubmitFile extends Component {
           </div>
           <div className="submitfile__header--error-upload">
             <div className="submitfile__header--error-upload--label-red">{errorUpload ? errorUpload : ''}</div>
+          </div>
+          <div className="submitfile__header-right--file">
+            {fileData}
           </div>
 
           <div className={"submitfile__header--webcam " + (optWebCam ? "opt-selected" : "opt-no-selected")} onClick={this.handleOptWebcam}>
@@ -1262,6 +1295,9 @@ class SubmitFile extends Component {
           </div>
           <div className="submitfile__header--error-webcam">
             <div className="submitfile__header--error-webcam--label-red">{errorWebcam ? errorWebcam : ''}</div>
+          </div>
+          <div className="submitfile__header-right--file">
+            {webcamData}
           </div>
 
           <div className="submitfile__header--buttons">
@@ -1374,10 +1410,6 @@ class SubmitFile extends Component {
 
           <div className="submitfile__header-right--file">
             {colaData}
-          </div>
-
-          <div className="submitfile__header-right--file">
-            {fileData}
           </div>
 
         </div>

@@ -19,6 +19,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "react-select": "^4.1.0",
+    "react-webcam": "^5.2.3",
     "socket.io-client": "^4.0.0",
     "y18n": "^5.0.8"
   },

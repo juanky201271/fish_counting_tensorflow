@@ -74,6 +74,7 @@ const labels = {
   tit_webcam: "Utilisation d'une WebCam ou CCTV connectée",
   tit_select_webcam: 'Sélectionner!',
   tit_selected_webcam: 'Choisi',
+  tit_camera: 'Caméra',
 
   waiting: 'Attendant',
   start: 'Début',
