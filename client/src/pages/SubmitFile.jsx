@@ -32,6 +32,7 @@ class SubmitFile extends Component {
   constructor(props) {
       super(props)
       this.state = {
+        render: null,
         isLoading: false,
         authenticated: '',
         twitterId: '',
@@ -68,9 +69,11 @@ class SubmitFile extends Component {
         cola: [],
 
         optUpload: false,
-        optWebCam: false,
-        devices: [],
-        device: null,
+        optWebcam: false,
+        label: null,
+        deviceId: null,
+        durationWebcam: null,
+        selectedWebcam: false,
       }
       this.uploadInputRef = React.createRef()
       this.uploadInputRefCalibration = React.createRef()
@@ -945,7 +948,7 @@ class SubmitFile extends Component {
   }
 
   handleCancel = e => {
-    this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false, })
+    this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false, optUpload: false, optWebcam: false, selectedWebcam:false, durationWebcam: null })
     if (this.uploadInputRef.current) {
       this.uploadInputRef.current.value = ''
     }
@@ -962,7 +965,7 @@ class SubmitFile extends Component {
 
   handleList = e => {
     if (!e.target.value) {
-      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, model: '', optUpload: false, optWebCam: false, })
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, model: '', optUpload: false, optWebcam: false, })
       this.uploadInputRef.current.value = ''
     } else {
       this.setState({ model: e.target.value })
@@ -971,6 +974,10 @@ class SubmitFile extends Component {
 
   handleChangeInputNumberCalibration = e => {
     this.setState({ cms: e.target.value })
+  }
+
+  handleChangeInputNumberDurationWebcam = e => {
+    this.setState({ durationWebcam: e.target.value })
   }
 
   fileData = () => {
@@ -1002,16 +1009,40 @@ class SubmitFile extends Component {
     }
   }
 
-  handleDevices = mediaDevices => {
-    this.setState({
-      devices: mediaDevices.filter(({ kind }) => kind === "videoinput"),
-    })
-  }
-
-
   webcamData = () => {
-    if (this.state.optWebCam) {
-      navigator.mediaDevices.enumerateDevices().then(this.handleDevices)
+    if (this.state.optWebcam) {
+      const { selectedWebcam } = this.state
+
+      navigator.mediaDevices.enumerateDevices()
+        .then(mediaDevices => {
+          var label, deviceId
+          mediaDevices.forEach((item, i) => {
+            if (item.kind === 'videoinput') {
+              if (!label && !deviceId) {
+                label = item.label
+                deviceId = item.deviceId
+                if (this.state.label !== item.label || this.state.deviceId !== item.deviceId) {
+                  this.setState({
+                    label: item.label,
+                    deviceId: item.deviceId,
+                  })
+                }
+              }
+            }
+          })
+        })
+        .catch(err => {
+          console.log('media devices error: ', err)
+        })
+
+      if (selectedWebcam && !this.state.label) {
+        setTimeout(function() {
+          this.setState({
+            render: Date.now(),
+          })
+        }.bind(this), 1000)
+      }
+
       return (
         <div className="submitfile__header-right--file submitfile__col">
           <div className="submitfile__title--green">
@@ -1019,18 +1050,28 @@ class SubmitFile extends Component {
           </div>
           <hr />
           <div className="submitfile__col">
-            {this.state.devices.map((device, key) => (
+            {this.state.deviceId && (
               <>
-                <Webcam
-                  className="submitfile__header--box-webcam"
-                  audio={false}
-                  ref={this.webcamRef}
-                  screenshotFormat="image/jpeg"
-                  videoConstraints={{ deviceId: device.deviceId }}
-                />
-                { 'Device ' + key + ' - ' + (device.label ? device.label : '') }
+                {selectedWebcam && (
+                  <Webcam
+                    className="submitfile__header--box-webcam"
+                    audio={false}
+                    ref={this.webcamRef}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={{ deviceId: this.state.deviceId }}
+                  />
+                )}
+                {/*!selectedWebcam && (
+                  <div className="submitfile__header--box-webcam-border"></div>
+                )*/}
+                { 'Device 0' + (this.state.label ? ' - ' + this.state.label : '') }
               </>
-            ))}
+            )}
+            {!this.state.deviceId && (
+              <div className="submitfile__text--green">
+                {this.state.labels['tit_webcam_no_found']}
+              </div>
+            )}
           </div>
         </div>
       )
@@ -1228,21 +1269,27 @@ class SubmitFile extends Component {
   handleOptUpload = (e) => {
     if (this.state.model && !this.state.optUpload) {
       e.preventDefault()
-      this.setState({ optUpload: true, optWebCam: false })
+      this.setState({ optUpload: true, optWebcam: false })
     }
   }
 
   handleOptWebcam = (e) => {
-    if (this.state.model && !this.state.optWebCam) {
+    if (this.state.model && !this.state.optWebcam) {
       e.preventDefault()
-      this.setState({ optWebCam: true, optUpload: false })
+      this.setState({ optWebcam: true, optUpload: false })
+    }
+  }
+
+  handleWebcam = (e) => {
+    if (this.state.model && this.state.optWebcam) {
+      this.setState({ selectedWebcam: true })
     }
   }
 
   render() {
     console.log('submit file state', this.state)
     //console.log('submit file props', this.props)
-    const { isLoading, selectedFile, uploadedFile, total_fish, errorUpload, errorWebcam, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info, optUpload, optWebCam } = this.state
+    const { isLoading, selectedFile, uploadedFile, total_fish, errorUpload, errorWebcam, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info, optUpload, optWebcam, durationWebcam, selectedWebcam, } = this.state
     const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
     const fileData = this.fileData()
     const imageData = this.imageData()
@@ -1264,42 +1311,85 @@ class SubmitFile extends Component {
             </select>
           </div>
 
-          <div className={"submitfile__header--upload-file"} onClick={this.handleOptUpload}>
-            <div className={optUpload ? "opt-selected" : "opt-no-selected"}>
-              <div className="submitfile__col-75">
-                <div className="submitfile__title">{this.state.labels['tit_select']}</div>
-                <input
-                    className="submitfile__header--upload-file--input-file form-control"
-                    id="selectedFileInput"
-                    type="file"
-                    accept='image/*|video/*'
-                    onChange={this.handleChangeInputUpload}
-                    ref={this.uploadInputRef}
-                    onClick={optUpload ? null : this.handleOptUpload}
-                    disabled={isLoading || !model ? true : !optUpload ? false : !uploadedFile && optUpload ? false : true}
-                />
-              </div>
-              <div className="submitfile__col-25">
-                <button className="submitfile__button-upload btn" id="uploadButton" onClick={optUpload ? this.handleUpload : this.handleOptUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : !optUpload ? false : selectedFile && !uploadedFile && optUpload ? false : true} >{optUpload ? this.state.labels['tit_upload'] : this.state.labels['tit_select_webcam']}</button>
-              </div>
-            </div>
-          </div>
-          <div className="submitfile__header--error-upload">
-            <div className="submitfile__header--error-upload--label-red">{errorUpload ? errorUpload : ''}</div>
-          </div>
+          <div className={"submitfile__header--upload-file--webcam"}>
 
-          <div className={"submitfile__header--webcam"} onClick={this.handleOptWebcam}>
-            <div className={optWebCam ? "opt-selected" : "opt-no-selected"}>
-              <div className="submitfile__col-75">
-                <div className="submitfile__title">{this.state.labels['tit_webcam']}</div>
+            <div className="submitfile__col-75">
+              <div className={optUpload ? "opt-selected" : "opt-no-selected"} onClick={this.handleOptUpload}>
+                <div className="submitfile__col">
+                  <div className="submitfile__title">{this.state.labels['tit_select']}</div>
+                  <input
+                      className="submitfile__header--upload-file--input-file form-control"
+                      id="selectedFileInput"
+                      type="file"
+                      accept='image/*|video/*'
+                      onChange={this.handleChangeInputUpload}
+                      ref={this.uploadInputRef}
+                      onClick={optUpload ? null : this.handleOptUpload}
+                      disabled={isLoading || !model ? true : !optUpload ? false : !uploadedFile && optUpload ? false : true}
+                  />
+                </div>
               </div>
-              <div className="submitfile__col-25">
-                <button className="submitfile__button-upload btn" id="webcamButton" onClick={this.handleOptWebcam} ref={this.webcamButtonRef} disabled={isLoading || !model ? true : false} >{optWebCam ? this.state.labels['tit_selected_webcam'] : this.state.labels['tit_select_webcam']}</button>
+
+              <div className="submitfile__text--green">{'...' + this.state.labels['tit_or_you_can']}</div>
+
+              <div className={optWebcam ? "opt-selected" : "opt-no-selected"} onClick={this.handleOptWebcam}>
+                <div className="submitfile__col">
+                  <div className="submitfile__title">{this.state.labels['tit_webcam']}</div>
+                  <div className="submitfile__row">
+                    <label className="submitfile__text">{this.state.labels['tit_duration'] + ': '}</label>
+                    <input
+                        className="submitfile__header--box-webcam--input-number form-control"
+                        id="InputNumberDurationWebcam"
+                        type="number"
+                        value={durationWebcam ? durationWebcam : ''}
+                        onChange={this.handleChangeInputNumberDurationWebcam}
+                        onClick={optWebcam ? null : this.handleOptWebcam}
+                        disabled={isLoading || !model ? true : !optWebcam ? false : !selectedWebcam && optWebcam ? false : true}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+
+            <div className="submitfile__col-25--upload-file--webcam">
+
+              {optUpload && (
+                <div className="submitfile__col">
+                  <button
+                    className="submitfile__button-upload btn"
+                    id="uploadButton"
+                    onClick={optUpload ? this.handleUpload : this.handleOptUpload}
+                    ref={this.uploadButtonRef}
+                    disabled={isLoading || !model ? true : !optUpload ? false : selectedFile && !uploadedFile && optUpload ? false : true}
+                  >
+                    {this.state.labels['tit_upload']}
+                  </button>
+                </div>
+              )}
+
+              {optWebcam && (
+                <div className="submitfile__col">
+                  <button
+                    className="submitfile__button-upload btn"
+                    id="webcamButton"
+                    onClick={optWebcam ? this.handleWebcam : this.handleOptWebcam}
+                    ref={this.webcamButtonRef}
+                    disabled={isLoading || !model ? true : false}
+                    disabled={isLoading || !model ? true : !optWebcam ? false : durationWebcam && optWebcam ? false : true}
+                  >
+                    {this.state.labels['tit_select_webcam']}
+                  </button>
+                </div>
+              )}
+
+            </div>
+
           </div>
-          <div className="submitfile__header--error-webcam">
-            <div className="submitfile__header--error-webcam--label-red">{errorWebcam ? errorWebcam : ''}</div>
+          <div className="submitfile__header--error-upload-file--webcam">
+            <div className="submitfile__header--error-upload-file--webcam--label-red">
+              {errorUpload ? errorUpload : ''}
+              {errorWebcam ? errorWebcam : ''}
+            </div>
           </div>
 
           <div className="submitfile__header--buttons">

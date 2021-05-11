@@ -75,6 +75,9 @@ const labels = {
   tit_select_webcam: 'Selecionar!',
   tit_selected_webcam: 'Selecionado',
   tit_camera: 'Câmera',
+  tit_duration: 'Duração',
+  tit_webcam_no_found: 'Câmera não disponível',
+  tit_or_you_can: 'ou você pode',
 
   waiting: 'Esperando',
   start: 'Começar',

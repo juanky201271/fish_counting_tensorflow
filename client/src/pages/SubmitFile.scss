@@ -83,7 +83,7 @@
         display: initial;
       }
     }
-    &--upload-file {
+    &--upload-file--webcam {
       margin-top: 10px;
       display: block;
       width: 100%;
@@ -107,39 +107,7 @@
         }
       }
     }
-    &--error-upload {
-      height: 15px;
-
-      &--label-red {
-        margin-left: 20px;
-        color: red;
-      }
-    }
-    &--webcam {
-      margin-top: 10px;
-      display: block;
-      width: 100%;
-      padding-left: 2px;
-      padding-bottom: 2px;
-
-      @media(min-width: 300px) {
-        display: flex;
-        flex-direction: row;
-      }
-      @media(min-width: 1024px) {
-        margin-top: 30px;
-        padding-right: 50px;
-      }
-
-      &--input-file {
-        font-size: 12px;
-
-        @media(min-width: 768px) {
-          font-size: 15px;
-        }
-      }
-    }
-    &--error-webcam {
+    &--error-upload-file--webcam {
       height: 15px;
 
       &--label-red {
@@ -150,6 +118,7 @@
     &--box-webcam {
       display: block;
       width: 80%;
+      border: 1px solid #0091a8;
 
       @media(min-width: 500px) {
         width: 50%;
@@ -159,6 +128,27 @@
       }
       @media(min-width: 1400px) {
         width: 50%;
+      }
+    }
+    &--box-webcam-border {
+      display: block;
+      width: 80%;
+      height: auto;
+      border: 1px solid #0091a8;
+
+      @media(min-width: 500px) {
+        width: 50%;
+      }
+      @media(min-width: 1024px) {
+        width: 80%;
+      }
+      @media(min-width: 1400px) {
+        width: 50%;
+      }
+      &:after {
+        content: "";
+        display: block;
+        padding-bottom: 100%;
       }
     }
     &--select-model {
@@ -456,6 +446,7 @@
     @media(min-width: 300px) {
       display: flex;
       flex-direction: column;
+      width: 100%;
     }
   }
 
@@ -491,6 +482,18 @@
     }
   }
 
+  &__col-25--upload-file--webcam {
+    display: block;
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: column;
+      width: 25%;
+      margin-left: 10px;
+      justify-content: center;
+    }
+  }
+
   &__col-25-buttons {
     display: block;
 
@@ -512,6 +515,12 @@
     @media(min-width: 300px) {
       display: flex;
       flex-direction: row;
+    }
+
+    label {
+      margin-bottom: 0px;
+      margin-right: 5px;
+      padding-top: 5px;
     }
   }
 
