@@ -6,7 +6,7 @@ const errors = {
   waiting: '... Tu peux attendre ou annuler ...',
   error_process: 'Le processus a échoué, réessayez dans quelques minutes',
   process_queue: "Processus lancé, vérifiez la file d'attente du processus pour voir son état",
-  max_size_file: 'Taille maximale du fichier 30 Mb',
+  max_size_file: 'Taille maximale du fichier 100 Mb',
 
 };
 
@@ -80,6 +80,7 @@ const labels = {
   tit_duration: "Définit la durée de l'enregistrement",
   tit_webcam_no_found: 'Caméra non disponible',
   tit_or_you_can: 'ou tu peux',
+  tit_device: 'Appareil',
 
   waiting: 'Attendant',
   start: 'Début',

@@ -6,7 +6,7 @@ const errors = {
   waiting: '... Você pode espere ou cancele ...',
   error_process: 'O processo falhou, tente novamente em alguns minutos',
   process_queue: 'Processo iniciado, verifique a fila de processo para ver seu status',
-  max_size_file: 'Tamanho máximo do arquivo 30 Mb',
+  max_size_file: 'Tamanho máximo do arquivo 100 Mb',
 
 };
 
@@ -80,6 +80,7 @@ const labels = {
   tit_duration: 'Define a duração da gravação',
   tit_webcam_no_found: 'Câmera não disponível',
   tit_or_you_can: 'ou você pode',
+  tit_device: 'Dispositivo',
 
   waiting: 'Esperando',
   start: 'Começar',
