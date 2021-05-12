@@ -67,8 +67,8 @@ const labels = {
   tit_lab_results: 'Results',
   tit_lab_processing: 'Processing...',
   tit_lab_sel_typ_process: 'Select the type of process...',
-  tit_lab_upload: 'Upload the file...',
-  tit_lab_sel_file: 'Select file to process...',
+  tit_lab_upload: 'Upload the file or select webcam...',
+  tit_lab_sel_file: 'Select file or webcam to process...',
   tit_lab_sel_model: 'Select model to use...',
 
   tit_webcam: 'Select your connected Webcam or CCTV',

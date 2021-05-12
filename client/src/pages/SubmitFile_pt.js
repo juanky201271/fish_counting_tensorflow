@@ -67,8 +67,8 @@ const labels = {
   tit_lab_results: 'Resultados',
   tit_lab_processing: 'Em processamento...',
   tit_lab_sel_typ_process: 'Selecione o tipo de processo...',
-  tit_lab_upload: 'Carregue o arquivo...',
-  tit_lab_sel_file: 'Selecione o arquivo para processar...',
+  tit_lab_upload: 'Carregue o arquivo ou selecione a webcam...',
+  tit_lab_sel_file: 'Selecione o arquivo ou webcam para processar...',
   tit_lab_sel_model: 'Selecione o modelo para usar...',
 
   tit_webcam: 'Selecione sua webcam ou CCTV conectado',

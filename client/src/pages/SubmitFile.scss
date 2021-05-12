@@ -518,9 +518,28 @@
     }
 
     label {
+      display: block;
       margin-bottom: 0px;
       margin-right: 5px;
       padding-top: 5px;
+      width: 100%;
+
+      @media(min-width: 300px) {
+        display: initial;
+        width: 70%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    #InputNumberDurationWebcam {
+      display: block;
+      width: 100%;
+
+      @media(min-width: 300px) {
+        display: initial;
+        width: 30%;
+      }
     }
   }
 
