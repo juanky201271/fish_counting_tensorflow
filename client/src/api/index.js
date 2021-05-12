@@ -38,7 +38,7 @@ export const videoCountFishLocaly = (url_input_video, dir, model, width_cms, wid
 export const videoCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm) => flask_api.post(`/videocountfishawss3`, { url_input_video, model, width_cms, width_pxs_x_cm })
 
 export const webcamCountFishLocaly = (url_input_video, dir, model, width_cms, width_pxs_x_cm) => flask_api.post(`/webcamcountfishlocaly`, { url_input_video, dir, model, width_cms, width_pxs_x_cm })
-export const webcamCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm, device, durationWebcam) => flask_api.post(`/webcamcountfishawss3`, { url_input_video, model, width_cms, width_pxs_x_cm, device, durationWebcam })
+export const webcamCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm, device, duration) => flask_api.post(`/webcamcountfishawss3`, { url_input_video, model, width_cms, width_pxs_x_cm, device, duration })
 
 export const pictureCountFishLocaly = (url_input_video, dir, model, width_cms, width_pxs_x_cm) => flask_api.post(`/picturecountfishlocaly`, { url_input_video, dir, model, width_cms, width_pxs_x_cm })
 export const pictureCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm) => flask_api.post(`/picturecountfishawss3`, { url_input_video, model, width_cms, width_pxs_x_cm })

@@ -96,13 +96,15 @@ class SubmitFile extends Component {
         //console.log('params:', params)
         if (cola.length > 0) {
           for (let i = 0; i < cola.length; i++) {
-            const uploadedFileState = 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile
-            if (params.uploadedFile === uploadedFileState && cola[i].log !== 'end') {
+            const uploadedFileState = cola[i].uploadedFile ? 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile : ''
+            const nameState = cola[i].name ? 'submits/' + cola[i].dir_webcam + '/' + cola[i].name : ''
+            const selectedFileState = cola[i].selectedFile ? cola[i].selectedFile.type.split('/')[0] : ''
+            if ((params.uploadedFile === uploadedFileState || params.uploadedFile === nameState) && cola[i].log !== 'end') {
               // si ya esta finalizado no hacer nada
               // si ha dado error pero al final el proceso se lanza, recibir las notificaciones, ¿por qué no?
               let incremento
-              if (cola[i].selectedFile.type.split('/')[0] === 'video') {
-                //video
+              if (selectedFileState === 'video' || params.uploadedFile === nameState) {
+                //video o webcam
                 if (params.action === 'start') {
                   cola[i].porc = 5
                 } else if (params.action === 'end' || params.action === 'ERROR') {
@@ -157,7 +159,7 @@ class SubmitFile extends Component {
               this.setState(
                 { cola: cola },
                 function() {
-                  if (params.action === 'detecting' && cola[i].selectedFile.type.split('/')[0] === 'image') { // solo detecting e imagen
+                  if (params.action === 'detecting' && selectedFileState === 'image') { // solo detecting e imagen
                     this.intervals[i] = setTimeout(function() { this.porcentaje(i) }.bind(this), 1000)
                   }
                 }
@@ -727,7 +729,7 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorWebcam: this.state.errors['process_queue'], durationWebcam: '', selectedWebcam: '', total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
@@ -1181,7 +1183,7 @@ class SubmitFile extends Component {
               return (<>
                 <div className="submitfile__col">
                   <strong>
-                    {ele.uploadedFile || ele.name + ' - '}
+                    {(ele.uploadedFile || ele.name) + ' - '}
                     <span style={c}>{this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '')}</span>
                     {' - ' + (ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%')}
                   </strong>
