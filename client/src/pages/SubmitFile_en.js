@@ -22,7 +22,7 @@ const labels = {
   tit_table: 'Species/Size table',
   tit_det_images: 'Individual detections images',
   tit_fil_details: (type) => {
-    return (`File details (${type}):`)
+    return (`FILE (${type}):`)
   },
   tit_fil_name: (name) => {
     return ('Name: ' + name)
@@ -74,7 +74,7 @@ const labels = {
   tit_webcam: 'Using a connected WebCam or CCTV',
   tit_select_webcam: 'Select!',
   tit_selected_webcam: 'Selected',
-  tit_camera: 'Camera',
+  tit_camera: 'CAMERA',
   tit_duration: 'Duration',
   tit_webcam_no_found: 'Camera not available',
   tit_or_you_can: 'or you can',

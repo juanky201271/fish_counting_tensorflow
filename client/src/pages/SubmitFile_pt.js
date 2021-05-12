@@ -22,7 +22,7 @@ const labels = {
   tit_table: 'Tabela de espécies/tamanho',
   tit_det_images: 'Imagens de detecções individuais',
   tit_fil_details: (type) => {
-    return (`Detalhes do arquivo (${type === 'image' ? 'Imagem' : 'Vídeo'}):`)
+    return (`ARQUIVO (${type === 'image' ? 'Imagem' : 'Vídeo'}):`)
   },
   tit_fil_name: (name) => {
     return ('Nome: ' + name)
@@ -74,7 +74,7 @@ const labels = {
   tit_webcam: 'Usando uma WebCam ou CCTV conectada',
   tit_select_webcam: 'Selecionar!',
   tit_selected_webcam: 'Selecionado',
-  tit_camera: 'Câmera',
+  tit_camera: 'CÂMERA',
   tit_duration: 'Duração',
   tit_webcam_no_found: 'Câmera não disponível',
   tit_or_you_can: 'ou você pode',
