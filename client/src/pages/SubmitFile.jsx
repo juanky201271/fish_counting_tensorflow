@@ -1345,6 +1345,7 @@ class SubmitFile extends Component {
                         onChange={this.handleChangeInputNumberDurationWebcam}
                         onClick={optWebcam ? null : this.handleOptWebcam}
                         disabled={isLoading || !model ? true : !optWebcam ? false : !selectedWebcam && optWebcam ? false : true}
+                        placeholder={this.state.labels['tit_minutes']}
                     />
                   </div>
                 </div>
@@ -1449,6 +1450,7 @@ class SubmitFile extends Component {
                         value={cms ? cms : ''}
                         onChange={this.handleChangeInputNumberCalibration}
                         disabled={isLoading || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
+                        placeholder={this.state.labels['tit_inches']}
                     />
                   </div>
                   <div className="submitfile__col-25">
@@ -1482,10 +1484,10 @@ class SubmitFile extends Component {
               isLoading ?
                 <>{this.state.labels['tit_lab_processing'] + ' [' + this.state.labels[log] + info + ']'}</>
               :
-                uploadedFile ?
+                uploadedFile || selectedWebcam ?
                   <>{this.state.labels['tit_lab_sel_typ_process']}</>
                 :
-                  selectedFile ?
+                  selectedFile || durationWebcam ?
                     <>{this.state.labels['tit_lab_upload']}</>
                   :
                     model ?

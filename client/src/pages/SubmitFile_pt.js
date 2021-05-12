@@ -41,6 +41,8 @@ const labels = {
   tit_upload: 'Envio!',
   tit_sel_model: 'Selecione o modelo mais adequado',
   tit_sel_placeholder: '<Escolha um modelo>',
+  tit_minutes: '<minutos>',
+  tit_inches: '<centímetros>',
   tit_typ_process: 'Selecione o tipo de processo',
   tit_roi_video: 'Vídeo da esteira transportadora',
   tit_web_cam: 'Webcam',
