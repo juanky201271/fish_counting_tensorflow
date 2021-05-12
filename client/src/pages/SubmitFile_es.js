@@ -74,11 +74,11 @@ const labels = {
   tit_lab_sel_file: 'Seleccionar archivo para procesar...',
   tit_lab_sel_model: 'Seleccionar modelo para usar...',
 
-  tit_webcam: 'Usar una WebCam or CCTV conectada',
+  tit_webcam: 'Seleccionar tu Webcam o CCTV conectada',
   tit_select_webcam: 'Seleccionar!',
   tit_selected_webcam: 'Seleccionada',
   tit_camera: 'CÁMARA',
-  tit_duration: 'Duración',
+  tit_duration: 'Define la duración de la grabación',
   tit_webcam_no_found: 'Cámara no disponible',
   tit_or_you_can: 'o puedes',
 
