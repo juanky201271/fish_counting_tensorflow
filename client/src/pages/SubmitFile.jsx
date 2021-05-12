@@ -1374,8 +1374,7 @@ class SubmitFile extends Component {
                     id="webcamButton"
                     onClick={optWebcam ? this.handleWebcam : this.handleOptWebcam}
                     ref={this.webcamButtonRef}
-                    disabled={isLoading || !model ? true : false}
-                    disabled={isLoading || !model ? true : !optWebcam ? false : durationWebcam && optWebcam ? false : true}
+                    disabled={isLoading || !model ? true : !optWebcam ? false : durationWebcam && !selectedWebcam && optWebcam ? false : true}
                   >
                     {this.state.labels['tit_select_webcam']}
                   </button>
