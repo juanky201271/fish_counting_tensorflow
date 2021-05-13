@@ -666,7 +666,82 @@ class SubmitFile extends Component {
     this.setState({ isLoading: false })
   }
 
-  handleWebcamProcess = e => {
+  handleVideoRoiProcessWebcam = e => {
+    this.setState({ isLoading: true, log: 'waiting', })
+    const { _id_webcam, dir_webcam, model, width_cms, width_pxs_x_cm, durationWebcam, } = this.state
+    const name = 'Webcam_' + dir_webcam.split('_Webcam_')[1]
+
+    if (dir_webcam !== null) {
+      if (this.processWebcamButtonRef.current) {
+        this.processWebcamButtonRef.current.style.backgroundColor = '#d68977'
+        this.pressButton = 'processWebcamButton'
+      }
+      api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir_webcam + '/' + name, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm, 0, durationWebcam)
+        .then(res => {
+          //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
+        })
+        .catch(e => {
+          console.log('Webcam Count Fish ERROR: ', e.response, e.request, e.message, e)
+
+          this.reRunProcess(name)
+
+          //if (e.request.timeout === 29000) {
+          //  this.setState({
+          //    error: this.state.errors['long_process'], //isLoading: false,
+          //    cancelarWaiting: true,
+          //  },
+          //  () => {
+          //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+          //  })
+          //  this.interval = setInterval(this.s3Demon, 5000)
+          //} else {
+          //  this.setState({
+          //    error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false,
+          //  },
+          //  () => {
+          //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+          //  })
+          //  if (this.uploadInputRef.current) {
+          //    this.uploadInputRef.current.value = ''
+          //  }
+          //  clearInterval(this.interval)
+          //}
+
+        })
+      // lo añado a la cola de procesos
+      const cola = this.state.cola || []
+      this.intervals.push(null)
+      cola.push(
+        {
+          api: 'webcamCountFishAwsS3',
+          total_fish: 0,
+          _id_webcam: _id_webcam,
+          dir_webcam: dir_webcam,
+          name: name,
+          model: model,
+          width_cms: width_cms,
+          width_pxs_x_cm: width_pxs_x_cm,
+          durationWebcam: durationWebcam,
+          device: 0,
+          log: 'waiting',
+          info: '',
+          times: 1,
+        }
+      )
+      this.setState({
+          errorWebcam: this.state.errors['process_queue'], durationWebcam: '', selectedWebcam: '', total_fish: null, cancelarWaiting: false, cola: cola,
+        },
+        () => {
+          setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+      })
+      if (this.uploadInputRef.current) {
+        this.uploadInputRef.current.value = ''
+      }
+    }
+    this.setState({ isLoading: false })
+  }
+
+  handleVideoProcessWebcam = e => {
     this.setState({ isLoading: true, log: 'waiting', })
     const { _id_webcam, dir_webcam, model, width_cms, width_pxs_x_cm, durationWebcam, } = this.state
     const name = 'Webcam_' + dir_webcam.split('_Webcam_')[1]
@@ -1453,21 +1528,10 @@ class SubmitFile extends Component {
                     id="processVideoRoiButton"
                     ref={this.processVideoRoiButtonRef} onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
                     onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
-                    onClick={this.handleVideoRoiProcess}
+                    onClick={optUpload ? this.handleVideoRoiProcess : this.handleVideoRoiProcessWebcam}
                     disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile && optUpload ? false : true}
                   >
                     {this.state.labels['tit_roi_video']}
-                  </button>
-
-                  <button
-                    className="submitfile__button-video btn"
-                    id="processWebcamButton" ref={this.processWebcamButtonRef}
-                    onMouseOver={() => this.handleOnMouseOver(this.processWebcamButtonRef, 'processWebcamButton')}
-                    onMouseOut={() => this.handleOnMouseOut(this.processWebcamButtonRef, 'processWebcamButton')}
-                    onClick={this.handleWebcamProcess}
-                    disabled={isLoading || !model || total_fish !== null ? true : selectedWebcam && optWebcam ? false : true}
-                  >
-                    {this.state.labels['tit_web_cam']}
                   </button>
                 </div>
 
@@ -1478,7 +1542,7 @@ class SubmitFile extends Component {
                     ref={this.processVideoButtonRef}
                     onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')}
                     onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')}
-                    onClick={this.handleVideoProcess}
+                    onClick={optUpload ? this.handleVideoProcess : this.handleVideoProcessWebcam}
                     disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile && optUpload ? false : true}
                   >
                     {this.state.labels['tit_video']}

@@ -43,7 +43,7 @@ const labels = {
   tit_sel_placeholder: '<choisi un modèle>',
   tit_minutes: '<minutes>',
   tit_inches: '<centimètres>',
-  tit_typ_process: 'Sélectionnez le type de processus',
+  tit_typ_process: 'Définir le type de processus',
   tit_roi_video: 'Vidéo de la bande transporteuse',
   tit_web_cam: 'Webcam',
   tit_video: 'Vidéo standard',

@@ -46,11 +46,11 @@ const labels = {
   tit_sel_placeholder: '<elige un modelo>',
   tit_minutes: '<minutos>',
   tit_inches: '<centímetros>',
-  tit_typ_process: 'Seleccionar el tipo de Proceso',
+  tit_typ_process: 'Define el tipo de proceso',
   tit_roi_video: 'Video cinta transportadora',
   tit_web_cam: 'Cámara web',
   tit_video: 'Video estándar',
-  tit_picture: 'Imagen',
+  tit_picture: 'Foto',
   tit_cancel: (total_fish) => {
     return (total_fish !== null ?
       'Limpiar!' :

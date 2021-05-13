@@ -43,11 +43,11 @@ const labels = {
   tit_sel_placeholder: '<choose a model>',
   tit_minutes: '<minutes>',
   tit_inches: '<inches>',
-  tit_typ_process: 'Select the type of process',
+  tit_typ_process: 'Define the type of process',
   tit_roi_video: 'Conveyor belt video',
   tit_web_cam: 'Webcam',
   tit_video: 'Standard video',
-  tit_picture: 'Image',
+  tit_picture: 'Photo',
   tit_cancel: (total_fish) => {
     return (total_fish !== null ?
       'Clear!' :
