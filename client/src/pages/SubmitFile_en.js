@@ -38,7 +38,7 @@ const labels = {
   // header
   tit_obj_det_tool: 'Fish Identification, Counting and Measurement App',
   tit_select: 'Select an (photo/video) to process',
-  tit_upload: 'Upload!',
+  tit_upload: 'Upload selection!',
   tit_sel_model: 'Select the most suitable model',
   tit_sel_placeholder: '<choose a model>',
   tit_minutes: '<minutes>',
@@ -74,7 +74,7 @@ const labels = {
   tit_lab_sel_model: 'Select model to use...',
 
   tit_webcam: 'Select your connected Webcam or CCTV',
-  tit_select_webcam: 'Select!',
+  tit_select_webcam: 'Upload selection!',
   tit_selected_webcam: 'Selected',
   tit_camera: 'CAMERA',
   tit_duration: 'Defines the duration of the recording',

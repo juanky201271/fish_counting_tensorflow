@@ -38,7 +38,7 @@ const labels = {
   // header
   tit_obj_det_tool: "Application d'identification, de comptage et de mesure des poissons",
   tit_select: 'Sélectionnez une photo à traiter',
-  tit_upload: 'Télécharger!',
+  tit_upload: 'Télécharger la sélection!',
   tit_sel_model: 'Sélectionnez le modèle le plus adapté',
   tit_sel_placeholder: '<choisi un modèle>',
   tit_minutes: '<minutes>',
@@ -74,7 +74,7 @@ const labels = {
   tit_lab_sel_model: 'Sélectionnez le modèle à utiliser...',
 
   tit_webcam: "Sélectionnez votre webcam ou CCTV connectée",
-  tit_select_webcam: 'Sélectionner!',
+  tit_select_webcam: 'Télécharger la sélection!',
   tit_selected_webcam: 'Choisi',
   tit_camera: 'CAMÉRA',
   tit_duration: "Définit la durée de l'enregistrement",

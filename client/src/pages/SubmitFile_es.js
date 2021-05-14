@@ -41,7 +41,7 @@ const labels = {
   // header
   tit_obj_det_tool: 'Aplicación de identificación, conteo y medida de peces',
   tit_select: 'Selecciona una foto o video para procesar',
-  tit_upload: 'Cargar archivo!',
+  tit_upload: 'Cargar selección!',
   tit_sel_model: 'Selecciona el modelo más adecuado',
   tit_sel_placeholder: '<elige un modelo>',
   tit_minutes: '<minutos>',
@@ -76,8 +76,8 @@ const labels = {
   tit_lab_sel_file: 'Seleccionar archivo o webcam para procesar...',
   tit_lab_sel_model: 'Seleccionar modelo para usar...',
 
-  tit_webcam: 'Seleccionar tu Webcam o CCTV conectada',
-  tit_select_webcam: 'Seleccionar!',
+  tit_webcam: 'Selecciona tu Webcam o CCTV conectada',
+  tit_select_webcam: 'Cargar selección!',
   tit_selected_webcam: 'Seleccionada',
   tit_camera: 'CÁMARA',
   tit_duration: 'Define la duración de la grabación',

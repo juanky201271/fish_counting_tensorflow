@@ -1428,14 +1428,18 @@ class SubmitFile extends Component {
           </div>
 
           <div className="submitfile__header--select-model">
-            <div className="submitfile__title">{this.state.labels['tit_sel_model']}</div>
-            <select name="models" id="listModels" onChange={this.handleList} disabled={isLoading}>
-              {this.createSelectItems()}
-            </select>
+            <div className="submitfile__numero">1</div>
+            <div className="submitfile__col">
+              <div className="submitfile__title">{this.state.labels['tit_sel_model']}</div>
+              <select name="models" id="listModels" onChange={this.handleList} disabled={isLoading}>
+                {this.createSelectItems()}
+              </select>
+            </div>
           </div>
 
           <div className={"submitfile__header--upload-file--webcam"}>
 
+            <div className="submitfile__numero">2</div>
             <div className="submitfile__col-75">
               <div className={optUpload ? "opt-selected" : "opt-no-selected"} onClick={this.handleOptUpload}>
                 <div className="submitfile__col">
@@ -1516,54 +1520,58 @@ class SubmitFile extends Component {
           </div>
 
           <div className="submitfile__header--buttons">
-            <div className="submitfile__title">
-              {this.state.labels['tit_typ_process']}
-            </div>
-
-            <div className="submitfile__row-buttons">
-              <div className="submitfile__row-75">
-                <div className="submitfile__col-50">
-                  <button
-                    className="submitfile__button-video btn"
-                    id="processVideoRoiButton"
-                    ref={this.processVideoRoiButtonRef} onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
-                    onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
-                    onClick={optUpload ? this.handleVideoRoiProcess : this.handleVideoRoiProcessWebcam}
-                    disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile && optUpload ? false : true}
-                  >
-                    {this.state.labels['tit_roi_video']}
-                  </button>
-                </div>
-
-                <div className="submitfile__col-50">
-                  <button
-                    className="submitfile__button-video btn"
-                    id="processVideoButton"
-                    ref={this.processVideoButtonRef}
-                    onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')}
-                    onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')}
-                    onClick={optUpload ? this.handleVideoProcess : this.handleVideoProcessWebcam}
-                    disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile && optUpload ? false : true}
-                  >
-                    {this.state.labels['tit_video']}
-                  </button>
-
-                  <button
-                    className="submitfile__button-video btn"
-                    id="processPictureButton"
-                    ref={this.processPictureButtonRef}
-                    onMouseOver={() => this.handleOnMouseOver(this.processPictureButtonRef, 'processPictureButton')}
-                    onMouseOut={() => this.handleOnMouseOut(this.processPictureButtonRef, 'processPictureButton')}
-                    onClick={this.handlePictureProcess}
-                    disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile && optUpload ? false : true}
-                  >
-                    {this.state.labels['tit_picture']}
-                  </button>
-                </div>
+            <div className="submitfile__numero">3</div>
+            <div className="submitfile__col">
+              <div className="submitfile__title">
+                {this.state.labels['tit_typ_process']}
               </div>
 
-              <div className="submitfile__col-25-buttons">
-                <button className="submitfile__button-cancel btn" id="cancelButton" onClick={this.handleCancel} disabled={(isLoading || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
+              <div className="submitfile__row-buttons">
+                <div className="submitfile__row-75">
+                  <div className="submitfile__col-50">
+                    <button
+                      className="submitfile__button-video btn"
+                      id="processVideoRoiButton"
+                      ref={this.processVideoRoiButtonRef}
+                      onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
+                      onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
+                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcam : null}
+                      disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile || selectedWebcam ? false : true}
+                    >
+                      {this.state.labels['tit_roi_video']}
+                    </button>
+
+                    <button
+                      className="submitfile__button-video btn"
+                      id="processVideoButton"
+                      ref={this.processVideoButtonRef}
+                      onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')}
+                      onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')}
+                      onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcam : null}
+                      disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile || selectedWebcam ? false : true}
+                    >
+                      {this.state.labels['tit_video']}
+                    </button>
+                  </div>
+
+                  <div className="submitfile__col-50">
+                    <button
+                      className="submitfile__button-video btn"
+                      id="processPictureButton"
+                      ref={this.processPictureButtonRef}
+                      onMouseOver={() => this.handleOnMouseOver(this.processPictureButtonRef, 'processPictureButton')}
+                      onMouseOut={() => this.handleOnMouseOut(this.processPictureButtonRef, 'processPictureButton')}
+                      onClick={this.handlePictureProcess}
+                      disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile && optUpload ? false : true}
+                    >
+                      {this.state.labels['tit_picture']}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="submitfile__col-25-buttons">
+                  <button className="submitfile__button-cancel btn" id="cancelButton" onClick={this.handleCancel} disabled={(isLoading || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
+                </div>
               </div>
             </div>
           </div>
