@@ -1,7 +1,7 @@
 const errors = {
-  only_valid_files: 'Veuillez sélectionner uniquement des images ou des vidéos à télécharger',
-  only_images: "Veuillez télécharger uniquement des images pour l'étalonnage",
-  only_one_fish: 'Veuillez sélectionner une image avec un seul poisson',
+  only_valid_files: 'Veuillez sélectionner uniquement des photos ou des vidéos à télécharger',
+  only_images: "Veuillez télécharger uniquement des photos pour l'étalonnage",
+  only_one_fish: 'Veuillez sélectionner une photo avec un seul poisson',
   long_process: "Processus très complexe, attendez qu'il se termine ou annulez",
   waiting: '... Tu peux attendre ou annuler ...',
   error_process: 'Le processus a échoué, réessayez dans quelques minutes',
@@ -15,14 +15,14 @@ const labels = {
   tit_down: 'TÉLÉCHARGEMENTS',
   tit_cola: 'FILE DE PROCESSUS',
   tit_attention: 'ATTENTION!!',
-  tit_attention_text: "Si l'espèce de votre photo ou vidéo n'a pas été détectée, veuillez continuer à télécharger des images jusqu'à ce que le système apprenne à l'identifier. Si vous souhaitez accélérer le processus, envoyer un message à",
+  tit_attention_text: "Si l'espèce de votre photo ou vidéo n'a pas été détectée, veuillez continuer à télécharger des photos jusqu'à ce que le système apprenne à l'identifier. Si vous souhaitez accélérer le processus, envoyer un message à",
   tit_processed: (type) => {
-    return ((type === 'image' ? 'Image' : 'Vidéo').concat(' traitée'))
+    return ((type === 'image' ? 'Photo' : 'Vidéo').concat(' traitée'))
   },
   tit_table: 'Tableau des espèces / tailles',
-  tit_det_images: 'Images de détections individuelles',
+  tit_det_images: 'Photos de détections individuelles',
   tit_fil_details: (type) => {
-    return (`FICHIER (${type === 'image' ? 'image' : 'vidéo'}):`)
+    return (`FICHIER (${type === 'image' ? 'photo' : 'vidéo'}):`)
   },
   tit_fil_name: (name) => {
     return ('Nom: ' + name)
@@ -37,7 +37,7 @@ const labels = {
 
   // header
   tit_obj_det_tool: "Application d'identification, de comptage et de mesure des poissons",
-  tit_select: 'Sélectionnez une image à traiter',
+  tit_select: 'Sélectionnez une photo à traiter',
   tit_upload: 'Télécharger!',
   tit_sel_model: 'Sélectionnez le modèle le plus adapté',
   tit_sel_placeholder: '<choisi un modèle>',
@@ -58,8 +58,8 @@ const labels = {
   // calibration
   tit_calibration: 'ÉTALONNAGE',
   tit_tex_calibration: 'Les tailles de poisson sont référencées à une distance de la caméra de (150 cm) à 90 °, avec un angle de vue de 75 °, si ces données sont modifiées il est nécessaire de calibrer les calculs.',
-  tit_tex_sel_calibration: 'Pour calibrer, sélectionnez une image avec un seul poisson et entrez sa taille réelle en (cm)',
-  tit_sel_calibration: "Sélectionnez l'image",
+  tit_tex_sel_calibration: 'Pour calibrer, sélectionnez une photo avec un seul poisson et entrez sa taille réelle en (cm)',
+  tit_sel_calibration: "Sélectionnez l'photo",
   tit_siz_calibration: 'Mettre la taille (cm)',
   tit_calibrate: 'Étalonner!',
   tit_ok_calibration: (width_pxs_x_cm) => {

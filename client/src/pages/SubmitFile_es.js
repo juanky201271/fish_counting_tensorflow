@@ -1,7 +1,7 @@
 const errors = {
   only_valid_files: 'Por favor subir solo imágenes o videos',
   only_images: 'Por favor subir solo imágenes para la calibración',
-  only_one_fish: 'Por favor subir una imagen con un solo pez',
+  only_one_fish: 'Por favor subir una foto con un solo pez',
   long_process: 'Proceso muy complejo, esperar a que termine o cancelar',
   waiting: '... Puedes esperar o cancelar ...',
   error_process: 'El proceso ha fallado, intentar de nuevo en unos minutos',
@@ -17,13 +17,13 @@ const labels = {
   tit_attention: '¡¡ATENCIÓN!!',
   tit_attention_text: 'Si la especie de tu foto o video no ha sido detectada, por favor continua cargando imágenes hasta que el sistema aprenda a identificarla. Si quieres acelerar el proceso envía un mensaje a',
   tit_processed: (type) => {
-    return (type === 'image' ? 'Imagen procesada' : 'Video procesado')
+    return (type === 'image' ? 'Foto procesada' : 'Video procesado')
   },
   tit_table: 'Tabla de Especies/Tallas',
   tit_det_images: 'Imágenes detecciones individuales',
   tit_fil_details: (type) => {
     return (`FICHERO (${type === 'image' ?
-      'imagen' :
+      'foto' :
       'video'
     }):`)
   },
@@ -40,7 +40,7 @@ const labels = {
 
   // header
   tit_obj_det_tool: 'Aplicación de identificación, conteo y medida de peces',
-  tit_select: 'Selecciona una imagen o video para procesar',
+  tit_select: 'Selecciona una foto o video para procesar',
   tit_upload: 'Cargar archivo!',
   tit_sel_model: 'Selecciona el modelo más adecuado',
   tit_sel_placeholder: '<elige un modelo>',
@@ -61,8 +61,8 @@ const labels = {
   // calibration
   tit_calibration: 'CALIBRACIÓN',
   tit_tex_calibration: 'Las tallas de los peces están referenciadas a una distancia de la cámara de (150 cm) a 90º, con angulo de visión de 75º, si estos datos se modifican es necesario calibrar los cálculos.',
-  tit_tex_sel_calibration: 'Para calibrar seleccionar una imagen con un único pez e introducir su talla real en (cm)',
-  tit_sel_calibration: 'Seleccionar la imagen',
+  tit_tex_sel_calibration: 'Para calibrar seleccionar una foto con un único pez e introducir su talla real en (cm)',
+  tit_sel_calibration: 'Seleccionar la foto',
   tit_siz_calibration: 'Introducir la talla (cm)',
   tit_calibrate: 'Calibrar!',
   tit_ok_calibration: (width_pxs_x_cm) => {

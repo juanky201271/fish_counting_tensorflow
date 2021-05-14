@@ -1,7 +1,7 @@
 const errors = {
-  only_valid_files: 'Selecione apenas imagens ou vídeos para enviar',
-  only_images: 'Carregue apenas imagens para calibração',
-  only_one_fish: 'Selecione uma imagem com apenas um peixe',
+  only_valid_files: 'Selecione apenas fotos ou vídeos para enviar',
+  only_images: 'Carregue apenas fotos para calibração',
+  only_one_fish: 'Selecione uma foto com apenas um peixe',
   long_process: 'Processo muito complexo, aguarde a conclusão ou cancele',
   waiting: '... Você pode espere ou cancele ...',
   error_process: 'O processo falhou, tente novamente em alguns minutos',
@@ -15,14 +15,14 @@ const labels = {
   tit_down: 'TRANSFERÊNCIAS',
   tit_cola: 'PROCESS QUEUE',
   tit_attention: 'ATENÇÃO!!',
-  tit_attention_text: 'Se a espécie de sua foto ou vídeo não foi detectada, continue enviando imagens até que o sistema aprenda a identificá-la. Se você quiser agilizar o processo, envie uma mensagem para',
+  tit_attention_text: 'Se a espécie de sua foto ou vídeo não foi detectada, continue enviando fotos até que o sistema aprenda a identificá-la. Se você quiser agilizar o processo, envie uma mensagem para',
   tit_processed: (type) => {
-    return ((type === 'image' ? 'Imagem' : 'Vídeo').concat(' processada'))
+    return ((type === 'image' ? 'Foto' : 'Vídeo').concat(' processada'))
   },
   tit_table: 'Tabela de espécies/tamanho',
-  tit_det_images: 'Imagens de detecções individuais',
+  tit_det_images: 'Fotos de detecções individuais',
   tit_fil_details: (type) => {
-    return (`ARQUIVO (${type === 'image' ? 'Imagem' : 'Vídeo'}):`)
+    return (`ARQUIVO (${type === 'image' ? 'Foto' : 'Vídeo'}):`)
   },
   tit_fil_name: (name) => {
     return ('Nome: ' + name)
@@ -37,7 +37,7 @@ const labels = {
 
   // header
   tit_obj_det_tool: 'Aplicativo de identificação, contagem e medição de peixes',
-  tit_select: 'Selecione (imagem / vídeo) para processar',
+  tit_select: 'Selecione (foto / vídeo) para processar',
   tit_upload: 'Envio!',
   tit_sel_model: 'Selecione o modelo mais adequado',
   tit_sel_placeholder: '<Escolha um modelo>',
@@ -58,8 +58,8 @@ const labels = {
   // calibration
   tit_calibration: 'CALIBRAÇÃO',
   tit_tex_calibration: 'Os tamanhos dos peixes são referenciados a uma distância da câmera de (150 cm) a 90º, com um ângulo de visão de 75º, se estes dados forem modificados é necessário calibrar os cálculos.',
-  tit_tex_sel_calibration: 'Para calibrar selecione uma imagem com um único peixe e insira seu tamanho real em (cm)',
-  tit_sel_calibration: 'Selecione a imagem',
+  tit_tex_sel_calibration: 'Para calibrar selecione uma foto com um único peixe e insira seu tamanho real em (cm)',
+  tit_sel_calibration: 'Selecione a foto',
   tit_siz_calibration: 'Introduzir o tamanho (cm)',
   tit_calibrate: 'Calibrar!',
   tit_ok_calibration: (width_pxs_x_cm) => {
