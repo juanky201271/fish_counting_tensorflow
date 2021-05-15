@@ -1429,6 +1429,7 @@ class SubmitFile extends Component {
 
           <div className="submitfile__header--select-model">
             <div className="submitfile__numero">1</div>
+            <div className="submitfile__numero-peque">1</div>
             <div className="submitfile__col">
               <div className="submitfile__title">{this.state.labels['tit_sel_model']}</div>
               <select name="models" id="listModels" onChange={this.handleList} disabled={isLoading}>
@@ -1440,6 +1441,7 @@ class SubmitFile extends Component {
           <div className={"submitfile__header--upload-file--webcam"}>
 
             <div className="submitfile__numero">2</div>
+            <div className="submitfile__numero-peque">2</div>
             <div className="submitfile__col-75">
               <div className={optUpload ? "opt-selected" : "opt-no-selected"} onClick={this.handleOptUpload}>
                 <div className="submitfile__col">
@@ -1521,6 +1523,7 @@ class SubmitFile extends Component {
 
           <div className="submitfile__header--buttons">
             <div className="submitfile__numero">3</div>
+            <div className="submitfile__numero-peque">3</div>
             <div className="submitfile__col">
               <div className="submitfile__title">
                 {this.state.labels['tit_typ_process']}
