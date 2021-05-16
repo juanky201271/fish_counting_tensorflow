@@ -1066,7 +1066,7 @@ class SubmitFile extends Component {
 
   fileData = () => {
     const file = this.state.uploadedFile ? process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile : ''
-    if (this.state.optUpload) {
+    if (this.state.optUpload && this.state.selectedFile) {
       const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
       return (
         <div className="submitfile__header-right--file submitfile__col">
@@ -1094,7 +1094,7 @@ class SubmitFile extends Component {
   }
 
   webcamData = () => {
-    if (this.state.optWebcam) {
+    if (this.state.optWebcam && this.state.durationWebcam) {
       const { selectedWebcam } = this.state
 
       navigator.mediaDevices.enumerateDevices()
@@ -1352,14 +1352,14 @@ class SubmitFile extends Component {
 
   handleOptUpload = (e) => {
     if (this.state.model && !this.state.optUpload) {
-      e.preventDefault()
+      //e.preventDefault()
       this.setState({ optUpload: true, optWebcam: false })
     }
   }
 
   handleOptWebcam = (e) => {
     if (this.state.model && !this.state.optWebcam) {
-      e.preventDefault()
+      //e.preventDefault()
       this.setState({ optWebcam: true, optUpload: false })
     }
   }
@@ -1440,7 +1440,7 @@ class SubmitFile extends Component {
 
           <div className={"submitfile__header--upload-file--webcam"}>
 
-            <div className="submitfile__numero">2</div>
+            <div className="submitfile__numero-2">2</div>
             <div className="submitfile__numero-peque">2</div>
             <div className="submitfile__col-75">
               <div className={optUpload ? "opt-selected" : "opt-no-selected"} onClick={this.handleOptUpload}>
@@ -1453,7 +1453,6 @@ class SubmitFile extends Component {
                       accept='image/*|video/*'
                       onChange={this.handleChangeInputUpload}
                       ref={this.uploadInputRef}
-                      onClick={optUpload ? null : this.handleOptUpload}
                       disabled={isLoading || !model ? true : !optUpload ? false : !uploadedFile && optUpload ? false : true}
                   />
                 </div>
@@ -1483,7 +1482,7 @@ class SubmitFile extends Component {
 
             <div className="submitfile__col-25--upload-file--webcam">
 
-              {optUpload && (
+              {(optUpload && selectedFile) && (
                 <div className="submitfile__col">
                   <button
                     className="submitfile__button-upload btn"
@@ -1497,7 +1496,7 @@ class SubmitFile extends Component {
                 </div>
               )}
 
-              {optWebcam && (
+              {(optWebcam && durationWebcam) && (
                 <div className="submitfile__col">
                   <button
                     className="submitfile__button-upload btn"
@@ -1539,7 +1538,7 @@ class SubmitFile extends Component {
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
                       onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcam : null}
-                      disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile || selectedWebcam ? false : true}
+                      disabled={isLoading || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_roi_video']}
                     </button>
@@ -1551,7 +1550,7 @@ class SubmitFile extends Component {
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')}
                       onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcam : null}
-                      disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile || selectedWebcam ? false : true}
+                      disabled={isLoading || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_video']}
                     </button>

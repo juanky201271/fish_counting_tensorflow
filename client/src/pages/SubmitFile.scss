@@ -26,10 +26,22 @@
     @media(min-width: 300px) {
       display: flex;
       font-size: 6rem;
-      color: white;
-      background: white;
+      color: #f0f0f0;
       text-shadow: -1px -1px 1px #0091a8, 1px -1px 1px #0091a8, -1px 1px 1px #0091a8, 1px 1px 1px #0091a8;
-      transform: translateY(-15px);
+      transform: translateY(-13px);
+      padding-right: 10px;
+    }
+  }
+
+  &__numero-2 {
+    display: none;
+
+    @media(min-width: 300px) {
+      display: flex;
+      font-size: 6rem;
+      color: #f0f0f0;
+      text-shadow: -1px -1px 1px #0091a8, 1px -1px 1px #0091a8, -1px 1px 1px #0091a8, 1px 1px 1px #0091a8;
+      transform: translateY(-10px);
       padding-right: 10px;
     }
   }
@@ -37,8 +49,7 @@
   &__numero-peque {
     display: flex;
     font-size: 2rem;
-    color: white;
-    background: white;
+    color: #f0f0f0;
     text-shadow: -1px -1px 1px #0091a8, 1px -1px 1px #0091a8, -1px 1px 1px #0091a8, 1px 1px 1px #0091a8;
 
     @media(min-width: 300px) {
