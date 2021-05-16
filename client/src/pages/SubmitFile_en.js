@@ -1,7 +1,7 @@
 const errors = {
   only_valid_files: 'Please select only photos or videos to upload',
   only_images: 'Please upload only photos for calibration',
-  only_one_fish: 'Please select an photo with just one fish',
+  only_one_fish: 'Please select a photo with just one fish',
   long_process: 'Very complex process, wait for it to finish or cancel',
   waiting: '... You can wait or cancel ...',
   error_process: 'The process has failed, try again in a few minutes',
@@ -37,7 +37,7 @@ const labels = {
 
   // header
   tit_obj_det_tool: 'Fish Identification, Counting and Measurement App',
-  tit_select: 'Select an (photo/video) to process',
+  tit_select: 'Select a (photo/video) to process',
   tit_upload: 'Upload selection!',
   tit_sel_model: 'Select the most suitable model',
   tit_sel_placeholder: '<choose a model>',
@@ -58,8 +58,8 @@ const labels = {
   // calibration
   tit_calibration: 'CALIBRATION',
   tit_tex_calibration: 'The fish sizes are referenced at a distance from the camera of (60 in) at 90º, with a viewing angle of 75º, if these data are modified it is necessary to calibrate the calculations.',
-  tit_tex_sel_calibration: 'To calibrate select an photo with a single fish and enter its real size in (in)',
-  tit_sel_calibration: 'Select an photo',
+  tit_tex_sel_calibration: 'To calibrate select a photo with a single fish and enter its real size in (in)',
+  tit_sel_calibration: 'Select a photo',
   tit_siz_calibration: 'Introduce size (in)',
   tit_calibrate: 'Calibrate!',
   tit_ok_calibration: (width_pxs_x_cm) => {
