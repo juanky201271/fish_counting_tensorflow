@@ -7,6 +7,7 @@ const errors = {
   error_process: 'El proceso ha fallado, intentar de nuevo en unos minutos',
   process_queue: 'Proceso lanzado, checkear la cola de procesos para ver su estado',
   max_size_file: 'Tamaño maximo de fichero 100 Mb',
+  max_duration: 'Máxima duración 60 min',
 
 };
 
@@ -76,7 +77,7 @@ const labels = {
   tit_lab_sel_file: 'Seleccionar archivo o webcam para procesar...',
   tit_lab_sel_model: 'Seleccionar modelo para usar...',
 
-  tit_webcam: 'Selecciona tu Webcam o CCTV conectada',
+  tit_webcam: 'Seleccionar tu Webcam o CCTV conectada',
   tit_select_webcam: 'Cargar selección!',
   tit_selected_webcam: 'Seleccionada',
   tit_camera: 'CÁMARA',

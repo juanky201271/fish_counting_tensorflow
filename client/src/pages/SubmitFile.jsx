@@ -1061,6 +1061,19 @@ class SubmitFile extends Component {
   }
 
   handleChangeInputNumberDurationWebcam = e => {
+    if (e.target.value > 60) {
+      e.preventDefault()
+      this.setState(
+        {
+          errorUpload: this.state.errors['max_duration']
+        },
+        () => {
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
+        }
+      )
+      return
+    }
+
     this.setState({ durationWebcam: e.target.value })
   }
 

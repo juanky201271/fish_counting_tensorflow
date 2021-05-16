@@ -7,6 +7,7 @@ const errors = {
   error_process: 'The process has failed, try again in a few minutes',
   process_queue: 'Process launched, check the process queue to see its status',
   max_size_file: 'Maximum file size 100 Mb',
+  max_duration: 'Maximun duration 60 min',
 
 };
 
