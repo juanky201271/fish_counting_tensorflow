@@ -80,7 +80,6 @@ class SubmitFile extends Component {
       this.uploadInputRef = React.createRef()
       this.uploadInputRefCalibration = React.createRef()
       this.processVideoRoiButtonRef = React.createRef()
-      this.processWebcamButtonRef = React.createRef()
       this.processVideoButtonRef = React.createRef()
       this.processPictureButtonRef = React.createRef()
       this.webcamRef = React.createRef()
@@ -420,9 +419,6 @@ class SubmitFile extends Component {
     if (this.processVideoButtonRef.current) {
       this.processVideoButtonRef.current.style.backgroundColor = '#83a8bc'
     }
-    if (this.processWebcamButtonRef.current) {
-      this.processWebcamButtonRef.current.style.backgroundColor = '#83a8bc'
-    }
     if (this.processPictureButtonRef.current) {
       this.processPictureButtonRef.current.style.backgroundColor = '#83a8bc'
     }
@@ -737,9 +733,9 @@ class SubmitFile extends Component {
     const name = 'Webcam_' + dir_webcam.split('_Webcam_')[1]
 
     if (dir_webcam !== null) {
-      if (this.processWebcamButtonRef.current) {
-        this.processWebcamButtonRef.current.style.backgroundColor = '#d68977'
-        this.pressButton = 'processWebcamButton'
+      if (this.processVideoRoiButtonRef.current) {
+        this.processVideoRoiButtonRef.current.style.backgroundColor = '#d68977'
+        this.pressButton = 'processVideoRoiButton'
       }
       const img = this.webcamRef.current.getScreenshot()
       let width, height
@@ -752,12 +748,12 @@ class SubmitFile extends Component {
         .catch(err => {
           console.log('Webcam dim image ERROR: ', err.response, err.request, err.message, err)
         })
-      api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir_webcam + '/' + name, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm, 0, durationWebcam, width, height)
+      api.webcamVideoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir_webcam + '/' + name, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm, 0, durationWebcam, width, height)
         .then(res => {
           //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
         })
         .catch(e => {
-          console.log('Webcam Count Fish ERROR: ', e.response, e.request, e.message, e)
+          console.log('Webcam Video Roi Count Fish ERROR: ', e.response, e.request, e.message, e)
 
           this.reRunProcess(name)
 
@@ -789,7 +785,7 @@ class SubmitFile extends Component {
       this.intervals.push(null)
       cola.push(
         {
-          api: 'webcamCountFishAwsS3',
+          api: 'webcamVideoRoiCountFishAwsS3',
           total_fish: 0,
           _id_webcam: _id_webcam,
           dir_webcam: dir_webcam,
@@ -817,22 +813,33 @@ class SubmitFile extends Component {
     this.setState({ isLoading: false })
   }
 
-  handleVideoProcessWebcam = e => {
+  handleVideoProcessWebcam = async e => {
     this.setState({ isLoading: true, log: 'waiting', })
     const { _id_webcam, dir_webcam, model, width_cms, width_pxs_x_cm, durationWebcam, } = this.state
     const name = 'Webcam_' + dir_webcam.split('_Webcam_')[1]
 
     if (dir_webcam !== null) {
-      if (this.processWebcamButtonRef.current) {
-        this.processWebcamButtonRef.current.style.backgroundColor = '#d68977'
-        this.pressButton = 'processWebcamButton'
+      if (this.processVideoButtonRef.current) {
+        this.processVideoButtonRef.current.style.backgroundColor = '#d68977'
+        this.pressButton = 'processVideoButton'
       }
-      api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir_webcam + '/' + name, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm, 0, durationWebcam)
+      const img = this.webcamRef.current.getScreenshot()
+      let width, height
+      await this.getImageDimensions(img)
+        .then(data => {
+          console.log(data)
+          width = data.w
+          height = data.h
+        })
+        .catch(err => {
+          console.log('Webcam dim image ERROR: ', err.response, err.request, err.message, err)
+        })
+      api.webcamVideoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir_webcam + '/' + name, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm, 0, durationWebcam, width, height)
         .then(res => {
           //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
         })
         .catch(e => {
-          console.log('Webcam Count Fish ERROR: ', e.response, e.request, e.message, e)
+          console.log('Webcam Video Count Fish ERROR: ', e.response, e.request, e.message, e)
 
           this.reRunProcess(name)
 
@@ -864,7 +871,7 @@ class SubmitFile extends Component {
       this.intervals.push(null)
       cola.push(
         {
-          api: 'webcamCountFishAwsS3',
+          api: 'webcamVideoCountFishAwsS3',
           total_fish: 0,
           _id_webcam: _id_webcam,
           dir_webcam: dir_webcam,
@@ -880,7 +887,7 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], durationWebcam: '', selectedWebcam: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, //durationWebcam: '', selectedWebcam: '',
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
@@ -1486,9 +1493,6 @@ class SubmitFile extends Component {
       }
       if (this.processVideoButtonRef.current) {
         this.processVideoButtonRef.current.style.backgroundColor = '#83a8bc'
-      }
-      if (this.processWebcamButtonRef.current) {
-        this.processWebcamButtonRef.current.style.backgroundColor = '#83a8bc'
       }
       if (this.processPictureButtonRef.current) {
         this.processPictureButtonRef.current.style.backgroundColor = '#83a8bc'
