@@ -217,7 +217,7 @@ class SubmitFile extends Component {
     )
   }
 
-  sendWebcamFrames = (name, durationWebcam) => {
+  sendWebcamFrames = async (name, durationWebcam) => {
     if (this.webcamRef.current) {
       const frames = ((parseFloat(durationWebcam) * 60) * 25).toFixed()
       console.log(durationWebcam, name, frames)
@@ -235,20 +235,20 @@ class SubmitFile extends Component {
             //console.log('send frame: ' + i + ' ERROR: ', e)
           })
       }
+      console.log('sending frame null')
+      // sendWebcamFrameBuf
+      api.sendWebcamFrameB64(name, '')
+        .then(r => {
+          console.log('send frame null response: ', r)
+        })
+        .catch(e => {
+          //console.log('send frame null ERROR: ', e)
+        })
+
+      this.setState({
+          durationWebcam: '', selectedWebcam: '',
+      })
     }
-    // sendWebcamFrameBuf
-    api.sendWebcamFrameB64(name, '')
-      .then(r => {
-        console.log('send frame null response: ', r)
-      })
-      .catch(e => {
-        //console.log('send frame null ERROR: ', e)
-      })
-
-    this.setState({
-        durationWebcam: '', selectedWebcam: '',
-    })
-
   }
 
   componentDidMount = () => {

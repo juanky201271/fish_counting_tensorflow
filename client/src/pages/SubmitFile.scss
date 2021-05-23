@@ -130,7 +130,7 @@
         flex-direction: row;
       }
       @media(min-width: 1024px) {
-        padding-right: 50px;
+        padding-right: 10px;
         transform: translateX(-40px);
       }
 
@@ -197,7 +197,7 @@
       }
       @media(min-width: 1024px) {
         margin-top: 30px;
-        padding-right: 20px;
+        padding-right: 0px;
         transform: translateX(-40px);
       }
 
@@ -206,7 +206,7 @@
         font-size: 12px;
 
         @media(min-width: 300px) {
-          width: 70%;
+          width: 72%;
         }
         @media(min-width: 768px) {
           font-size: 15px;
@@ -222,7 +222,7 @@
         flex-direction: row;
       }
       @media(min-width: 1024px) {
-        padding-right: 50px;
+        padding-right: 10px;
         transform: translateX(-40px);
       }
     }
