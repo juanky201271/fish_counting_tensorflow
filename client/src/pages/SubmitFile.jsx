@@ -106,15 +106,14 @@ class SubmitFile extends Component {
                 //video o webcam
                 if (params.action === 'start') {
                   cola[i].porc = 5
-
-                } else if (params.action === 'reading') {
-                  if (cola[i].porc < 100) {
-                    cola[i].porc = cola[i].porc + 5
-                  }
+                //} else if (params.action === 'reading') {
+                //  if (cola[i].porc < 100) {
+                //    cola[i].porc = cola[i].porc + 5
+                //  }
                   // si es webcam empezar a lanzar los frames
-                  if (params.uploadedFile === nameState) {
-                    this.sendWebcamFrames(nameState, cola[i].durationWebcam)
-                  }
+                //  if (params.uploadedFile === nameState) {
+                //    this.sendWebcamFrames(nameState, cola[i].durationWebcam)
+                //  }
                 } else if (params.action === 'end' || params.action === 'ERROR') {
                   cola[i].porc = 100
                 } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
@@ -219,7 +218,7 @@ class SubmitFile extends Component {
 
   sendWebcamFrames = async (name, durationWebcam) => {
     if (this.webcamRef.current) {
-      const frames = ((parseFloat(durationWebcam) * 60) * 25).toFixed()
+      const frames = Math.floor(parseFloat(durationWebcam) * (60 * 25))
       console.log(durationWebcam, name, frames)
       let image_base64, image_buffer
       for (let i = 0; i < frames; i++) {
@@ -795,6 +794,8 @@ class SubmitFile extends Component {
           width_pxs_x_cm: width_pxs_x_cm,
           durationWebcam: durationWebcam,
           device: 0,
+          width: width,
+          height: height,
           log: 'waiting',
           info: '',
           times: 1,
@@ -802,6 +803,63 @@ class SubmitFile extends Component {
       )
       this.setState({
           errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, //durationWebcam: '', selectedWebcam: '',
+        },
+        () => {
+          setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+      })
+      if (this.uploadInputRef.current) {
+        this.uploadInputRef.current.value = ''
+      }
+    }
+    this.setState({ isLoading: false })
+  }
+
+  handleVideoRoiProcessWebcamIframe = async e => {
+    this.setState({ isLoading: true, log: 'waiting', })
+    const { _id_webcam, dir_webcam, model, width_cms, width_pxs_x_cm, durationWebcam, } = this.state
+    const name = 'Webcam_' + dir_webcam.split('_Webcam_')[1]
+
+    if (dir_webcam !== null) {
+      if (this.processVideoRoiButtonRef.current) {
+        this.processVideoRoiButtonRef.current.style.backgroundColor = '#d68977'
+        this.pressButton = 'processVideoRoiButton'
+      }
+      const img = this.webcamRef.current.getScreenshot()
+      let width, height
+      await this.getImageDimensions(img)
+        .then(data => {
+          console.log(data)
+          width = data.w
+          height = data.h
+        })
+        .catch(err => {
+          console.log('Webcam dim image ERROR: ', err.response, err.request, err.message, err)
+        })
+
+      // lo añado a la cola de procesos
+      const cola = this.state.cola || []
+      this.intervals.push(null)
+      cola.push(
+        {
+          api: 'webcamvideoroicountfishawss3iframe',
+          total_fish: 0,
+          _id_webcam: _id_webcam,
+          dir_webcam: dir_webcam,
+          name: name,
+          model: model,
+          width_cms: width_cms,
+          width_pxs_x_cm: width_pxs_x_cm,
+          durationWebcam: durationWebcam,
+          device: 0,
+          width: width,
+          height: height,
+          log: 'waiting',
+          info: '',
+          times: 1,
+        }
+      )
+      this.setState({
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, durationWebcam: '', selectedWebcam: '',
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
@@ -881,6 +939,8 @@ class SubmitFile extends Component {
           width_pxs_x_cm: width_pxs_x_cm,
           durationWebcam: durationWebcam,
           device: 0,
+          width: width,
+          height: height,
           log: 'waiting',
           info: '',
           times: 1,
@@ -1352,6 +1412,8 @@ class SubmitFile extends Component {
               //const w = { alignSelf: 'flex-start', width: ele.porc ? ele.porc : '0%', marginLeft: '5px', marginTop: '5px' }
               const w = { alignSelf: 'flex-start', width: ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%', marginTop: '5px' }
               const c = { color: ele.log === 'waiting' ? 'red' : ele.log === 'end' ? 'green' : 'black' }
+              const url_iframe = process.env.REACT_APP_FLASK_API + '/' + ele.api + '?url_input_video=' + process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + ele.dir_webcam + '/' + ele.name + '&model=' + 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + ele.model.split('#')[0] +  '&width_cms=' + ele.width_cms + '&width_pxs_x_cm=' + ele.width_pxs_x_cm + '&device=' + ele.device + '&duration=' + ele.durationWebcam + '&width=' + ele.width + '&height=' + ele.height + '&url_callback=' + process.env.REACT_APP_URL_CALLBACK
+              console.log('url webcam', url_iframe)
               return (<>
                 <div className="submitfile__col">
                   <strong>
@@ -1363,6 +1425,11 @@ class SubmitFile extends Component {
                 <div className="submitfile__col">
                   {ele.log === 'end' ? this.colaFileData(ele) : ''}
                 </div>
+
+                {ele.log != 'end' && (
+                  <iframe style={{ display: 'none' }} src={url_iframe} height="5" width="5" title="webcam python" allow="camera; microphone;"></iframe>
+                )}
+
                 {/* <div className="submitfile__row"> */}
                   {/* <div style={{ fontSize: '10px' }}>{ele.porc}</div> */}
                   <div style={w}>
@@ -1631,7 +1698,7 @@ class SubmitFile extends Component {
                       ref={this.processVideoRoiButtonRef}
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
-                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcam : null}
+                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcamIframe : null}
                       disabled={isLoading || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_roi_video']}
