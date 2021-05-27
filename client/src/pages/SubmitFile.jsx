@@ -106,14 +106,14 @@ class SubmitFile extends Component {
                 //video o webcam
                 if (params.action === 'start') {
                   cola[i].porc = 5
-                } else if (params.action === 'reading') {
+                /*} else if (params.action === 'reading') {
                   if (cola[i].porc < 100) {
                     cola[i].porc = cola[i].porc + 5
                   }
                   // si es webcam empezar a lanzar los frames
                   if (params.uploadedFile === nameState) {
                     this.sendWebcamFrames(nameState, cola[i].durationWebcam)
-                  }
+                  }*/
                 } else if (params.action === 'end' || params.action === 'ERROR') {
                   cola[i].porc = 100
                 } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
@@ -841,7 +841,7 @@ class SubmitFile extends Component {
       this.intervals.push(null)
       cola.push(
         {
-          api: 'webcamvideoroicountfishawss3iframe',
+          api: 'webcamvideoroicountfishawss3iframesockets',
           total_fish: 0,
           _id_webcam: _id_webcam,
           dir_webcam: dir_webcam,
@@ -1469,8 +1469,8 @@ class SubmitFile extends Component {
               //const w = { alignSelf: 'flex-start', width: ele.porc ? ele.porc : '0%', marginLeft: '5px', marginTop: '5px' }
               const w = { alignSelf: 'flex-start', width: ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%', marginTop: '5px' }
               const c = { color: ele.log === 'waiting' ? 'red' : ele.log === 'end' ? 'green' : 'black' }
-              //const url_iframe = process.env.REACT_APP_FLASK_API + '/' + ele.api + '?url_input_video=' + process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + ele.dir_webcam + '/' + ele.name + '&model=' + 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + ele.model.split('#')[0] +  '&width_cms=' + ele.width_cms + '&width_pxs_x_cm=' + ele.width_pxs_x_cm + '&device=' + ele.device + '&duration=' + ele.durationWebcam + '&width=' + ele.width + '&height=' + ele.height + '&url_callback=' + process.env.REACT_APP_URL_CALLBACK
-              //console.log('url webcam', url_iframe)
+              const url_iframe = process.env.REACT_APP_FLASK_API + '/' + ele.api + '?url_input_video=' + process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + ele.dir_webcam + '/' + ele.name + '&model=' + 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + ele.model.split('#')[0] +  '&width_cms=' + ele.width_cms + '&width_pxs_x_cm=' + ele.width_pxs_x_cm + '&device=' + ele.device + '&duration=' + ele.durationWebcam + '&width=' + ele.width + '&height=' + ele.height + '&url_callback=' + process.env.REACT_APP_URL_CALLBACK
+              console.log('url webcam', url_iframe)
               return (<>
                 <div className="submitfile__col">
                   <strong>
@@ -1483,9 +1483,9 @@ class SubmitFile extends Component {
                   {ele.log === 'end' ? this.colaFileData(ele) : ''}
                 </div>
 
-                {/*ele.log != 'end' && (
-                  <iframe style={{ display: 'none' }} src={url_iframe} height="5" width="5" title="webcam python" allow="camera; microphone;"></iframe>
-                )*/}
+                {ele.log != 'end' && (
+                  <iframe style={{ display: 'inherit' }} src={url_iframe} height="300" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
+                )}
 
                 {/* <div className="submitfile__row"> */}
                   {/* <div style={{ fontSize: '10px' }}>{ele.porc}</div> */}
@@ -1755,7 +1755,7 @@ class SubmitFile extends Component {
                       ref={this.processVideoRoiButtonRef}
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
-                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcam : null}
+                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcamIframe : null}
                       disabled={isLoading || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_roi_video']}
@@ -1767,7 +1767,7 @@ class SubmitFile extends Component {
                       ref={this.processVideoButtonRef}
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')}
-                      onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcam : null}
+                      onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcamIframe : null}
                       disabled={isLoading || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_video']}
