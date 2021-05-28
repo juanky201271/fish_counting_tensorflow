@@ -82,6 +82,7 @@ const labels = {
   tit_webcam_no_found: 'Câmera não disponível',
   tit_or_you_can: 'ou você pode',
   tit_device: 'Dispositivo',
+  tit_recording: 'Gravação',
 
   waiting: 'Esperando',
   start: 'Começar',

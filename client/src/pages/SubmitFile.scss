@@ -166,6 +166,22 @@
         margin-top: 10px;
       }
     }
+    &--box-webcam-red {
+      display: block;
+      width: 100%;
+      border: 3px solid red;
+
+      @media(min-width: 500px) {
+        width: 80%;
+      }
+      @media(min-width: 1024px) {
+        width: 100%;
+      }
+
+      &--input-number {
+        margin-top: 10px;
+      }
+    }
     &--box-webcam-border {
       display: block;
       width: 80%;

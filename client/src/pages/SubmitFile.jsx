@@ -76,6 +76,7 @@ class SubmitFile extends Component {
         deviceId: null,
         durationWebcam: null,
         selectedWebcam: false,
+        webcamRecording: false,
       }
       this.uploadInputRef = React.createRef()
       this.uploadInputRefCalibration = React.createRef()
@@ -807,9 +808,6 @@ class SubmitFile extends Component {
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
       })
-      if (this.uploadInputRef.current) {
-        this.uploadInputRef.current.value = ''
-      }
     }
     this.setState({ isLoading: false })
   }
@@ -859,14 +857,13 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, durationWebcam: '', selectedWebcam: '',
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true, //durationWebcam: '', selectedWebcam: '',
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+          const msec = durationWebcam * 60 * 1000
+          setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false }) }, msec)
       })
-      if (this.uploadInputRef.current) {
-        this.uploadInputRef.current.value = ''
-      }
     }
     this.setState({ isLoading: false })
   }
@@ -952,9 +949,6 @@ class SubmitFile extends Component {
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
       })
-      if (this.uploadInputRef.current) {
-        this.uploadInputRef.current.value = ''
-      }
     }
     this.setState({ isLoading: false })
   }
@@ -986,7 +980,7 @@ class SubmitFile extends Component {
       this.intervals.push(null)
       cola.push(
         {
-          api: 'webcamvideocountfishawss3iframe',
+          api: 'webcamvideocountfishawss3iframesockets',
           total_fish: 0,
           _id_webcam: _id_webcam,
           dir_webcam: dir_webcam,
@@ -1004,14 +998,13 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, durationWebcam: '', selectedWebcam: '',
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true, //durationWebcam: '', selectedWebcam: '',
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+          const msec = durationWebcam * 60 * 1000
+          setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false,  }) }, msec)
       })
-      if (this.uploadInputRef.current) {
-        this.uploadInputRef.current.value = ''
-      }
     }
     this.setState({ isLoading: false })
   }
@@ -1351,7 +1344,7 @@ class SubmitFile extends Component {
               <>
                 {selectedWebcam && (
                   <Webcam
-                    className="submitfile__header--box-webcam"
+                    className={this.state.webcamRecording ? "submitfile__header--box-webcam-red" : "submitfile__header--box-webcam"}
                     audio={false}
                     ref={this.webcamRef}
                     screenshotFormat="image/jpeg"
@@ -1362,7 +1355,9 @@ class SubmitFile extends Component {
                 {/*!selectedWebcam && (
                   <div className="submitfile__header--box-webcam-border"></div>
                 )*/}
-                { this.state.labels['tit_device'] + ' 0' + (this.state.label ? ' - ' + this.state.label : '') }
+                <div>
+                  <span>{this.state.labels['tit_device'] + ' 0' + (this.state.label ? ' - ' + this.state.label : '')}</span><span style={{ color: 'red' }}>{this.state.webcamRecording ? ' - ' + this.state.labels['tit_recording'] : ''}</span>
+                </div>
               </>
             )}
             {!this.state.deviceId && (
@@ -1484,7 +1479,7 @@ class SubmitFile extends Component {
                 </div>
 
                 {(ele.log != 'end' && ele.name) && (
-                  <iframe style={{ display: 'inherit' }} src={url_iframe} height="300" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
+                  <iframe style={{ display: 'none' }} src={url_iframe} height="300" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
                 )}
 
                 {/* <div className="submitfile__row"> */}
@@ -1630,7 +1625,7 @@ class SubmitFile extends Component {
   render() {
     console.log('submit file state', this.state)
     //console.log('submit file props', this.props)
-    const { isLoading, selectedFile, uploadedFile, total_fish, errorUpload, errorWebcam, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info, optUpload, optWebcam, durationWebcam, selectedWebcam, } = this.state
+    const { isLoading, selectedFile, uploadedFile, total_fish, errorUpload, errorWebcam, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info, optUpload, optWebcam, durationWebcam, selectedWebcam, webcamRecording, } = this.state
     const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
     const fileData = this.fileData()
     const imageData = this.imageData()
@@ -1671,7 +1666,7 @@ class SubmitFile extends Component {
                       accept='image/*|video/*'
                       onChange={this.handleChangeInputUpload}
                       ref={this.uploadInputRef}
-                      disabled={isLoading || !model ? true : !optUpload ? false : !uploadedFile && optUpload ? false : true}
+                      disabled={isLoading || webcamRecording || !model ? true : !optUpload ? false : !uploadedFile && optUpload ? false : true}
                   />
                 </div>
               </div>
@@ -1690,7 +1685,7 @@ class SubmitFile extends Component {
                         value={durationWebcam ? durationWebcam : ''}
                         onChange={this.handleChangeInputNumberDurationWebcam}
                         onClick={optWebcam ? null : this.handleOptWebcam}
-                        disabled={isLoading || !model ? true : !optWebcam ? false : !selectedWebcam && optWebcam ? false : true}
+                        disabled={isLoading || webcamRecording || !model ? true : !optWebcam ? false : !selectedWebcam && optWebcam ? false : true}
                         placeholder={this.state.labels['tit_minutes']}
                     />
                   </div>
@@ -1707,7 +1702,7 @@ class SubmitFile extends Component {
                     id="uploadButton"
                     onClick={optUpload ? this.handleUpload : this.handleOptUpload}
                     ref={this.uploadButtonRef}
-                    disabled={isLoading || !model ? true : !optUpload ? false : selectedFile && !uploadedFile && optUpload ? false : true}
+                    disabled={isLoading || webcamRecording || !model ? true : !optUpload ? false : selectedFile && !uploadedFile && optUpload ? false : true}
                   >
                     {this.state.labels['tit_upload']}
                   </button>
@@ -1721,7 +1716,7 @@ class SubmitFile extends Component {
                     id="webcamButton"
                     onClick={optWebcam ? this.handleWebcam : this.handleOptWebcam}
                     ref={this.webcamButtonRef}
-                    disabled={isLoading || !model ? true : !optWebcam ? false : durationWebcam && !selectedWebcam && optWebcam ? false : true}
+                    disabled={isLoading || webcamRecording || !model ? true : !optWebcam ? false : durationWebcam && !selectedWebcam && optWebcam ? false : true}
                   >
                     {this.state.labels['tit_select_webcam']}
                   </button>
@@ -1756,7 +1751,7 @@ class SubmitFile extends Component {
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
                       onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcamIframe : null}
-                      disabled={isLoading || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
+                      disabled={isLoading || webcamRecording || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_roi_video']}
                     </button>
@@ -1768,7 +1763,7 @@ class SubmitFile extends Component {
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')}
                       onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcamIframe : null}
-                      disabled={isLoading || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
+                      disabled={isLoading || webcamRecording || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_video']}
                     </button>
@@ -1782,7 +1777,7 @@ class SubmitFile extends Component {
                       onMouseOver={() => this.handleOnMouseOver(this.processPictureButtonRef, 'processPictureButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processPictureButtonRef, 'processPictureButton')}
                       onClick={this.handlePictureProcess}
-                      disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile && optUpload ? false : true}
+                      disabled={isLoading || webcamRecording || !model || total_fish !== null || type === 'video' ? true : uploadedFile && optUpload ? false : true}
                     >
                       {this.state.labels['tit_picture']}
                     </button>
@@ -1790,7 +1785,7 @@ class SubmitFile extends Component {
                 </div>
 
                 <div className="submitfile__col-25-buttons">
-                  <button className="submitfile__button-cancel btn" id="cancelButton" onClick={this.handleCancel} disabled={(isLoading || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
+                  <button className="submitfile__button-cancel btn" id="cancelButton" onClick={this.handleCancel} disabled={(isLoading || webcamRecording || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
                 </div>
               </div>
             </div>
@@ -1818,7 +1813,7 @@ class SubmitFile extends Component {
                         accept='image/*|video/*'
                         onChange={this.handleChangeInputUploadCalibration}
                         ref={this.uploadInputRefCalibration}
-                        disabled={isLoading || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
+                        disabled={isLoading || webcamRecording || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
                     />
                     <div className="submitfile__text--green">{this.state.labels['tit_siz_calibration']}</div>
                     <input
@@ -1827,13 +1822,13 @@ class SubmitFile extends Component {
                         type="number"
                         value={cms ? cms : ''}
                         onChange={this.handleChangeInputNumberCalibration}
-                        disabled={isLoading || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
+                        disabled={isLoading || webcamRecording || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
                         placeholder={this.state.labels['tit_inches']}
                     />
                   </div>
                   <div className="submitfile__col-25">
-                    <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading || !model ? true : selectedFileCalibration && cms && (!uploadedFileCalibration || resultFileCalibration)  ? false : true} >{this.state.labels['tit_calibrate']}</button>
-                    <button className="submitfile__button-cancel btn" id="cancelCalibrationButton" onClick={this.handleCancelCalibration} disabled={(isLoading || !model) && !cancelarWaitingCalibration} >{this.state.labels['tit_cancel'](total_fish)}</button>
+                    <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading || webcamRecording || !model ? true : selectedFileCalibration && cms && (!uploadedFileCalibration || resultFileCalibration)  ? false : true} >{this.state.labels['tit_calibrate']}</button>
+                    <button className="submitfile__button-cancel btn" id="cancelCalibrationButton" onClick={this.handleCancelCalibration} disabled={(isLoading || webcamRecording || !model) && !cancelarWaitingCalibration} >{this.state.labels['tit_cancel'](total_fish)}</button>
                   </div>
                 </div>
                 <div className="submitfile__header--error">
@@ -1859,7 +1854,7 @@ class SubmitFile extends Component {
             {total_fish ?
               <>{this.state.labels['tit_lab_results']}</>
             :
-              isLoading ?
+              isLoading || webcamRecording ?
                 <>{this.state.labels['tit_lab_processing'] + ' [' + this.state.labels[log] + info + ']'}</>
               :
                 uploadedFile || selectedWebcam ?

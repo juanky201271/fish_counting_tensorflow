@@ -82,6 +82,7 @@ const labels = {
   tit_webcam_no_found: 'Camera not available',
   tit_or_you_can: 'or you can',
   tit_device: 'Device',
+  tit_recording: 'Recording',
 
   waiting: 'Waiting',
   start: 'Start',
