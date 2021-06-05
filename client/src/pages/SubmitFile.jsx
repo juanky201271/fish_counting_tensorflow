@@ -443,6 +443,9 @@ class SubmitFile extends Component {
     if (!this.state.selectedFileCalibration || !this.state.cms || !this.state.model) {
       return
     }
+    if (this.state.cms <= 0) {
+      return
+    }
 
     if (this.state.selectedFileCalibration.size > 30000000) {
       this.setState(
@@ -1250,7 +1253,7 @@ class SubmitFile extends Component {
   }
 
   handleChangeInputNumberCalibration = e => {
-    if (e.target.value > 0) {
+    if (e.target.value >= 0) {
       this.setState({ cms: e.target.value })
     } else {
       e.preventDefault()
@@ -1270,7 +1273,7 @@ class SubmitFile extends Component {
       )
       return
     }
-    if (e.target.value > 0) {
+    if (e.target.value >= 0) {
       this.setState({ durationWebcam: e.target.value })
     } else {
       e.preventDefault()
@@ -1589,6 +1592,9 @@ class SubmitFile extends Component {
 
   handleWebcam = async (e) => {
     if (this.state.model && this.state.optWebcam) {
+      if (this.state.durationWebcam <= 0) {
+        return
+      }
 
       this.setState({ isLoading: true, log: 'waiting', })
 
