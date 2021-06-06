@@ -121,8 +121,13 @@ class SubmitFile extends Component {
                     selectedWebcam: '',
                     webcamRecording: false
                   })
-                } else if (params.action === 'end' || params.action === 'ERROR') {
+                } else if (params.action === 'end') {
                   cola[i].porc = 100
+                  this.setState({
+                    durationWebcam: '',
+                    selectedWebcam: '',
+                    webcamRecording: false
+                  })
                 } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
                   const n_frames = parseInt(params.info.split('/')[0])
                   const t_frames = parseInt(params.info.split('/')[1])
@@ -142,7 +147,7 @@ class SubmitFile extends Component {
                 //image
                 if (params.action === 'start') {
                   cola[i].porc = 5
-                } else if (params.action === 'end' || params.action === 'ERROR') {
+                } else if (params.action === 'end') {
                   cola[i].porc = 100
                   if (this.intervals[i]) {
                     clearTimeout(this.intervals[i])
@@ -169,7 +174,7 @@ class SubmitFile extends Component {
 
               if (params.action !== 'cameraoff') {
                 cola[i].log = params.action
-                cola[i].info = params.info ? ' {' + params.info + '}' : ''
+                cola[i].info = params.info === 'error' ? params.info : params.info ? ' {' + params.info + '}' : ''
               }
 
               this.setState(
@@ -241,7 +246,7 @@ class SubmitFile extends Component {
             console.log('send frame: ' + i + ' response: ', r)
           })
           .catch(e => {
-            //console.log('send frame: ' + i + ' ERROR: ', e)
+            console.log('send frame: ' + i + ' ERROR: ', e)
           })
       }
       console.log('sending frame null')
@@ -251,7 +256,7 @@ class SubmitFile extends Component {
           console.log('send frame null response: ', r)
         })
         .catch(e => {
-          //console.log('send frame null ERROR: ', e)
+          console.log('send frame null ERROR: ', e)
         })
 
       this.setState({
@@ -1103,7 +1108,7 @@ class SubmitFile extends Component {
       if (uploadedFile_name === uploadedFile || uploadedFile_name === name) {
         if (cola[i].log === 'waiting') {
           if (cola[i].times >= 6) {
-            cola[i].info = this.state.labels['error']
+            cola[i].info = 'error'
             this.setState({ cola: cola })
             return
           }
@@ -1481,12 +1486,12 @@ class SubmitFile extends Component {
                 <div className="submitfile__col">
                   <strong>
                     {(ele.uploadedFile || ele.name) + ' - '}
-                    <span style={c}>{this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '')}</span>
+                    <span style={c}>{this.state.labels[ele.log] + (ele.info === 'error' ? ' - ' + this.state.labels['error'] : ele.info ? ' - ' + ele.info : '')}</span>
                     {' - ' + (ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%')}
                   </strong>
                 </div>
                 <div className="submitfile__col">
-                  {ele.log === 'end' ? this.colaFileData(ele) : ''}
+                  {ele.log === 'end' && ele.info != 'error' ? this.colaFileData(ele) : ''}
                 </div>
 
                 {(ele.log != 'end' && ele.name) && (
