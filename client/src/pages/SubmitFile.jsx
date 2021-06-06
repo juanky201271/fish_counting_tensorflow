@@ -1262,11 +1262,7 @@ class SubmitFile extends Component {
   }
 
   handleChangeInputNumberCalibration = e => {
-    if (e.target.value >= 0) {
-      this.setState({ cms: e.target.value })
-    } else {
-      e.preventDefault()
-    }
+    this.setState({ cms: e.target.value })
   }
 
   handleChangeInputNumberDurationWebcam = e => {
@@ -1282,11 +1278,7 @@ class SubmitFile extends Component {
       )
       return
     }
-    if (e.target.value >= 0) {
-      this.setState({ durationWebcam: e.target.value })
-    } else {
-      e.preventDefault()
-    }
+    this.setState({ durationWebcam: e.target.value })
   }
 
   fileData = () => {
