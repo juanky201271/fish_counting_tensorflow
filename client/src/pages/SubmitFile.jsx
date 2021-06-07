@@ -121,6 +121,13 @@ class SubmitFile extends Component {
                     selectedWebcam: '',
                     webcamRecording: false
                   })
+                } else if (params.action === 'iframeoff') {
+                  cola[i].iframe = false;
+                  this.setState({
+                    durationWebcam: '',
+                    selectedWebcam: '',
+                    webcamRecording: false
+                  })
                 } else if (params.action === 'end') {
                   cola[i].porc = 100
                   this.setState({
@@ -871,6 +878,7 @@ class SubmitFile extends Component {
           log: 'waiting',
           info: '',
           times: 1,
+          iframe: true,
         }
       )
       this.setState({
@@ -1012,6 +1020,7 @@ class SubmitFile extends Component {
           log: 'waiting',
           info: '',
           times: 1,
+          iframe: true,
         }
       )
       this.setState({
@@ -1494,7 +1503,7 @@ class SubmitFile extends Component {
                   {ele.log === 'end' && ele.info != 'error' ? this.colaFileData(ele) : ''}
                 </div>
 
-                {(ele.log != 'end' && ele.name) && (
+                {(ele.log != 'end' && ele.name && (ele.iframe ? ele.iframe : false) === true) && (
                   <iframe style={{ display: 'inherit' }} src={url_iframe} height="500" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
                 )}
 
