@@ -1495,7 +1495,7 @@ class SubmitFile extends Component {
                 </div>
 
                 {(ele.log != 'end' && ele.name) && (
-                  <iframe style={{ display: 'none' }} src={url_iframe} height="300" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
+                  <iframe style={{ display: 'inherit' }} src={url_iframe} height="500" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
                 )}
 
                 {/* <div className="submitfile__row"> */}
