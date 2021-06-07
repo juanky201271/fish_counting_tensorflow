@@ -179,7 +179,7 @@ class SubmitFile extends Component {
                 }
               }
 
-              if (params.action !== 'cameraoff') {
+              if (params.action !== 'cameraoff' && params.action !== 'iframeoff') {
                 cola[i].log = params.action
                 cola[i].info = params.info === 'error' ? params.info : params.info ? ' {' + params.info + '}' : ''
               }
@@ -1614,7 +1614,8 @@ class SubmitFile extends Component {
       this.setState({ isLoading: true, log: 'waiting', })
 
       const name = "Webcam_" + Date.now()
-      let _id_webcam, dir_webcam
+      let _id_webcam
+      //let dir_webcam
       //let is_error = false
       const payload = this.payload(name)
       await api.createSubmit(payload)
