@@ -136,7 +136,7 @@ class SubmitFile extends Component {
                     webcamRecording: false
                   })
                 } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
-                  const n_frames = parseInt(params.info.split('/')[0])
+                  //const n_frames = parseInt(params.info.split('/')[0])
                   const t_frames = parseInt(params.info.split('/')[1])
                   incremento = (80 / t_frames) / 3
                   //sumar incremento
@@ -412,7 +412,7 @@ class SubmitFile extends Component {
         is_error = true
       })
 
-    let uploadedFile = ''
+    //let uploadedFile = ''
 
     if (!is_error) {
       // Create an object of formData
@@ -1401,27 +1401,27 @@ class SubmitFile extends Component {
   }
 
   imageData = () => {
-    const image = this.state.uploadedFile ?
-      process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile :
-      ''
-    const image_video = this.state.uploadedFile ?
-      process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_first_frame_video.png' :
-      ''
+    //const image = this.state.uploadedFile ?
+    //  process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile :
+    //  ''
+    //const image_video = this.state.uploadedFile ?
+    //  process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_first_frame_video.png' :
+    //  ''
     const imageCalibration = this.state.uploadedFileCalibration ?
       process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.uploadedFileCalibration :
       ''
 
-    const imageResult = this.state.uploadedFile ?
-      process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png' :
-      ''
-    const videoResult = this.state.uploadedFile ?
-      process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_last_frame_video.png' :
-      ''
+    //const imageResult = this.state.uploadedFile ?
+    //  process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png' :
+    //  ''
+    //const videoResult = this.state.uploadedFile ?
+    //  process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_last_frame_video.png' :
+    //  ''
     const imageCalibrationResult = this.state.resultFileCalibration ?
       process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + this.state.resultFileCalibration :
       ''
 
-    const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
+    //const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
     const typeCalibration = this.state.selectedFileCalibration ? this.state.selectedFileCalibration.type.split('/')[0] : ''
 
     //if (this.state.total_fish !== null) {
@@ -1500,10 +1500,10 @@ class SubmitFile extends Component {
                   </strong>
                 </div>
                 <div className="submitfile__col">
-                  {ele.log === 'end' && ele.info != 'error' ? this.colaFileData(ele) : ''}
+                  {ele.log === 'end' && ele.info !== 'error' ? this.colaFileData(ele) : ''}
                 </div>
 
-                {(ele.log != 'end' && ele.name && (ele.iframe ? ele.iframe : false) === true) && (
+                {(ele.log !== 'end' && ele.name && (ele.iframe ? ele.iframe : false) === true) && (
                   <iframe style={{ display: 'inherit' }} src={url_iframe} height="500" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
                 )}
 
@@ -1615,24 +1615,24 @@ class SubmitFile extends Component {
 
       const name = "Webcam_" + Date.now()
       let _id_webcam, dir_webcam
-      let is_error = false
+      //let is_error = false
       const payload = this.payload(name)
       await api.createSubmit(payload)
         .then(async res => {
           this.setState({ _id_webcam: res.data._id, dir_webcam: res.data._id + "_" + name })
           _id_webcam = res.data._id
-          dir_webcam = res.data._id + "_" + name
+          //dir_webcam = res.data._id + "_" + name
           const payload2 = this.payload(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + _id_webcam + "_" + name + '/' + name)
           await api.updateSubmit(_id_webcam, payload2)
             .then()
             .catch(e => {
               console.log('update submit ERROR: ', e)
-              is_error = true
+              //is_error = true
             })
         })
         .catch(e => {
           console.log('create submit ERROR: ', e)
-          is_error = true
+          //is_error = true
         })
 
       if (this.processVideoRoiButtonRef.current) {
