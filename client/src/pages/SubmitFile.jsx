@@ -1490,6 +1490,7 @@ class SubmitFile extends Component {
               const w = { alignSelf: 'flex-start', width: ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%', marginTop: '5px' }
               const c = { color: ele.log === 'waiting' || (ele.log === 'end' && ele.info === 'error') ? 'red' : ele.log === 'end' ? 'green' : 'black' }
               const url_iframe = process.env.REACT_APP_FLASK_API + '/' + ele.api + '?url_input_video=' + process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + ele.dir_webcam + '/' + ele.name + '&model=' + 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + ele.model.split('#')[0] +  '&width_cms=' + ele.width_cms + '&width_pxs_x_cm=' + ele.width_pxs_x_cm + '&deviceid=' + ele.deviceId + '&duration=' + ele.durationWebcam + '&width=' + ele.width + '&height=' + ele.height + '&url_callback=' + process.env.REACT_APP_URL_CALLBACK
+              const iframe = ele.iframe || false
               //console.log('url webcam', url_iframe)
               return (<>
                 <div className="submitfile__col">
@@ -1503,7 +1504,7 @@ class SubmitFile extends Component {
                   {ele.log === 'end' && ele.info !== 'error' ? this.colaFileData(ele) : ''}
                 </div>
 
-                {(ele.log !== 'end' && ele.name && ((ele.iframe ? ele.iframe : false) === true)) && (
+                {(ele.log !== 'end' && ele.name && iframe === true) && (
                   <iframe style={{ display: 'none' }} src={url_iframe} height="500" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
                 )}
 
