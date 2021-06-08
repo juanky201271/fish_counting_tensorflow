@@ -886,8 +886,8 @@ class SubmitFile extends Component {
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
-          //const msec = durationWebcam * 60 * 1000
-          //setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false }) }, msec)
+          const msec = durationWebcam * 60 * 1000
+          setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false }) }, msec)
       })
     }
     this.setState({ isLoading: false })
@@ -1028,8 +1028,8 @@ class SubmitFile extends Component {
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
-          //const msec = durationWebcam * 60 * 1000
-          //setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false,  }) }, msec)
+          const msec = durationWebcam * 60 * 1000
+          setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false,  }) }, msec)
       })
     }
     this.setState({ isLoading: false })
