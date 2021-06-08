@@ -1503,7 +1503,7 @@ class SubmitFile extends Component {
                   {ele.log === 'end' && ele.info !== 'error' ? this.colaFileData(ele) : ''}
                 </div>
 
-                {(ele.log !== 'end' && ele.name && (ele.iframe ? ele.iframe : false) === true) && (
+                {(ele.log !== 'end' && ele.name && ((ele.iframe ? ele.iframe : false) === true)) && (
                   <iframe style={{ display: 'none' }} src={url_iframe} height="500" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
                 )}
 
