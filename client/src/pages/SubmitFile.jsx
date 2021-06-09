@@ -1338,8 +1338,8 @@ class SubmitFile extends Component {
                 deviceId = item.deviceId
                 if (this.state.label !== item.label || this.state.deviceId !== item.deviceId) {
                   this.setState({
-                    label: item.label,
-                    deviceId: item.deviceId,
+                    label: 'Selected Camera', //item.label,
+                    deviceId: '0', //item.deviceId,
                   })
                 }
               }
