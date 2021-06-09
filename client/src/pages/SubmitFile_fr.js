@@ -42,7 +42,7 @@ const labels = {
   tit_upload: 'Télécharger la sélection!',
   tit_sel_model: 'Sélectionnez le modèle le plus adapté',
   tit_sel_placeholder: '<choisi un modèle>',
-  tit_minutes: '<minutes>',
+  tit_minutes: '<secondes>',
   tit_inches: '<centimètres>',
   tit_typ_process: 'Définir le type de processus',
   tit_roi_video: 'Vidéo de la bande transporteuse',

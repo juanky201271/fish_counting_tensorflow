@@ -45,7 +45,7 @@ const labels = {
   tit_upload: 'Cargar selección!',
   tit_sel_model: 'Selecciona el modelo más adecuado',
   tit_sel_placeholder: '<elige un modelo>',
-  tit_minutes: '<minutos>',
+  tit_minutes: '<segundos>',
   tit_inches: '<centímetros>',
   tit_typ_process: 'Define el tipo de proceso',
   tit_roi_video: 'Video cinta transportadora',

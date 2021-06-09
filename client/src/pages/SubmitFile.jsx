@@ -240,7 +240,7 @@ class SubmitFile extends Component {
 
   sendWebcamFrames = async (name, durationWebcam) => {
     if (this.webcamRef.current) {
-      const frames = Math.floor(parseFloat(durationWebcam) * (60 * 25))
+      const frames = Math.floor(parseFloat(durationWebcam) * 25)
       console.log(durationWebcam, name, frames)
       let image_base64, image_buffer
       for (let i = 0; i < frames; i++) {
@@ -886,7 +886,7 @@ class SubmitFile extends Component {
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
-          const msec = durationWebcam * 60 * 1000
+          const msec = durationWebcam * 1000
           setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false }) }, msec)
       })
     }
@@ -1028,7 +1028,7 @@ class SubmitFile extends Component {
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
-          const msec = durationWebcam * 60 * 1000
+          const msec = durationWebcam * 1000
           setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false,  }) }, msec)
       })
     }
@@ -1280,7 +1280,7 @@ class SubmitFile extends Component {
   }
 
   handleChangeInputNumberDurationWebcam = e => {
-    if (e.target.value > 60) {
+    if (e.target.value > (60 * 60)) {
       e.preventDefault()
       this.setState(
         {

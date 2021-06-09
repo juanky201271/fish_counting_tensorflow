@@ -42,7 +42,7 @@ const labels = {
   tit_upload: 'Upload selection!',
   tit_sel_model: 'Select the most suitable model',
   tit_sel_placeholder: '<choose a model>',
-  tit_minutes: '<minutes>',
+  tit_minutes: '<seconds>',
   tit_inches: '<inches>',
   tit_typ_process: 'Define the type of process',
   tit_roi_video: 'Conveyor belt video',

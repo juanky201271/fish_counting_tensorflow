@@ -42,7 +42,7 @@ const labels = {
   tit_upload: 'Upload de seleção!',
   tit_sel_model: 'Selecione o modelo mais adequado',
   tit_sel_placeholder: '<Escolha um modelo>',
-  tit_minutes: '<minutos>',
+  tit_minutes: '<segundos>',
   tit_inches: '<centímetros>',
   tit_typ_process: 'Defina o tipo de processo',
   tit_roi_video: 'Vídeo da esteira transportadora',
