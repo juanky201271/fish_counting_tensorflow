@@ -1280,7 +1280,7 @@ class SubmitFile extends Component {
   }
 
   handleChangeInputNumberDurationWebcam = e => {
-    if (e.target.value > (60 * 60)) {
+    if (e.target.value > 3600) {
       e.preventDefault()
       this.setState(
         {
@@ -1291,8 +1291,9 @@ class SubmitFile extends Component {
         }
       )
       return
+    } else {
+      this.setState({ durationWebcam: e.target.value })
     }
-    this.setState({ durationWebcam: e.target.value })
   }
 
   fileData = () => {
@@ -1714,7 +1715,6 @@ class SubmitFile extends Component {
                         type="number"
                         value={durationWebcam ? durationWebcam : ''}
                         onChange={this.handleChangeInputNumberDurationWebcam}
-                        onClick={optWebcam ? null : this.handleOptWebcam}
                         disabled={isLoading || webcamRecording || !model ? true : !optWebcam ? false : !selectedWebcam && optWebcam ? false : true}
                         placeholder={this.state.labels['tit_minutes']}
                     />
