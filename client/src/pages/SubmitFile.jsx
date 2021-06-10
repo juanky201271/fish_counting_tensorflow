@@ -117,6 +117,8 @@ class SubmitFile extends Component {
                   }*/
                 } else if (params.action === 'cameraoff') {
                   this.setState({
+                    label: null,
+                    deviceId: null,
                     durationWebcam: '',
                     selectedWebcam: false,
                     webcamRecording: false
@@ -124,6 +126,8 @@ class SubmitFile extends Component {
                 } else if (params.action === 'iframeoff') {
                   cola[i].iframe = false;
                   this.setState({
+                    label: null,
+                    deviceId: null,
                     durationWebcam: '',
                     selectedWebcam: false,
                     webcamRecording: false
@@ -131,6 +135,8 @@ class SubmitFile extends Component {
                 } else if (params.action === 'end') {
                   cola[i].porc = 100
                   this.setState({
+                    label: null,
+                    deviceId: null,
                     durationWebcam: '',
                     selectedWebcam: false,
                     webcamRecording: false
@@ -267,7 +273,11 @@ class SubmitFile extends Component {
         })
 
       this.setState({
-          durationWebcam: '', selectedWebcam: false,
+        label: null,
+        deviceId: null,
+        durationWebcam: '',
+        selectedWebcam: false,
+        webcamRecording: false
       })
     }
   }
@@ -827,7 +837,7 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, //durationWebcam: '', selectedWebcam: false,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
@@ -882,12 +892,12 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true, //durationWebcam: '', selectedWebcam: false,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true,
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
           //const msec = durationWebcam * 1000
-          //setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: false, webcamRecording: false }) }, msec)
+          //setTimeout(() => { this.setState({ label: null, deviceId: null, durationWebcam: '', selectedWebcam: false, webcamRecording: false }) }, msec)
       })
     }
     this.setState({ isLoading: false })
@@ -969,7 +979,7 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, //durationWebcam: '', selectedWebcam: false,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
@@ -1024,12 +1034,12 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true, //durationWebcam: '', selectedWebcam: false,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true,
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
           //const msec = durationWebcam * 1000
-          //setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: false, webcamRecording: false,  }) }, msec)
+          //setTimeout(() => { this.setState({ label: null, deviceId: null, durationWebcam: '', selectedWebcam: false, webcamRecording: false,  }) }, msec)
       })
     }
     this.setState({ isLoading: false })
@@ -1251,7 +1261,7 @@ class SubmitFile extends Component {
   }
 
   handleCancel = e => {
-    this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false, optUpload: false, optWebcam: false, selectedWebcam: false, durationWebcam: null })
+    this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false, optUpload: false, optWebcam: false, label: null, deviceId: null, selectedWebcam: false, durationWebcam: null, webcamRecording: null })
     if (this.uploadInputRef.current) {
       this.uploadInputRef.current.value = ''
     }
@@ -1328,35 +1338,37 @@ class SubmitFile extends Component {
   webcamData = () => {
     if (this.state.optWebcam && this.state.durationWebcam && this.state.selectedWebcam) {
 
-      navigator.mediaDevices.enumerateDevices()
-        .then(mediaDevices => {
-          var label, deviceId
-          mediaDevices.forEach((item, i) => {
-            if (item.kind === 'videoinput') {
-              if (!label && !deviceId) {
-                label = item.label
-                deviceId = item.deviceId
-                if (this.state.label !== item.label || this.state.deviceId !== item.deviceId) {
-                  this.setState({
-                    label: 'Selected Camera', //item.label,
-                    deviceId: '0', //item.deviceId,
-                  })
+      if (!this.state.deviceId && !this.state.label) {
+        navigator.mediaDevices.enumerateDevices()
+          .then(mediaDevices => {
+            var label, deviceId
+            mediaDevices.forEach((item, i) => {
+              if (item.kind === 'videoinput') {
+                if (!label && !deviceId) {
+                  label = item.label
+                  deviceId = item.deviceId
+                  if (this.state.label !== item.label || this.state.deviceId !== item.deviceId) {
+                    this.setState({
+                      label: 'Selected Camera', //item.label,
+                      deviceId: '0', //item.deviceId,
+                    })
+                  }
                 }
               }
-            }
+            })
           })
-        })
-        .catch(err => {
-          console.log('media devices error: ', err)
-        })
-
-      if (this.state.selectedWebcam && !this.state.label) {
-        setTimeout(function() {
-          this.setState({
-            render: Date.now(),
+          .catch(err => {
+            console.log('media devices error: ', err)
           })
-        }.bind(this), 1000)
       }
+
+      //if (!this.state.label) {
+      //  setTimeout(function() {
+      //    this.setState({
+      //      render: Date.now(),
+      //    })
+      //  }.bind(this), 1000)
+      //}
 
       return (
         <div className="submitfile__header-right--file submitfile__col">
