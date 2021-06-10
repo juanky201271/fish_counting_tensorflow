@@ -1,6 +1,7 @@
 // juanky201271 - AIPeces - 2021
 
 import React, { Component } from 'react'
+import Webcam from 'react-webcam'
 import { withRouter } from 'react-router'
 import api from '../api'
 import { socket } from '../components'
@@ -31,6 +32,7 @@ class SubmitFile extends Component {
   constructor(props) {
       super(props)
       this.state = {
+        render: null,
         isLoading: false,
         authenticated: '',
         twitterId: '',
@@ -41,8 +43,11 @@ class SubmitFile extends Component {
         uploadedFile: '',
         total_fish: null,
         _id: null,
+        _id_webcam: null,
         dir: null,
-        error: null,
+        dir_webcam: null,
+        errorUpload: null,
+        errorWebcam: null,
         cancelarWaiting: false,
 
         model: '',
@@ -64,13 +69,21 @@ class SubmitFile extends Component {
         labels: labels_lang[this.props.parentState.language],
 
         cola: [],
+
+        optUpload: false,
+        optWebcam: false,
+        label: null,
+        deviceId: null,
+        durationWebcam: null,
+        selectedWebcam: false,
+        webcamRecording: false,
       }
       this.uploadInputRef = React.createRef()
       this.uploadInputRefCalibration = React.createRef()
       this.processVideoRoiButtonRef = React.createRef()
-      this.processWebcamButtonRef = React.createRef()
       this.processVideoButtonRef = React.createRef()
       this.processPictureButtonRef = React.createRef()
+      this.webcamRef = React.createRef()
       this.interval = null
       this.intervalCalibration = null
 
@@ -83,19 +96,53 @@ class SubmitFile extends Component {
         //console.log('params:', params)
         if (cola.length > 0) {
           for (let i = 0; i < cola.length; i++) {
-            const uploadedFileState = 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile
-            if (params.uploadedFile === uploadedFileState && cola[i].log !== 'end') {
+            const uploadedFileState = cola[i].uploadedFile ? 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile : ''
+            const nameState = cola[i].name ? 'submits/' + cola[i].dir_webcam + '/' + cola[i].name : ''
+            const selectedFileState = cola[i].selectedFile ? cola[i].selectedFile.type.split('/')[0] : ''
+            if ((params.uploadedFile === uploadedFileState || params.uploadedFile === nameState) && cola[i].log !== 'end') {
               // si ya esta finalizado no hacer nada
               // si ha dado error pero al final el proceso se lanza, recibir las notificaciones, ¿por qué no?
               let incremento
-              if (cola[i].selectedFile.type.split('/')[0] === 'video') {
-                //video
+              if (selectedFileState === 'video' || params.uploadedFile === nameState) {
+                //video o webcam
                 if (params.action === 'start') {
                   cola[i].porc = 5
-                } else if (params.action === 'end' || params.action === 'ERROR') {
+                /*} else if (params.action === 'reading') {
+                  if (cola[i].porc < 100) {
+                    cola[i].porc = cola[i].porc + 5
+                  }
+                  // si es webcam empezar a lanzar los frames
+                  if (params.uploadedFile === nameState) {
+                    this.sendWebcamFrames(nameState, cola[i].durationWebcam)
+                  }*/
+                } else if (params.action === 'cameraoff') {
+                  this.setState({
+                    label: null,
+                    deviceId: null,
+                    durationWebcam: '',
+                    selectedWebcam: false,
+                    webcamRecording: false
+                  })
+                } else if (params.action === 'iframeoff') {
+                  cola[i].iframe = false;
+                  this.setState({
+                    label: null,
+                    deviceId: null,
+                    durationWebcam: '',
+                    selectedWebcam: false,
+                    webcamRecording: false
+                  })
+                } else if (params.action === 'end') {
                   cola[i].porc = 100
+                  this.setState({
+                    label: null,
+                    deviceId: null,
+                    durationWebcam: '',
+                    selectedWebcam: false,
+                    webcamRecording: false
+                  })
                 } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
-                  const n_frames = parseInt(params.info.split('/')[0])
+                  //const n_frames = parseInt(params.info.split('/')[0])
                   const t_frames = parseInt(params.info.split('/')[1])
                   incremento = (80 / t_frames) / 3
                   //sumar incremento
@@ -108,12 +155,12 @@ class SubmitFile extends Component {
                     cola[i].porc = cola[i].porc + 5
                   }
                 }
-                console.log('......video........', params.action, params.info, cola[i].porc, incremento ? incremento : 0)
+                //console.log('......video........', params.action, params.info, cola[i].porc, incremento ? incremento : 0)
               } else {
                 //image
                 if (params.action === 'start') {
                   cola[i].porc = 5
-                } else if (params.action === 'end' || params.action === 'ERROR') {
+                } else if (params.action === 'end') {
                   cola[i].porc = 100
                   if (this.intervals[i]) {
                     clearTimeout(this.intervals[i])
@@ -138,13 +185,15 @@ class SubmitFile extends Component {
                 }
               }
 
-              cola[i].log = params.action
-              cola[i].info = params.info ? ' {' + params.info + '}' : ''
+              if (params.action !== 'cameraoff' && params.action !== 'iframeoff') {
+                cola[i].log = params.action
+                cola[i].info = params.info === 'error' ? params.info : params.info ? ' {' + params.info + '}' : ''
+              }
 
               this.setState(
                 { cola: cola },
                 function() {
-                  if (params.action === 'detecting' && cola[i].selectedFile.type.split('/')[0] === 'image') { // solo detecting e imagen
+                  if (params.action === 'detecting' && selectedFileState === 'image') { // solo detecting e imagen
                     this.intervals[i] = setTimeout(function() { this.porcentaje(i) }.bind(this), 1000)
                   }
                 }
@@ -163,6 +212,7 @@ class SubmitFile extends Component {
             console.log('socket no match calibration', params)
           }
         }
+
       })
   }
 
@@ -192,6 +242,44 @@ class SubmitFile extends Component {
         }
       }
     )
+  }
+
+  sendWebcamFrames = async (name, durationWebcam) => {
+    if (this.webcamRef.current) {
+      const frames = Math.floor(parseFloat(durationWebcam) * 25)
+      console.log(durationWebcam, name, frames)
+      let image_base64, image_buffer
+      for (let i = 0; i < frames; i++) {
+        image_base64 = this.webcamRef.current.getScreenshot()
+        image_buffer = Buffer.from(image_base64, 'base64')
+        console.log('sending frame', i, 'of', frames, image_base64, image_buffer)
+        // sendWebcamFrameBuf
+        api.sendWebcamFrameB64(name, image_base64)
+          .then(r => {
+            console.log('send frame: ' + i + ' response: ', r)
+          })
+          .catch(e => {
+            console.log('send frame: ' + i + ' ERROR: ', e)
+          })
+      }
+      console.log('sending frame null')
+      // sendWebcamFrameBuf
+      api.sendWebcamFrameB64(name, '')
+        .then(r => {
+          console.log('send frame null response: ', r)
+        })
+        .catch(e => {
+          console.log('send frame null ERROR: ', e)
+        })
+
+      this.setState({
+        label: null,
+        deviceId: null,
+        durationWebcam: '',
+        selectedWebcam: false,
+        webcamRecording: false
+      })
+    }
   }
 
   componentDidMount = () => {
@@ -261,10 +349,10 @@ class SubmitFile extends Component {
       this.uploadInputRef.current.value = ''
       this.setState(
         {
-          error: this.state.errors['only_valid_files']
+          errorUpload: this.state.errors['only_valid_files']
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
         }
       )
       return
@@ -294,14 +382,14 @@ class SubmitFile extends Component {
 
   handleUpload = async e => {
 
-    if (this.state.selectedFile.size > 30000000) {
+    if (this.state.selectedFile.size > 100000000) { // 100 mb.
       this.setState(
         {
-          error: this.state.errors['max_size_file'],
+          errorUpload: this.state.errors['max_size_file'],
           uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
         }
       )
       if (this.uploadInputRef.current) {
@@ -334,7 +422,7 @@ class SubmitFile extends Component {
         is_error = true
       })
 
-    let uploadedFile = ''
+    //let uploadedFile = ''
 
     if (!is_error) {
       // Create an object of formData
@@ -362,9 +450,6 @@ class SubmitFile extends Component {
     if (this.processVideoButtonRef.current) {
       this.processVideoButtonRef.current.style.backgroundColor = '#83a8bc'
     }
-    if (this.processWebcamButtonRef.current) {
-      this.processWebcamButtonRef.current.style.backgroundColor = '#83a8bc'
-    }
     if (this.processPictureButtonRef.current) {
       this.processPictureButtonRef.current.style.backgroundColor = '#83a8bc'
     }
@@ -387,6 +472,9 @@ class SubmitFile extends Component {
 
   handleCalibration = async e => {
     if (!this.state.selectedFileCalibration || !this.state.cms || !this.state.model) {
+      return
+    }
+    if (this.state.cms <= 0) {
       return
     }
 
@@ -485,8 +573,8 @@ class SubmitFile extends Component {
   }
 
   payload = (name) => {
-    const type = this.state.selectedFile.type.split('/')[0]
-    if (type === 'video') {
+    const type = this.state.optUpload ? this.state.selectedFile.type.split('/')[0] : 'webcam'
+    if (type === 'video' || type === 'webcam') {
       return {
         file: name,
         type: type,
@@ -566,10 +654,10 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorUpload: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
       })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
@@ -639,10 +727,10 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorUpload: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
       })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
@@ -651,23 +739,57 @@ class SubmitFile extends Component {
     this.setState({ isLoading: false })
   }
 
-  handleWebcamProcess = e => {
-    this.setState({ isLoading: true, log: 'waiting', })
-    const { selectedFile, uploadedFile, _id, dir, model, width_cms, width_pxs_x_cm } = this.state
+  getImageDimensions = (file) => {
+    return new Promise (function (resolved, rejected) {
+      var i = new Image()
+      i.onload = function(){
+        resolved({w: i.width, h: i.height})
+      };
+      i.onerror = rejected
+      i.src = file
+    })
+  }
 
-    if (dir !== null) {
-      if (this.processWebcamButtonRef.current) {
-        this.processWebcamButtonRef.current.style.backgroundColor = '#d68977'
-        this.pressButton = 'processWebcamButton'
+  getImageSrc = (file) => {
+    return new Promise (function (resolved, rejected) {
+      var i = new Image()
+      i.onload = function(){
+        resolved({src: i.src})
+      };
+      i.onerror = rejected
+      i.src = file
+    })
+  }
+
+  handleVideoRoiProcessWebcam = async e => {
+    this.setState({ isLoading: true, log: 'waiting', })
+    const { _id_webcam, dir_webcam, model, width_cms, width_pxs_x_cm, durationWebcam, deviceId, } = this.state
+    const name = 'Webcam_' + dir_webcam.split('_Webcam_')[1]
+
+    if (dir_webcam !== null) {
+      if (this.processVideoRoiButtonRef.current) {
+        this.processVideoRoiButtonRef.current.style.backgroundColor = '#d68977'
+        this.pressButton = 'processVideoRoiButton'
       }
-      api.webcamCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir + '/' + uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm)
+      const img = this.webcamRef.current.getScreenshot()
+      let width, height
+      await this.getImageDimensions(img)
+        .then(data => {
+          //console.log(data)
+          width = data.w
+          height = data.h
+        })
+        .catch(err => {
+          console.log('Webcam dim image ERROR: ', err.response, err.request, err.message, err)
+        })
+      api.webcamVideoRoiCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir_webcam + '/' + name, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm, 0, durationWebcam, width, height)
         .then(res => {
           //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
         })
         .catch(e => {
-          console.log('Webcam Count Fish ERROR: ', e.response, e.request, e.message, e)
+          console.log('Webcam Video Roi Count Fish ERROR: ', e.response, e.request, e.message, e)
 
-          this.reRunProcess(uploadedFile)
+          this.reRunProcess(name)
 
           //if (e.request.timeout === 29000) {
           //  this.setState({
@@ -697,29 +819,228 @@ class SubmitFile extends Component {
       this.intervals.push(null)
       cola.push(
         {
-          api: 'webcamCountFishAwsS3',
-          selectedFile: selectedFile,
-          uploadedFile: uploadedFile,
+          api: 'webcamVideoRoiCountFishAwsS3',
           total_fish: 0,
-          _id: _id,
-          dir: dir,
+          _id_webcam: _id_webcam,
+          dir_webcam: dir_webcam,
+          name: name,
           model: model,
           width_cms: width_cms,
           width_pxs_x_cm: width_pxs_x_cm,
+          durationWebcam: durationWebcam,
+          deviceId: deviceId,
+          width: width,
+          height: height,
           log: 'waiting',
           info: '',
           times: 1,
         }
       )
       this.setState({
-          error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
       })
-      if (this.uploadInputRef.current) {
-        this.uploadInputRef.current.value = ''
+    }
+    this.setState({ isLoading: false })
+  }
+
+  handleVideoRoiProcessWebcamIframe = async e => {
+    this.setState({ isLoading: true, log: 'waiting', })
+    const { _id_webcam, dir_webcam, model, width_cms, width_pxs_x_cm, durationWebcam, deviceId, } = this.state
+    const name = 'Webcam_' + dir_webcam.split('_Webcam_')[1]
+
+    if (dir_webcam !== null) {
+      if (this.processVideoRoiButtonRef.current) {
+        this.processVideoRoiButtonRef.current.style.backgroundColor = '#d68977'
+        this.pressButton = 'processVideoRoiButton'
       }
+      const img = this.webcamRef.current.getScreenshot()
+      let width, height
+      await this.getImageDimensions(img)
+        .then(data => {
+          //console.log(data)
+          width = data.w
+          height = data.h
+        })
+        .catch(err => {
+          console.log('Webcam dim image ERROR: ', err.response, err.request, err.message, err)
+        })
+
+      // lo añado a la cola de procesos
+      const cola = this.state.cola || []
+      this.intervals.push(null)
+      cola.push(
+        {
+          api: 'webcamvideoroicountfishawss3iframesockets',
+          total_fish: 0,
+          _id_webcam: _id_webcam,
+          dir_webcam: dir_webcam,
+          name: name,
+          model: model,
+          width_cms: width_cms,
+          width_pxs_x_cm: width_pxs_x_cm,
+          durationWebcam: durationWebcam,
+          deviceId: deviceId,
+          width: width,
+          height: height,
+          log: 'waiting',
+          info: '',
+          times: 1,
+          iframe: true,
+        }
+      )
+      this.setState({
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true,
+        },
+        () => {
+          setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+          //const msec = durationWebcam * 1000
+          //setTimeout(() => { this.setState({ label: null, deviceId: null, durationWebcam: '', selectedWebcam: false, webcamRecording: false }) }, msec)
+      })
+    }
+    this.setState({ isLoading: false })
+  }
+
+  handleVideoProcessWebcam = async e => {
+    this.setState({ isLoading: true, log: 'waiting', })
+    const { _id_webcam, dir_webcam, model, width_cms, width_pxs_x_cm, durationWebcam, deviceId, } = this.state
+    const name = 'Webcam_' + dir_webcam.split('_Webcam_')[1]
+
+    if (dir_webcam !== null) {
+      if (this.processVideoButtonRef.current) {
+        this.processVideoButtonRef.current.style.backgroundColor = '#d68977'
+        this.pressButton = 'processVideoButton'
+      }
+      const img = this.webcamRef.current.getScreenshot()
+      let width, height
+      await this.getImageDimensions(img)
+        .then(data => {
+          //console.log(data)
+          width = data.w
+          height = data.h
+        })
+        .catch(err => {
+          console.log('Webcam dim image ERROR: ', err.response, err.request, err.message, err)
+        })
+      api.webcamVideoCountFishAwsS3(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + dir_webcam + '/' + name, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + model, width_cms, width_pxs_x_cm, 0, durationWebcam, width, height)
+        .then(res => {
+          //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
+        })
+        .catch(e => {
+          console.log('Webcam Video Count Fish ERROR: ', e.response, e.request, e.message, e)
+
+          this.reRunProcess(name)
+
+          //if (e.request.timeout === 29000) {
+          //  this.setState({
+          //    error: this.state.errors['long_process'], //isLoading: false,
+          //    cancelarWaiting: true,
+          //  },
+          //  () => {
+          //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+          //  })
+          //  this.interval = setInterval(this.s3Demon, 5000)
+          //} else {
+          //  this.setState({
+          //    error: this.state.errors['error_process'], uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false,
+          //  },
+          //  () => {
+          //    setTimeout(() => { this.setState({ error: null }) }, 5000)
+          //  })
+          //  if (this.uploadInputRef.current) {
+          //    this.uploadInputRef.current.value = ''
+          //  }
+          //  clearInterval(this.interval)
+          //}
+
+        })
+      // lo añado a la cola de procesos
+      const cola = this.state.cola || []
+      this.intervals.push(null)
+      cola.push(
+        {
+          api: 'webcamVideoCountFishAwsS3',
+          total_fish: 0,
+          _id_webcam: _id_webcam,
+          dir_webcam: dir_webcam,
+          name: name,
+          model: model,
+          width_cms: width_cms,
+          width_pxs_x_cm: width_pxs_x_cm,
+          durationWebcam: durationWebcam,
+          deviceId: deviceId,
+          width: width,
+          height: height,
+          log: 'waiting',
+          info: '',
+          times: 1,
+        }
+      )
+      this.setState({
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
+        },
+        () => {
+          setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+      })
+    }
+    this.setState({ isLoading: false })
+  }
+
+  handleVideoProcessWebcamIframe = async e => {
+    this.setState({ isLoading: true, log: 'waiting', })
+    const { _id_webcam, dir_webcam, model, width_cms, width_pxs_x_cm, durationWebcam, deviceId, } = this.state
+    const name = 'Webcam_' + dir_webcam.split('_Webcam_')[1]
+
+    if (dir_webcam !== null) {
+      if (this.processVideoButtonRef.current) {
+        this.processVideoButtonRef.current.style.backgroundColor = '#d68977'
+        this.pressButton = 'processVideoButton'
+      }
+      const img = this.webcamRef.current.getScreenshot()
+      let width, height
+      await this.getImageDimensions(img)
+        .then(data => {
+          //console.log(data)
+          width = data.w
+          height = data.h
+        })
+        .catch(err => {
+          console.log('Webcam dim image ERROR: ', err.response, err.request, err.message, err)
+        })
+
+      // lo añado a la cola de procesos
+      const cola = this.state.cola || []
+      this.intervals.push(null)
+      cola.push(
+        {
+          api: 'webcamvideocountfishawss3iframesockets',
+          total_fish: 0,
+          _id_webcam: _id_webcam,
+          dir_webcam: dir_webcam,
+          name: name,
+          model: model,
+          width_cms: width_cms,
+          width_pxs_x_cm: width_pxs_x_cm,
+          durationWebcam: durationWebcam,
+          deviceId: deviceId,
+          width: width,
+          height: height,
+          log: 'waiting',
+          info: '',
+          times: 1,
+          iframe: true,
+        }
+      )
+      this.setState({
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true,
+        },
+        () => {
+          setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+          //const msec = durationWebcam * 1000
+          //setTimeout(() => { this.setState({ label: null, deviceId: null, durationWebcam: '', selectedWebcam: false, webcamRecording: false,  }) }, msec)
+      })
     }
     this.setState({ isLoading: false })
   }
@@ -785,10 +1106,10 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          error: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
+          errorUpload: this.state.errors['process_queue'], uploadedFile: '', selectedFile: '', total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
-          setTimeout(() => { this.setState({ error: null }) }, 5000)
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
       })
       if (this.uploadInputRef.current) {
         this.uploadInputRef.current.value = ''
@@ -797,14 +1118,16 @@ class SubmitFile extends Component {
     this.setState({ isLoading: false })
   }
 
-  reRunProcess = uploadedFile => {
+  reRunProcess = uploadedFile_name => {
     const cola = this.state.cola || []
 
     for (let i = 0; i < cola.length; i++) {
-      if (uploadedFile === cola[i].uploadedFile) {
+      const uploadedFile = cola[i].uploadedFile || ''
+      const name = cola[i].name || ''
+      if (uploadedFile_name === uploadedFile || uploadedFile_name === name) {
         if (cola[i].log === 'waiting') {
           if (cola[i].times >= 6) {
-            cola[i].info = this.state.labels['error']
+            cola[i].info = 'error'
             this.setState({ cola: cola })
             return
           }
@@ -812,6 +1135,7 @@ class SubmitFile extends Component {
           cola[i].times += 1
           this.setState({ cola: cola })
 
+          // es diferente llamada para webcam - que lo sepas.
           //api[cola[i].api](process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + cola[i].dir + '/' + cola[i].uploadedFile, 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + cola[i].model, cola[i].width_cms, cola[i].width_pxs_x_cm)
           //  .then(res => {
               //this.setState({ total_fish: res.data.total_fish, isLoading: false, })
@@ -836,6 +1160,7 @@ class SubmitFile extends Component {
 
   }
 
+/*
   s3Demon = async () => {
     this.setState({
       error: this.state.errors['waiting'],
@@ -898,6 +1223,7 @@ class SubmitFile extends Component {
     }
     console.log(csv_exists, video_exists, image_exists, zip_exists)
   }
+*/
 
   s3DemonCalibration = async () => {
     this.setState({
@@ -935,7 +1261,7 @@ class SubmitFile extends Component {
   }
 
   handleCancel = e => {
-    this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false, })
+    this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false, optUpload: false, optWebcam: false, label: null, deviceId: null, selectedWebcam: false, durationWebcam: null, webcamRecording: null })
     if (this.uploadInputRef.current) {
       this.uploadInputRef.current.value = ''
     }
@@ -952,7 +1278,7 @@ class SubmitFile extends Component {
 
   handleList = e => {
     if (!e.target.value) {
-      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, model: '', })
+      this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, model: '', optUpload: false, optWebcam: false, })
       this.uploadInputRef.current.value = ''
     } else {
       this.setState({ model: e.target.value })
@@ -963,74 +1289,151 @@ class SubmitFile extends Component {
     this.setState({ cms: e.target.value })
   }
 
-  fileData = () => {
-    const file = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile
-    const csv = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile + '_csv_result.csv'
-    const video = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_video_result.mp4'
-    const image = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png'
-    const zip = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_images_zip_result.zip'
-    if (this.state.total_fish !== null) {
-      const type = this.state.selectedFile.type.split('/')[0] || ''
-      return (
-        <div className="submitfile__col">
-          <div className="submitfile__title--green">
-            {this.state.labels['tit_down']}
-          </div>
-          <hr />
-          <div className="submitfile__col-75">
-            <a className="submitfile__button-video btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_processed'](type)}</a>
-            <a className="submitfile__button-video btn" id="tableButton" href={csv} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_table']}</a>
-            <a className="submitfile__button-video btn" id="imagesButton" href={zip} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_det_images']}</a>
-          </div>
-        </div>
+  handleChangeInputNumberDurationWebcam = e => {
+    if (e.target.value > 3600) {
+      e.preventDefault()
+      this.setState(
+        {
+          errorUpload: this.state.errors['max_duration']
+        },
+        () => {
+          setTimeout(() => { this.setState({ errorUpload: null }) }, 5000)
+        }
       )
-    } else if (this.state.uploadedFile !== '') {
-      const type = this.state.selectedFile.type.split('/')[0] || ''
+      return
+    } else {
+      this.setState({ durationWebcam: e.target.value })
+    }
+  }
+
+  fileData = () => {
+    const file = this.state.uploadedFile ? process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' +  this.state.uploadedFile : ''
+    if (this.state.optUpload && this.state.selectedFile) {
+      const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
       return (
-        <div className="submitfile__col">
+        <div className="submitfile__header-right--file submitfile__col">
           <div className="submitfile__title--green">
-            {this.state.labels['tit_fil_details'](type)}
+            {this.state.labels['tit_fil_details'](type ? type : '---')}
           </div>
           <hr />
-          <div className="submitfile__col">
-            <div className="submitfile__text">{this.state.labels['tit_fil_name'](this.state.selectedFile.name)}</div>
-            <div className="submitfile__text">{this.state.labels['tit_fil_type'](this.state.selectedFile.type)}</div>
-            <div className="submitfile__text">{this.state.labels['tit_fil_size'](this.state.selectedFile.size)}</div>
-            <div className="submitfile__text--green">
-              <a href={file} rel="noopener noreferrer" target="_blank">{this.state.labels['tit_dow_uploaded']}</a>
-            </div>
+          <div className="submitfile__header-right--file submitfile__col">
+            <div className="submitfile__text">{this.state.labels['tit_fil_name'](this.state.selectedFile ? this.state.selectedFile.name : '---')}</div>
+            <div className="submitfile__text">{this.state.labels['tit_fil_type'](this.state.selectedFile ? this.state.selectedFile.type : '---')}</div>
+            <div className="submitfile__text">{this.state.labels['tit_fil_size'](this.state.selectedFile ? this.state.selectedFile.size : '---')}</div>
+            {file && (
+              <div className="submitfile__text--green">
+                <a href={file} rel="noopener noreferrer" target="_blank">{this.state.labels['tit_dow_uploaded']}</a>
+              </div>
+            )}
           </div>
         </div>
       )
     } else {
       return (
-        <div></div>
+        null
+      )
+    }
+  }
+
+  webcamData = () => {
+    if (this.state.optWebcam && this.state.durationWebcam && this.state.selectedWebcam) {
+
+      if (!this.state.deviceId && !this.state.label) {
+        navigator.mediaDevices.enumerateDevices()
+          .then(mediaDevices => {
+            var label, deviceId
+            mediaDevices.forEach((item, i) => {
+              if (item.kind === 'videoinput') {
+                if (!label && !deviceId) {
+                  label = item.label
+                  deviceId = item.deviceId
+                  if (this.state.label !== item.label || this.state.deviceId !== item.deviceId) {
+                    this.setState({
+                      label: 'Selected Camera', //item.label,
+                      deviceId: '0', //item.deviceId,
+                    })
+                  }
+                }
+              }
+            })
+          })
+          .catch(err => {
+            console.log('media devices error: ', err)
+          })
+      }
+
+      //if (!this.state.label) {
+      //  setTimeout(function() {
+      //    this.setState({
+      //      render: Date.now(),
+      //    })
+      //  }.bind(this), 1000)
+      //}
+
+      return (
+        <div className="submitfile__header-right--file submitfile__col">
+          <div className="submitfile__title--green">
+            {this.state.labels['tit_camera']}
+          </div>
+          <hr />
+          <div className="submitfile__col">
+            {this.state.deviceId && (
+              <>
+                {this.state.selectedWebcam && (
+                  <Webcam
+                    className={this.state.webcamRecording ? "submitfile__header--box-webcam-red" : "submitfile__header--box-webcam"}
+                    audio={false}
+                    ref={this.webcamRef}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={{ deviceId: this.state.deviceId }}
+                    forceScreenshotSourceSize={true}
+                  />
+                )}
+                {/*!this.state.selectedWebcam && (
+                  <div className="submitfile__header--box-webcam-border"></div>
+                )*/}
+                <div>
+                  <span>{this.state.labels['tit_device'] + (this.state.deviceId ? ' ' + this.state.deviceId : ' 0') + (this.state.label ? ' - ' + this.state.label : '')}</span><span style={{ color: 'red' }}>{this.state.webcamRecording ? ' - ' + this.state.labels['tit_recording'] : ''}</span>
+                </div>
+              </>
+            )}
+            {!this.state.deviceId && (
+              <div className="submitfile__text--green">
+                {this.state.labels['tit_webcam_no_found']}
+              </div>
+            )}
+          </div>
+        </div>
+      )
+    } else {
+      return (
+        null
       )
     }
   }
 
   imageData = () => {
-    const image = this.state.uploadedFile ?
-      process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile :
-      ''
-    const image_video = this.state.uploadedFile ?
-      process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_first_frame_video.png' :
-      ''
+    //const image = this.state.uploadedFile ?
+    //  process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile :
+    //  ''
+    //const image_video = this.state.uploadedFile ?
+    //  process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_first_frame_video.png' :
+    //  ''
     const imageCalibration = this.state.uploadedFileCalibration ?
       process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.uploadedFileCalibration :
       ''
 
-    const imageResult = this.state.uploadedFile ?
-      process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png' :
-      ''
-    const videoResult = this.state.uploadedFile ?
-      process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_last_frame_video.png' :
-      ''
+    //const imageResult = this.state.uploadedFile ?
+    //  process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_image_result.png' :
+    //  ''
+    //const videoResult = this.state.uploadedFile ?
+    //  process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + this.state.dir + '/' + this.state.uploadedFile + '_last_frame_video.png' :
+    //  ''
     const imageCalibrationResult = this.state.resultFileCalibration ?
       process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + this.state.resultFileCalibration :
       ''
 
-    const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
+    //const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
     const typeCalibration = this.state.selectedFileCalibration ? this.state.selectedFileCalibration.type.split('/')[0] : ''
 
     //if (this.state.total_fish !== null) {
@@ -1058,18 +1461,22 @@ class SubmitFile extends Component {
     if (this.state.total_fishCalibration !== null) {
       if (typeCalibration === 'image') {
         return (
-          <img src={imageCalibrationResult} alt="" />
+          <div className="submitfile__header-right--image">
+            <img src={imageCalibrationResult} alt="" />
+          </div>
         )
       }
     } else if (this.state.uploadedFileCalibration) {
       if (typeCalibration === 'image') {
         return (
-          <img src={imageCalibration} alt="" />
+          <div className="submitfile__header-right--image">
+            <img src={imageCalibration} alt="" />
+          </div>
         )
       }
     } else {
       return (
-        <div></div>
+        null
       )
     }
   }
@@ -1077,7 +1484,7 @@ class SubmitFile extends Component {
   colaData = () => {
     if (this.state.cola.length > 0) {
       return (
-        <div className="submitfile__col">
+        <div className="submitfile__header-right--file submitfile__col">
           <div className="submitfile__title--green">
             {this.state.labels['tit_cola']}
           </div>
@@ -1093,18 +1500,26 @@ class SubmitFile extends Component {
             ele => {
               //const w = { alignSelf: 'flex-start', width: ele.porc ? ele.porc : '0%', marginLeft: '5px', marginTop: '5px' }
               const w = { alignSelf: 'flex-start', width: ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%', marginTop: '5px' }
-              const c = { color: ele.log === 'waiting' ? 'red' : ele.log === 'end' ? 'green' : 'black' }
+              const c = { color: ele.log === 'waiting' || (ele.log === 'end' && ele.info === 'error') ? 'red' : ele.log === 'end' ? 'green' : 'black' }
+              const url_iframe = process.env.REACT_APP_FLASK_API + '/' + ele.api + '?url_input_video=' + process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + ele.dir_webcam + '/' + ele.name + '&model=' + 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + ele.model.split('#')[0] +  '&width_cms=' + ele.width_cms + '&width_pxs_x_cm=' + ele.width_pxs_x_cm + '&deviceid=' + ele.deviceId + '&duration=' + ele.durationWebcam + '&width=' + ele.width + '&height=' + ele.height + '&url_callback=' + process.env.REACT_APP_URL_CALLBACK
+              const iframe = ele.iframe || false
+              //console.log('url webcam', url_iframe)
               return (<>
                 <div className="submitfile__col">
                   <strong>
-                    {ele.uploadedFile + ' - '}
-                    <span style={c}>{this.state.labels[ele.log] + (ele.info ? ' - ' + ele.info : '')}</span>
+                    {(ele.uploadedFile || ele.name) + ' - '}
+                    <span style={c}>{this.state.labels[ele.log] + (ele.info === 'error' ? ' - ' + this.state.labels['error'] : ele.info ? ' - ' + ele.info : '')}</span>
                     {' - ' + (ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%')}
                   </strong>
                 </div>
                 <div className="submitfile__col">
-                  {ele.log === 'end' ? this.colaFileData(ele) : ''}
+                  {ele.log === 'end' && ele.info !== 'error' ? this.colaFileData(ele) : ''}
                 </div>
+
+                {(ele.log !== 'end' && ele.name && iframe === true) && (
+                  <iframe style={{ display: 'none' }} src={url_iframe} height="500" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
+                )}
+
                 {/* <div className="submitfile__row"> */}
                   {/* <div style={{ fontSize: '10px' }}>{ele.porc}</div> */}
                   <div style={w}>
@@ -1119,20 +1534,20 @@ class SubmitFile extends Component {
       )
     } else {
       return (
-        <div></div>
+        null
       )
     }
 
   }
 
   colaFileData = (state) => {
-    const file = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' +  state.uploadedFile
-    const csv = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' +  state.uploadedFile + '_csv_result.csv'
-    const video = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' + state.uploadedFile + '_video_result.mp4'
+    const file = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' + state.uploadedFile
+    const csv = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + (state.dir ? state.dir : state.dir_webcam) + '/' + (state.uploadedFile ? state.uploadedFile : state.name) + '_csv_result.csv'
+    const video = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + (state.dir ? state.dir : state.dir_webcam) + '/' + (state.uploadedFile ? state.uploadedFile : state.name) + '_video_result.mp4'
     const image = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' + state.uploadedFile + '_image_result.png'
-    const zip = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + state.dir + '/' + state.uploadedFile + '_images_zip_result.zip'
+    const zip = process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + (state.dir ? state.dir : state.dir_webcam) + '/' + (state.uploadedFile ? state.uploadedFile : state.name) + '_images_zip_result.zip'
     if (state.total_fish !== null) {
-      const type = state.selectedFile.type.split('/')[0] || ''
+      const type = state.selectedFile ? state.selectedFile.type.split('/')[0] : 'video'
       return (
         <div className="submitfile__row-buttons-queue">
           <a className="submitfile__button-video btn" id="processedFileButton" href={type === 'video' ? video : image} target="_blank" rel="noopener noreferrer">{this.state.labels['tit_processed'](type)}</a>
@@ -1141,7 +1556,7 @@ class SubmitFile extends Component {
         </div>
       )
     } else if (state.uploadedFile !== '') {
-      const type = state.selectedFile.type.split('/')[0] || ''
+      const type = state.selectedFile ? state.selectedFile.type.split('/')[0] : 'video'
       return (
         <div className="submitfile__col">
           <div className="submitfile__title--green">
@@ -1160,7 +1575,7 @@ class SubmitFile extends Component {
       )
     } else {
       return (
-        <div></div>
+        null
       )
     }
   }
@@ -1189,14 +1604,75 @@ class SubmitFile extends Component {
     }
   }
 
+  handleOptUpload = (e) => {
+    if (this.state.model && !this.state.optUpload) {
+      //e.preventDefault()
+      this.setState({ optUpload: true, optWebcam: false })
+    }
+  }
+
+  handleOptWebcam = (e) => {
+    if (this.state.model && !this.state.optWebcam) {
+      //e.preventDefault()
+      this.setState({ optWebcam: true, optUpload: false })
+    }
+  }
+
+  handleWebcam = async (e) => {
+    if (this.state.model && this.state.optWebcam) {
+      if (this.state.durationWebcam <= 0) {
+        return
+      }
+
+      this.setState({ isLoading: true, log: 'waiting', })
+
+      const name = "Webcam_" + Date.now()
+      let _id_webcam
+      //let dir_webcam
+      //let is_error = false
+      const payload = this.payload(name)
+      await api.createSubmit(payload)
+        .then(async res => {
+          this.setState({ _id_webcam: res.data._id, dir_webcam: res.data._id + "_" + name })
+          _id_webcam = res.data._id
+          //dir_webcam = res.data._id + "_" + name
+          const payload2 = this.payload(process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + _id_webcam + "_" + name + '/' + name)
+          await api.updateSubmit(_id_webcam, payload2)
+            .then()
+            .catch(e => {
+              console.log('update submit ERROR: ', e)
+              //is_error = true
+            })
+        })
+        .catch(e => {
+          console.log('create submit ERROR: ', e)
+          //is_error = true
+        })
+
+      if (this.processVideoRoiButtonRef.current) {
+        this.processVideoRoiButtonRef.current.style.backgroundColor = '#83a8bc'
+      }
+      if (this.processVideoButtonRef.current) {
+        this.processVideoButtonRef.current.style.backgroundColor = '#83a8bc'
+      }
+      if (this.processPictureButtonRef.current) {
+        this.processPictureButtonRef.current.style.backgroundColor = '#83a8bc'
+      }
+      this.pressButton = null
+
+      this.setState({ isLoading: false, selectedWebcam: true })
+    }
+  }
+
   render() {
     console.log('submit file state', this.state)
     //console.log('submit file props', this.props)
-    const { isLoading, selectedFile, uploadedFile, total_fish, error, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info } = this.state
+    const { isLoading, selectedFile, uploadedFile, total_fish, errorUpload, errorWebcam, errorCalibration, model, selectedFileCalibration, uploadedFileCalibration, width_pxs_x_cm, resultFileCalibration, cms, cancelarWaiting, cancelarWaitingCalibration, log, info, optUpload, optWebcam, durationWebcam, selectedWebcam, webcamRecording, } = this.state
     const type = this.state.selectedFile ? this.state.selectedFile.type.split('/')[0] : ''
     const fileData = this.fileData()
     const imageData = this.imageData()
     const colaData = this.colaData()
+    const webcamData = this.webcamData()
 
     return (
       <div className="submitfile">
@@ -1207,55 +1683,151 @@ class SubmitFile extends Component {
           </div>
 
           <div className="submitfile__header--select-model">
-            <div className="submitfile__title">{this.state.labels['tit_sel_model']}</div>
-            <select name="models" id="listModels" onChange={this.handleList} disabled={isLoading}>
-              {this.createSelectItems()}
-            </select>
+            <div className="submitfile__numero">1</div>
+            <div className="submitfile__numero-peque">1</div>
+            <div className="submitfile__col">
+              <div className="submitfile__title">{this.state.labels['tit_sel_model']}</div>
+              <select name="models" id="listModels" onChange={this.handleList} disabled={isLoading}>
+                {this.createSelectItems()}
+              </select>
+            </div>
           </div>
 
-          <div className="submitfile__header--upload-file">
+          <div className={"submitfile__header--upload-file--webcam"}>
+
+            <div className="submitfile__numero-2">2</div>
+            <div className="submitfile__numero-peque">2</div>
             <div className="submitfile__col-75">
-              <div className="submitfile__title">{this.state.labels['tit_select']}</div>
-              <input
-                  className="submitfile__header--upload-file--input-file form-control"
-                  id="selectedFileInput"
-                  type="file"
-                  accept='image/*|video/*'
-                  onChange={this.handleChangeInputUpload}
-                  ref={this.uploadInputRef}
-                  disabled={isLoading || !model ? true : uploadedFile ? true : false}
-              />
-            </div>
-            <div className="submitfile__col-25">
-              <button className="submitfile__button-upload btn" id="uploadButton" onClick={this.handleUpload} ref={this.uploadButtonRef} disabled={isLoading || !model ? true : selectedFile && !uploadedFile ? false : true} >{this.state.labels['tit_upload']}</button>
-            </div>
-          </div>
-          <div className="submitfile__header--error">
-            <div className="submitfile__header--error--label-red">{error ? error : ''}</div>
-          </div>
-
-          <div className="submitfile__header--buttons">
-            <div className="submitfile__title">
-              {this.state.labels['tit_typ_process']}
-            </div>
-
-            <div className="submitfile__row-buttons">
-              <div className="submitfile__row-75">
-                <div className="submitfile__col-50">
-                  <button className="submitfile__button-video btn" id="processVideoRoiButton" ref={this.processVideoRoiButtonRef} onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')} onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')} onClick={this.handleVideoRoiProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >{this.state.labels['tit_roi_video']}</button>
-
-                  <button className="submitfile__button-video btn" id="processWebcamButton" ref={this.processWebcamButtonRef} onMouseOver={() => this.handleOnMouseOver(this.processWebcamButtonRef, 'processWebcamButton')} onMouseOut={() => this.handleOnMouseOut(this.processWebcamButtonRef, 'processWebcamButton')} onClick={this.handleWebcamProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' || type === 'video' ? true : uploadedFile ? false : true} >{this.state.labels['tit_web_cam']}</button>
-                </div>
-
-                <div className="submitfile__col-50">
-                  <button className="submitfile__button-video btn" id="processVideoButton" ref={this.processVideoButtonRef} onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')} onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')} onClick={this.handleVideoProcess} disabled={isLoading || !model || total_fish !== null || type === 'image' ? true : uploadedFile ? false : true} >{this.state.labels['tit_video']}</button>
-
-                  <button className="submitfile__button-video btn" id="processPictureButton" ref={this.processPictureButtonRef} onMouseOver={() => this.handleOnMouseOver(this.processPictureButtonRef, 'processPictureButton')} onMouseOut={() => this.handleOnMouseOut(this.processPictureButtonRef, 'processPictureButton')} onClick={this.handlePictureProcess} disabled={isLoading || !model || total_fish !== null || type === 'video' ? true : uploadedFile ? false : true} >{this.state.labels['tit_picture']}</button>
+              <div className={optUpload ? "opt-selected" : "opt-no-selected"} onClick={this.handleOptUpload}>
+                <div className="submitfile__col">
+                  <div className="submitfile__title">{this.state.labels['tit_select']}</div>
+                  <input
+                      className="submitfile__header--upload-file--input-file form-control"
+                      id="selectedFileInput"
+                      type="file"
+                      accept='image/*|video/*'
+                      onChange={this.handleChangeInputUpload}
+                      ref={this.uploadInputRef}
+                      disabled={isLoading || webcamRecording || !model ? true : !optUpload ? false : !uploadedFile && optUpload ? false : true}
+                  />
                 </div>
               </div>
 
-              <div className="submitfile__col-25-buttons">
-                <button className="submitfile__button-cancel btn" id="cancelButton" onClick={this.handleCancel} disabled={(isLoading || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
+              <div className="submitfile__text--green">{'...' + this.state.labels['tit_or_you_can']}</div>
+
+              <div className={optWebcam ? "opt-selected" : "opt-no-selected"} onClick={this.handleOptWebcam}>
+                <div className="submitfile__col">
+                  <div className="submitfile__title">{this.state.labels['tit_webcam']}</div>
+                  <div className="submitfile__row">
+                    <label className="submitfile__text">{this.state.labels['tit_duration'] + ': '}</label>
+                    <input
+                        className="submitfile__header--box-webcam--input-number form-control"
+                        id="InputNumberDurationWebcam"
+                        type="number"
+                        value={durationWebcam ? durationWebcam : ''}
+                        onChange={this.handleChangeInputNumberDurationWebcam}
+                        disabled={isLoading || webcamRecording || !model ? true : !optWebcam ? false : !selectedWebcam && optWebcam ? false : true}
+                        placeholder={this.state.labels['tit_minutes']}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="submitfile__col-25--upload-file--webcam">
+
+              {(optUpload && selectedFile) && (
+                <div className="submitfile__col">
+                  <button
+                    className="submitfile__button-upload btn"
+                    id="uploadButton"
+                    onClick={optUpload ? this.handleUpload : this.handleOptUpload}
+                    ref={this.uploadButtonRef}
+                    disabled={isLoading || webcamRecording || !model ? true : !optUpload ? false : selectedFile && !uploadedFile && optUpload ? false : true}
+                  >
+                    {this.state.labels['tit_upload']}
+                  </button>
+                </div>
+              )}
+
+              {(optWebcam && durationWebcam) && (
+                <div className="submitfile__col">
+                  <button
+                    className="submitfile__button-upload btn"
+                    id="webcamButton"
+                    onClick={optWebcam ? this.handleWebcam : this.handleOptWebcam}
+                    ref={this.webcamButtonRef}
+                    disabled={isLoading || webcamRecording || !model ? true : !optWebcam ? false : durationWebcam && !selectedWebcam && optWebcam ? false : true}
+                  >
+                    {this.state.labels['tit_select_webcam']}
+                  </button>
+                </div>
+              )}
+
+            </div>
+
+          </div>
+          <div className="submitfile__header--error-upload-file--webcam">
+            <div className="submitfile__header--error-upload-file--webcam--label-red">
+              {errorUpload ? errorUpload : ''}
+              {errorWebcam ? errorWebcam : ''}
+            </div>
+          </div>
+
+          <div className="submitfile__header--buttons">
+            <div className="submitfile__numero">3</div>
+            <div className="submitfile__numero-peque">3</div>
+            <div className="submitfile__col">
+              <div className="submitfile__title">
+                {this.state.labels['tit_typ_process']}
+              </div>
+
+              <div className="submitfile__row-buttons">
+                <div className="submitfile__row-75">
+                  <div className="submitfile__col-50">
+                    <button
+                      className="submitfile__button-video btn"
+                      id="processVideoRoiButton"
+                      ref={this.processVideoRoiButtonRef}
+                      onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
+                      onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
+                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcamIframe : null}
+                      disabled={isLoading || webcamRecording || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
+                    >
+                      {this.state.labels['tit_roi_video']}
+                    </button>
+
+                    <button
+                      className="submitfile__button-video btn"
+                      id="processVideoButton"
+                      ref={this.processVideoButtonRef}
+                      onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')}
+                      onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')}
+                      onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcamIframe : null}
+                      disabled={isLoading || webcamRecording || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
+                    >
+                      {this.state.labels['tit_video']}
+                    </button>
+                  </div>
+
+                  <div className="submitfile__col-50">
+                    <button
+                      className="submitfile__button-video btn"
+                      id="processPictureButton"
+                      ref={this.processPictureButtonRef}
+                      onMouseOver={() => this.handleOnMouseOver(this.processPictureButtonRef, 'processPictureButton')}
+                      onMouseOut={() => this.handleOnMouseOut(this.processPictureButtonRef, 'processPictureButton')}
+                      onClick={this.handlePictureProcess}
+                      disabled={isLoading || webcamRecording || !model || total_fish !== null || type === 'video' ? true : uploadedFile && optUpload ? false : true}
+                    >
+                      {this.state.labels['tit_picture']}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="submitfile__col-25-buttons">
+                  <button className="submitfile__button-cancel btn" id="cancelButton" onClick={this.handleCancel} disabled={(isLoading || webcamRecording || !model) && !cancelarWaiting} >{this.state.labels['tit_cancel'](total_fish)}</button>
+                </div>
               </div>
             </div>
           </div>
@@ -1282,7 +1854,7 @@ class SubmitFile extends Component {
                         accept='image/*|video/*'
                         onChange={this.handleChangeInputUploadCalibration}
                         ref={this.uploadInputRefCalibration}
-                        disabled={isLoading || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
+                        disabled={isLoading || webcamRecording || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
                     />
                     <div className="submitfile__text--green">{this.state.labels['tit_siz_calibration']}</div>
                     <input
@@ -1291,12 +1863,13 @@ class SubmitFile extends Component {
                         type="number"
                         value={cms ? cms : ''}
                         onChange={this.handleChangeInputNumberCalibration}
-                        disabled={isLoading || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
+                        disabled={isLoading || webcamRecording || (uploadedFileCalibration && !resultFileCalibration) || !model ? true : false}
+                        placeholder={this.state.labels['tit_inches']}
                     />
                   </div>
                   <div className="submitfile__col-25">
-                    <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading || !model ? true : selectedFileCalibration && cms && (!uploadedFileCalibration || resultFileCalibration)  ? false : true} >{this.state.labels['tit_calibrate']}</button>
-                    <button className="submitfile__button-cancel btn" id="cancelCalibrationButton" onClick={this.handleCancelCalibration} disabled={(isLoading || !model) && !cancelarWaitingCalibration} >{this.state.labels['tit_cancel'](total_fish)}</button>
+                    <button className="submitfile__button-calibration btn" id="calibrationButton" onClick={this.handleCalibration} ref={this.calibrationButtonRef} disabled={isLoading || webcamRecording || !model ? true : selectedFileCalibration && cms && (!uploadedFileCalibration || resultFileCalibration)  ? false : true} >{this.state.labels['tit_calibrate']}</button>
+                    <button className="submitfile__button-cancel btn" id="cancelCalibrationButton" onClick={this.handleCancelCalibration} disabled={(isLoading || webcamRecording || !model) && !cancelarWaitingCalibration} >{this.state.labels['tit_cancel'](total_fish)}</button>
                   </div>
                 </div>
                 <div className="submitfile__header--error">
@@ -1322,13 +1895,13 @@ class SubmitFile extends Component {
             {total_fish ?
               <>{this.state.labels['tit_lab_results']}</>
             :
-              isLoading ?
+              isLoading || webcamRecording ?
                 <>{this.state.labels['tit_lab_processing'] + ' [' + this.state.labels[log] + info + ']'}</>
               :
-                uploadedFile ?
+                uploadedFile || selectedWebcam ?
                   <>{this.state.labels['tit_lab_sel_typ_process']}</>
                 :
-                  selectedFile ?
+                  selectedFile || durationWebcam ?
                     <>{this.state.labels['tit_lab_upload']}</>
                   :
                     model ?
@@ -1338,17 +1911,13 @@ class SubmitFile extends Component {
             }
           </div>
 
-          <div className="submitfile__header-right--image">
-            {imageData}
-          </div>
+          {imageData}
 
-          <div className="submitfile__header-right--file">
-            {colaData}
-          </div>
+          {fileData}
 
-          <div className="submitfile__header-right--file">
-            {fileData}
-          </div>
+          {webcamData}
+
+          {colaData}
 
         </div>
       </div>

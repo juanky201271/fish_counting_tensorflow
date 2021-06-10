@@ -20,6 +20,74 @@
     margin-right: 11%;
   }
 
+  &__numero {
+    display: none;
+
+    @media(min-width: 300px) {
+      display: flex;
+      font-size: 6rem;
+      color: #f0f0f0;
+      text-shadow: -1px -1px 1px #0091a8, 1px -1px 1px #0091a8, -1px 1px 1px #0091a8, 1px 1px 1px #0091a8;
+      transform: translateY(-13px);
+      padding-right: 10px;
+    }
+  }
+
+  &__numero-2 {
+    display: none;
+
+    @media(min-width: 300px) {
+      display: flex;
+      font-size: 6rem;
+      color: #f0f0f0;
+      text-shadow: -1px -1px 1px #0091a8, 1px -1px 1px #0091a8, -1px 1px 1px #0091a8, 1px 1px 1px #0091a8;
+      transform: translateY(-10px);
+      padding-right: 10px;
+    }
+  }
+
+  &__numero-peque {
+    display: flex;
+    font-size: 2rem;
+    color: #f0f0f0;
+    text-shadow: -1px -1px 1px #0091a8, 1px -1px 1px #0091a8, -1px 1px 1px #0091a8, 1px 1px 1px #0091a8;
+
+    @media(min-width: 300px) {
+      display: none;
+    }
+  }
+
+  .opt-selected {
+    display: block;
+    width: 100%;
+    border: 1px solid transparent;
+    cursor: inherit;
+    padding: 2px;
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+
+  .opt-no-selected {
+    display: block;
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    padding: 2px;
+
+    &:hover {
+      border: 1px dotted #0091a8;
+    }
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+
   &__header {
     display: block;
     width: 100%;
@@ -51,18 +119,19 @@
         display: initial;
       }
     }
-    &--upload-file {
-      margin-top: 10px;
+    &--upload-file--webcam {
       display: block;
       width: 100%;
+      padding-left: 2px;
+      padding-bottom: 2px;
 
       @media(min-width: 300px) {
         display: flex;
         flex-direction: row;
       }
       @media(min-width: 1024px) {
-        margin-top: 30px;
-        padding-right: 50px;
+        padding-right: 10px;
+        transform: translateX(-40px);
       }
 
       &--input-file {
@@ -73,12 +142,65 @@
         }
       }
     }
-    &--error {
+    &--error-upload-file--webcam {
       height: 15px;
 
       &--label-red {
         margin-left: 20px;
         color: red;
+      }
+    }
+    &--box-webcam {
+      display: block;
+      width: 100%;
+      border: 1px solid #0091a8;
+
+      @media(min-width: 500px) {
+        width: 80%;
+      }
+      @media(min-width: 1024px) {
+        width: 100%;
+      }
+
+      &--input-number {
+        margin-top: 10px;
+      }
+    }
+    &--box-webcam-red {
+      display: block;
+      width: 100%;
+      border: 3px solid red;
+
+      @media(min-width: 500px) {
+        width: 80%;
+      }
+      @media(min-width: 1024px) {
+        width: 100%;
+      }
+
+      &--input-number {
+        margin-top: 10px;
+      }
+    }
+    &--box-webcam-border {
+      display: block;
+      width: 80%;
+      height: auto;
+      border: 1px solid #0091a8;
+
+      @media(min-width: 500px) {
+        width: 50%;
+      }
+      @media(min-width: 1024px) {
+        width: 80%;
+      }
+      @media(min-width: 1400px) {
+        width: 50%;
+      }
+      &:after {
+        content: "";
+        display: block;
+        padding-bottom: 100%;
       }
     }
     &--select-model {
@@ -87,11 +209,12 @@
 
       @media(min-width: 300px) {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
       }
       @media(min-width: 1024px) {
         margin-top: 30px;
-        padding-right: 20px;
+        padding-right: 0px;
+        transform: translateX(-40px);
       }
 
       select {
@@ -99,7 +222,7 @@
         font-size: 12px;
 
         @media(min-width: 300px) {
-          width: 70%;
+          width: 72%;
         }
         @media(min-width: 768px) {
           font-size: 15px;
@@ -112,10 +235,11 @@
 
       @media(min-width: 300px) {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
       }
       @media(min-width: 1024px) {
-        padding-right: 50px;
+        padding-right: 10px;
+        transform: translateX(-40px);
       }
     }
     &--calibration {
@@ -248,9 +372,7 @@
     font-size: 18px;
     font-weight: bold;
     width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+
 
     @media(min-width: 300px) {
       margin-left: 10px;
@@ -376,6 +498,7 @@
     @media(min-width: 300px) {
       display: flex;
       flex-direction: column;
+      width: 100%;
     }
   }
 
@@ -411,6 +534,18 @@
     }
   }
 
+  &__col-25--upload-file--webcam {
+    display: block;
+
+    @media(min-width: 300px) {
+      display: flex;
+      flex-direction: column;
+      width: 25%;
+      margin-left: 10px;
+      justify-content: center;
+    }
+  }
+
   &__col-25-buttons {
     display: block;
 
@@ -432,6 +567,31 @@
     @media(min-width: 300px) {
       display: flex;
       flex-direction: row;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0px;
+      margin-right: 5px;
+      padding-top: 5px;
+      width: 100%;
+
+      @media(min-width: 300px) {
+        display: initial;
+        width: 70%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    #InputNumberDurationWebcam {
+      display: block;
+      width: 100%;
+
+      @media(min-width: 300px) {
+        display: initial;
+        width: 30%;
+      }
     }
   }
 
