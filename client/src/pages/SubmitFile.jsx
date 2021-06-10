@@ -1326,8 +1326,7 @@ class SubmitFile extends Component {
   }
 
   webcamData = () => {
-    if (this.state.optWebcam && this.state.durationWebcam) {
-      const { selectedWebcam } = this.state
+    if (this.state.optWebcam && this.state.durationWebcam && this.state.selectedWebcam) {
 
       navigator.mediaDevices.enumerateDevices()
         .then(mediaDevices => {
@@ -1351,7 +1350,7 @@ class SubmitFile extends Component {
           console.log('media devices error: ', err)
         })
 
-      if (selectedWebcam && !this.state.label) {
+      if (this.state.selectedWebcam && !this.state.label) {
         setTimeout(function() {
           this.setState({
             render: Date.now(),
