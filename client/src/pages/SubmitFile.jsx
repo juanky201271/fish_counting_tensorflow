@@ -118,21 +118,21 @@ class SubmitFile extends Component {
                 } else if (params.action === 'cameraoff') {
                   this.setState({
                     durationWebcam: '',
-                    selectedWebcam: '',
+                    selectedWebcam: false,
                     webcamRecording: false
                   })
                 } else if (params.action === 'iframeoff') {
                   cola[i].iframe = false;
                   this.setState({
                     durationWebcam: '',
-                    selectedWebcam: '',
+                    selectedWebcam: false,
                     webcamRecording: false
                   })
                 } else if (params.action === 'end') {
                   cola[i].porc = 100
                   this.setState({
                     durationWebcam: '',
-                    selectedWebcam: '',
+                    selectedWebcam: false,
                     webcamRecording: false
                   })
                 } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
@@ -267,7 +267,7 @@ class SubmitFile extends Component {
         })
 
       this.setState({
-          durationWebcam: '', selectedWebcam: '',
+          durationWebcam: '', selectedWebcam: false,
       })
     }
   }
@@ -827,7 +827,7 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, //durationWebcam: '', selectedWebcam: '',
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, //durationWebcam: '', selectedWebcam: false,
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
@@ -882,12 +882,12 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true, //durationWebcam: '', selectedWebcam: '',
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true, //durationWebcam: '', selectedWebcam: false,
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
           //const msec = durationWebcam * 1000
-          //setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false }) }, msec)
+          //setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: false, webcamRecording: false }) }, msec)
       })
     }
     this.setState({ isLoading: false })
@@ -969,7 +969,7 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, //durationWebcam: '', selectedWebcam: '',
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, //durationWebcam: '', selectedWebcam: false,
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
@@ -1024,12 +1024,12 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true, //durationWebcam: '', selectedWebcam: '',
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true, //durationWebcam: '', selectedWebcam: false,
         },
         () => {
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
           //const msec = durationWebcam * 1000
-          //setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: '', webcamRecording: false,  }) }, msec)
+          //setTimeout(() => { this.setState({ durationWebcam: '', selectedWebcam: false, webcamRecording: false,  }) }, msec)
       })
     }
     this.setState({ isLoading: false })
@@ -1251,7 +1251,7 @@ class SubmitFile extends Component {
   }
 
   handleCancel = e => {
-    this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false, optUpload: false, optWebcam: false, selectedWebcam:false, durationWebcam: null })
+    this.setState({ uploadedFile: '', selectedFile: '', total_fish: null, isLoading: false, cancelarWaiting: false, optUpload: false, optWebcam: false, selectedWebcam: false, durationWebcam: null })
     if (this.uploadInputRef.current) {
       this.uploadInputRef.current.value = ''
     }
@@ -1367,7 +1367,7 @@ class SubmitFile extends Component {
           <div className="submitfile__col">
             {this.state.deviceId && (
               <>
-                {selectedWebcam && (
+                {this.state.selectedWebcam && (
                   <Webcam
                     className={this.state.webcamRecording ? "submitfile__header--box-webcam-red" : "submitfile__header--box-webcam"}
                     audio={false}
@@ -1377,7 +1377,7 @@ class SubmitFile extends Component {
                     forceScreenshotSourceSize={true}
                   />
                 )}
-                {/*!selectedWebcam && (
+                {/*!this.state.selectedWebcam && (
                   <div className="submitfile__header--box-webcam-border"></div>
                 )*/}
                 <div>
