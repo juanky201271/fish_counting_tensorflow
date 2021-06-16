@@ -93,7 +93,7 @@ class SubmitFile extends Component {
       this.inter = null
       this.i = 0
       this.send_i = 0
-      this.frames = []
+      this.frames = {}
 
       socket.on("logging", params => {
         const cola = this.state.cola || []
@@ -231,7 +231,8 @@ class SubmitFile extends Component {
               console.log('imagen encolada de vuelta', par.contador)
               // mando 2 frames
               this.send_i += 1
-              this.sendFrame(this.send_i)
+              const par_frames = this.state.durationWebcam * 25
+              this.sendFrame(this.send_i, par_key, par_frames)
               //send_i += 1
               //sendFrame(send_i)
             }
@@ -256,25 +257,25 @@ class SubmitFile extends Component {
     }
 
     let dataURL = this.webcamRef.current.getScreenshot()
-    this.frames[iii] =  { key: par_key, image: dataURL, url_callback: process.env.REACT_APP_URL_CALLBACK_QUEUE }
+    this.frames[par_key][iii] =  { key: par_key, image: dataURL, url_callback: process.env.REACT_APP_URL_CALLBACK_QUEUE }
 
     console.log('saving frame num:', iii, 'of', par_frames)
   }
 
-  sendFrame = (send_iii, par_frames) => {
+  sendFrame = (send_iii, par_key, par_frames) => {
     if (send_iii > par_frames) {
       return
     }
-    let frame = this.frames[send_iii] || null
+    let frame = this.frames[par_key][send_iii] || null
     if (frame !== null) {
       socketPy.emit('input image', frame)
-      this.frames[send_iii] = null
+      this.frames[par_key][send_iii] = null
       console.log('frame num:', send_iii, 'of', par_frames)
     } else {
       console.log('...NO frame num:', send_iii, 'of', par_frames)
       let that = this
       setTimeout(function () {
-        that.sendFrame(that.send_i, par_frames)
+        that.sendFrame(that.send_i, par_key, par_frames)
       }, 1000)
     }
   }
@@ -913,8 +914,9 @@ class SubmitFile extends Component {
           }, 40)
           setTimeout(function () {
             that.send_i += 1
+            const par_key = dir_webcam.replace('_', '').replace('_', '')
             const par_frames = durationWebcam * 25
-            that.sendFrame(that.send_i, par_frames)
+            that.sendFrame(that.send_i, par_key, par_frames)
           }, 1000)
       })
     }
@@ -1067,8 +1069,9 @@ class SubmitFile extends Component {
           }, 40)
           setTimeout(function () {
             that.send_i += 1
+            const par_key = dir_webcam.replace('_', '').replace('_', '')
             const par_frames = durationWebcam * 25
-            that.sendFrame(that.send_i, par_frames)
+            that.sendFrame(that.send_i, par_key, par_frames)
           }, 1000)
       })
     }
