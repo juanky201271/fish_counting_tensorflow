@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import Webcam from 'react-webcam'
 import { withRouter } from 'react-router'
 import api from '../api'
-import { socket } from '../components'
+import { socket, socketPy } from '../components'
 
 import alert from '../assets/images/alert.png'
 
@@ -90,6 +90,11 @@ class SubmitFile extends Component {
       this.intervals = []
       this.pressButton = null
 
+      this.inter = null
+      this.i = 0
+      this.send_i = 0
+      this.frames = []
+
       socket.on("logging", params => {
         const cola = this.state.cola || []
         //console.log('log:', cola.length, cola)
@@ -124,7 +129,7 @@ class SubmitFile extends Component {
                     webcamRecording: false
                   })
                 } else if (params.action === 'iframeoff') {
-                  cola[i].iframe = false;
+                  cola[i].iframe = false
                   this.setState({
                     label: null,
                     deviceId: null,
@@ -214,6 +219,62 @@ class SubmitFile extends Component {
         }
 
       })
+      socket.on('queueing', par => {
+        const cola = this.state.cola || []
+
+        if (cola.length > 0) {
+          for (let i = 0; i < cola.length; i++) {
+            const par_key = cola[i].dir_webcam ? cola[i].dir_webcam.replace('_', '').replace('_', '') : ''
+            if (par.key === par_key) {
+              console.log('imagen encolada de vuelta', par.contador)
+              // mando 2 frames
+              this.send_i += 1
+              this.sendFrame(this.send_i)
+              //send_i += 1
+              //sendFrame(send_i)
+            }
+          }
+        }
+      })
+
+  }
+
+  sendSnapshot = (iii, par_key, par_frames) => {
+    if (iii > par_frames) {
+      clearInterval(this.inter)
+      this.inter = null
+      this.setState({
+        label: null,
+        deviceId: null,
+        durationWebcam: '',
+        selectedWebcam: false,
+        webcamRecording: false
+      })
+      return
+    }
+
+    let dataURL = this.webcamRef.current.getScreenshot()
+    this.frames[iii] =  { key: par_key, image: dataURL, url_callback: process.env.REACT_APP_URL_CALLBACK_QUEUE }
+
+    console.log('saving frame num:', iii)
+  }
+
+  sendFrame = (send_iii, par_frames) => {
+    if (send_iii > par_frames) {
+      return
+    }
+    let frame = this.frames[send_iii] || null
+    if (frame !== null) {
+      socketPy.emit('input image', frame)
+      this.frames[send_iii] = null
+      console.log('frame num:', send_iii)
+    } else {
+      console.log('...NO frame num:', send_iii)
+      let that = this
+      setTimeout(function () {
+        that.sendFrame(that.send_i, par_frames)
+      }, 1000)
+    }
   }
 
   porcentaje = i => {
@@ -327,12 +388,12 @@ class SubmitFile extends Component {
         })
       }
 
-      window.addEventListener('changeLanguage', this.changeLanguage);
+      window.addEventListener('changeLanguage', this.changeLanguage)
       this.setState({ isLoading: false })
   }
 
   componentWillUnmount = () => {
-    window.removeEventListener('changeLanguage', this.changeLanguage);
+    window.removeEventListener('changeLanguage', this.changeLanguage)
   }
 
   changeLanguage = ({ detail }) => {
@@ -744,7 +805,7 @@ class SubmitFile extends Component {
       var i = new Image()
       i.onload = function(){
         resolved({w: i.width, h: i.height})
-      };
+      }
       i.onerror = rejected
       i.src = file
     })
@@ -755,7 +816,7 @@ class SubmitFile extends Component {
       var i = new Image()
       i.onload = function(){
         resolved({src: i.src})
-      };
+      }
       i.onerror = rejected
       i.src = file
     })
@@ -840,7 +901,19 @@ class SubmitFile extends Component {
           errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
+          let that = this
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+          this.inter = setInterval(function () {
+            that.i += 1
+            const par_key = dir_webcam.replace('_', '').replace('_', '')
+            const par_frames = durationWebcam * 25
+            that.sendSnapshot(that.i, par_key, par_frames)
+          }, 40)
+          setTimeout(function () {
+            that.send_i += 1
+            const par_frames = durationWebcam * 25
+            that.sendFrame(that.send_i, par_frames)
+          }, 1000)
       })
     }
     this.setState({ isLoading: false })
@@ -982,7 +1055,19 @@ class SubmitFile extends Component {
           errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
         },
         () => {
+          let that = this
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+          this.inter = setInterval(function () {
+            that.i += 1
+            const par_key = dir_webcam.replace('_', '').replace('_', '')
+            const par_frames = durationWebcam * 25
+            that.sendSnapshot(that.i, par_key, par_frames)
+          }, 40)
+          setTimeout(function () {
+            that.send_i += 1
+            const par_frames = durationWebcam * 25
+            that.sendFrame(that.send_i, par_frames)
+          }, 1000)
       })
     }
     this.setState({ isLoading: false })
@@ -1501,8 +1586,8 @@ class SubmitFile extends Component {
               //const w = { alignSelf: 'flex-start', width: ele.porc ? ele.porc : '0%', marginLeft: '5px', marginTop: '5px' }
               const w = { alignSelf: 'flex-start', width: ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%', marginTop: '5px' }
               const c = { color: ele.log === 'waiting' || (ele.log === 'end' && ele.info === 'error') ? 'red' : ele.log === 'end' ? 'green' : 'black' }
-              const url_iframe = process.env.REACT_APP_FLASK_API + '/' + ele.api + '?url_input_video=' + process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + ele.dir_webcam + '/' + ele.name + '&model=' + 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + ele.model.split('#')[0] +  '&width_cms=' + ele.width_cms + '&width_pxs_x_cm=' + ele.width_pxs_x_cm + '&deviceid=' + ele.deviceId + '&duration=' + ele.durationWebcam + '&width=' + ele.width + '&height=' + ele.height + '&url_callback=' + process.env.REACT_APP_URL_CALLBACK
-              const iframe = ele.iframe || false
+              //const url_iframe = process.env.REACT_APP_FLASK_API + '/' + ele.api + '?url_input_video=' + process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + ele.dir_webcam + '/' + ele.name + '&model=' + 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + ele.model.split('#')[0] +  '&width_cms=' + ele.width_cms + '&width_pxs_x_cm=' + ele.width_pxs_x_cm + '&deviceid=' + ele.deviceId + '&duration=' + ele.durationWebcam + '&width=' + ele.width + '&height=' + ele.height + '&url_callback=' + process.env.REACT_APP_URL_CALLBACK
+              //const iframe = ele.iframe || false
               //console.log('url webcam', url_iframe)
               return (<>
                 <div className="submitfile__col">
@@ -1516,9 +1601,9 @@ class SubmitFile extends Component {
                   {ele.log === 'end' && ele.info !== 'error' ? this.colaFileData(ele) : ''}
                 </div>
 
-                {(ele.log !== 'end' && ele.name && iframe === true) && (
+                {/*(ele.log !== 'end' && ele.name && iframe === true) && (
                   <iframe style={{ display: 'none' }} src={url_iframe} height="500" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
-                )}
+                )*/}
 
                 {/* <div className="submitfile__row"> */}
                   {/* <div style={{ fontSize: '10px' }}>{ele.porc}</div> */}
@@ -1791,7 +1876,7 @@ class SubmitFile extends Component {
                       ref={this.processVideoRoiButtonRef}
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
-                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcamIframe : null}
+                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcam : null}
                       disabled={isLoading || webcamRecording || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_roi_video']}
@@ -1803,7 +1888,7 @@ class SubmitFile extends Component {
                       ref={this.processVideoButtonRef}
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')}
-                      onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcamIframe : null}
+                      onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcam : null}
                       disabled={isLoading || webcamRecording || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_video']}
