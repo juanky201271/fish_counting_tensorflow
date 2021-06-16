@@ -900,7 +900,7 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true,
         },
         () => {
           let that = this
@@ -1054,7 +1054,7 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true,
         },
         () => {
           let that = this
