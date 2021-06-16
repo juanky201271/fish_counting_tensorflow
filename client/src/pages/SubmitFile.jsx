@@ -90,9 +90,9 @@ class SubmitFile extends Component {
       this.intervals = []
       this.pressButton = null
 
-      this.inter = null
-      this.i = 0
-      this.send_i = 0
+      this.inter = {}
+      this.i = {}
+      this.send_i = {}
       this.frames = {}
 
       socket.on("logging", params => {
@@ -230,9 +230,9 @@ class SubmitFile extends Component {
             if (par.key === par_key) {
               console.log('imagen encolada de vuelta', par.contador)
               // mando 2 frames
-              this.send_i += 1
               const par_frames = this.state.durationWebcam * 25
-              this.sendFrame(this.send_i, par_key, par_frames)
+              this.send_i[par_key] += 1
+              this.sendFrame(this.send_i[par_key], par_key, par_frames)
               //send_i += 1
               //sendFrame(send_i)
             }
@@ -244,8 +244,8 @@ class SubmitFile extends Component {
 
   sendSnapshot = (iii, par_key, par_frames) => {
     if (iii > par_frames) {
-      clearInterval(this.inter)
-      this.inter = null
+      clearInterval(this.inter[par_key])
+      this.inter[par_key] = null
       this.setState({
         label: null,
         deviceId: null,
@@ -275,7 +275,7 @@ class SubmitFile extends Component {
       console.log('...NO frame num:', send_iii, 'of', par_frames)
       let that = this
       setTimeout(function () {
-        that.sendFrame(that.send_i, par_key, par_frames)
+        that.sendFrame(that.send_i[par_key], par_key, par_frames)
       }, 1000)
     }
   }
@@ -906,17 +906,18 @@ class SubmitFile extends Component {
         () => {
           let that = this
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
-          this.inter = setInterval(function () {
-            that.i += 1
+          const par_key_inter = dir_webcam.replace('_', '').replace('_', '')
+          this.inter[par_key_inter] = setInterval(function () {
             const par_key = dir_webcam.replace('_', '').replace('_', '')
             const par_frames = durationWebcam * 25
-            that.sendSnapshot(that.i, par_key, par_frames)
+            that.i[par_key] += 1
+            that.sendSnapshot(that.i[par_key], par_key, par_frames)
           }, 40)
           setTimeout(function () {
-            that.send_i += 1
             const par_key = dir_webcam.replace('_', '').replace('_', '')
             const par_frames = durationWebcam * 25
-            that.sendFrame(that.send_i, par_key, par_frames)
+            that.send_i[par_key] += 1
+            that.sendFrame(that.send_i[par_key], par_key, par_frames)
           }, 1000)
       })
     }
@@ -1061,17 +1062,18 @@ class SubmitFile extends Component {
         () => {
           let that = this
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
-          this.inter = setInterval(function () {
-            that.i += 1
+          const par_key_inter = dir_webcam.replace('_', '').replace('_', '')
+          this.inter[par_key_inter] = setInterval(function () {
             const par_key = dir_webcam.replace('_', '').replace('_', '')
             const par_frames = durationWebcam * 25
-            that.sendSnapshot(that.i, par_key, par_frames)
+            that.i[par_key] += 1
+            that.sendSnapshot(that.i[par_key], par_key, par_frames)
           }, 40)
           setTimeout(function () {
-            that.send_i += 1
             const par_key = dir_webcam.replace('_', '').replace('_', '')
             const par_frames = durationWebcam * 25
-            that.sendFrame(that.send_i, par_key, par_frames)
+            that.send_i[par_key] += 1
+            that.sendFrame(that.send_i[par_key], par_key, par_frames)
           }, 1000)
       })
     }
