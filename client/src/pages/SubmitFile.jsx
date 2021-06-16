@@ -222,6 +222,8 @@ class SubmitFile extends Component {
       socket.on('queueing', par => {
         const cola = this.state.cola || []
 
+        console.log('socket queue', par)
+
         if (cola.length > 0) {
           for (let i = 0; i < cola.length; i++) {
             const par_key = cola[i].dir_webcam ? cola[i].dir_webcam.replace('_', '').replace('_', '') : ''

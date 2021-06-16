@@ -2,6 +2,6 @@
 
 import openSocket from 'socket.io-client';
 
-const socketPy = openSocket(process.env.REACT_APP_PUBLIC_URL_PY, { transport : ['websocket'] });
+const socketPy = openSocket(process.env.REACT_APP_PUBLIC_URL_PY);
 
 export default socketPy;
