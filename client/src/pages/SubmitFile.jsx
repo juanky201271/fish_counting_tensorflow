@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import Webcam from 'react-webcam'
 import { withRouter } from 'react-router'
 import api from '../api'
-import { socket } from '../components'
+import { socket, socketPy } from '../components'
 
 import alert from '../assets/images/alert.png'
 
@@ -90,6 +90,11 @@ class SubmitFile extends Component {
       this.intervals = []
       this.pressButton = null
 
+      this.inter = {}
+      this.i = {}
+      this.send_i = {}
+      this.frames = {}
+
       socket.on("logging", params => {
         const cola = this.state.cola || []
         //console.log('log:', cola.length, cola)
@@ -115,7 +120,7 @@ class SubmitFile extends Component {
                   if (params.uploadedFile === nameState) {
                     this.sendWebcamFrames(nameState, cola[i].durationWebcam)
                   }*/
-                } else if (params.action === 'cameraoff') {
+                /*} else if (params.action === 'cameraoff') {
                   this.setState({
                     label: null,
                     deviceId: null,
@@ -124,23 +129,16 @@ class SubmitFile extends Component {
                     webcamRecording: false
                   })
                 } else if (params.action === 'iframeoff') {
-                  cola[i].iframe = false;
+                  cola[i].iframe = false
                   this.setState({
                     label: null,
                     deviceId: null,
                     durationWebcam: '',
                     selectedWebcam: false,
                     webcamRecording: false
-                  })
+                  })*/
                 } else if (params.action === 'end') {
                   cola[i].porc = 100
-                  this.setState({
-                    label: null,
-                    deviceId: null,
-                    durationWebcam: '',
-                    selectedWebcam: false,
-                    webcamRecording: false
-                  })
                 } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
                   //const n_frames = parseInt(params.info.split('/')[0])
                   const t_frames = parseInt(params.info.split('/')[1])
@@ -185,10 +183,10 @@ class SubmitFile extends Component {
                 }
               }
 
-              if (params.action !== 'cameraoff' && params.action !== 'iframeoff') {
+              //if (params.action !== 'cameraoff' && params.action !== 'iframeoff') {
                 cola[i].log = params.action
                 cola[i].info = params.info === 'error' ? params.info : params.info ? ' {' + params.info + '}' : ''
-              }
+              //}
 
               this.setState(
                 { cola: cola },
@@ -214,6 +212,70 @@ class SubmitFile extends Component {
         }
 
       })
+      socket.on('queueing', par => {
+        const cola = this.state.cola || []
+
+        //console.log('socket queue', par)
+
+        if (cola.length > 0) {
+          for (let i = 0; i < cola.length; i++) {
+            const par_key = cola[i].dir_webcam ? cola[i].dir_webcam.replace('_', '').replace('_', '') : ''
+            if (par.key === par_key) {
+              //console.log('imagen encolada de vuelta', par.contador)
+              // mando 1 frames
+              const par_frames = cola[i].durationWebcam * 25
+              this.send_i[par_key] += 1
+              this.sendFrame(this.send_i[par_key], par_key, par_frames)
+            }
+          }
+        }
+      })
+
+  }
+
+  sendSnapshot = (iii, par_key, par_frames) => {
+    if (iii > par_frames) {
+      clearInterval(this.inter[par_key])
+      this.inter[par_key] = null
+      this.setState({
+        label: null,
+        deviceId: null,
+        durationWebcam: '',
+        selectedWebcam: false,
+        webcamRecording: false
+      })
+      console.log('save all frames', par_frames)
+      return
+    }
+
+    if (this.webcamRef.current) {
+      let dataURL = this.webcamRef.current.getScreenshot()
+      this.frames[par_key][iii] =  { key: par_key, image: dataURL, url_callback: process.env.REACT_APP_URL_CALLBACK_QUEUE }
+      //console.log('saving frame num:', iii, 'of', par_frames)
+    } else {
+      this.i[par_key] -= 1
+      console.log('NO ACCESS CAMERA frame num:', iii, 'of', par_frames)
+    }
+
+  }
+
+  sendFrame = (send_iii, par_key, par_frames) => {
+    if (send_iii > par_frames) {
+      console.log('sent all frames', par_frames)
+      return
+    }
+    let frame = this.frames[par_key][send_iii] || null
+    if (frame !== null) {
+      socketPy.emit('input image', frame)
+      this.frames[par_key][send_iii] = null
+      //console.log('frame num:', send_iii, 'of', par_frames)
+    } else {
+      console.log('...NO frame num:', send_iii, 'of', par_frames)
+      let that = this
+      setTimeout(function () {
+        that.sendFrame(that.send_i[par_key], par_key, par_frames)
+      }, 1000)
+    }
   }
 
   porcentaje = i => {
@@ -327,12 +389,12 @@ class SubmitFile extends Component {
         })
       }
 
-      window.addEventListener('changeLanguage', this.changeLanguage);
+      window.addEventListener('changeLanguage', this.changeLanguage)
       this.setState({ isLoading: false })
   }
 
   componentWillUnmount = () => {
-    window.removeEventListener('changeLanguage', this.changeLanguage);
+    window.removeEventListener('changeLanguage', this.changeLanguage)
   }
 
   changeLanguage = ({ detail }) => {
@@ -744,7 +806,7 @@ class SubmitFile extends Component {
       var i = new Image()
       i.onload = function(){
         resolved({w: i.width, h: i.height})
-      };
+      }
       i.onerror = rejected
       i.src = file
     })
@@ -755,7 +817,7 @@ class SubmitFile extends Component {
       var i = new Image()
       i.onload = function(){
         resolved({src: i.src})
-      };
+      }
       i.onerror = rejected
       i.src = file
     })
@@ -837,10 +899,27 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true,
         },
         () => {
+          let that = this
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+          const par_key_inter = dir_webcam.replace('_', '').replace('_', '')
+          this.frames[par_key_inter] = []
+          this.i[par_key_inter] = 0
+          this.send_i[par_key_inter] = 0
+          this.inter[par_key_inter] = setInterval(function () {
+            const par_key = dir_webcam.replace('_', '').replace('_', '')
+            const par_frames = durationWebcam * 25
+            that.i[par_key] += 1
+            that.sendSnapshot(that.i[par_key], par_key, par_frames)
+          }, 40)
+          setTimeout(function () {
+            const par_key = dir_webcam.replace('_', '').replace('_', '')
+            const par_frames = durationWebcam * 25
+            that.send_i[par_key] += 1
+            that.sendFrame(that.send_i[par_key], par_key, par_frames)
+          }, 1000)
       })
     }
     this.setState({ isLoading: false })
@@ -979,10 +1058,27 @@ class SubmitFile extends Component {
         }
       )
       this.setState({
-          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola,
+          errorWebcam: this.state.errors['process_queue'], total_fish: null, cancelarWaiting: false, cola: cola, webcamRecording: true,
         },
         () => {
+          let that = this
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
+          const par_key_inter = dir_webcam.replace('_', '').replace('_', '')
+          this.frames[par_key_inter] = []
+          this.i[par_key_inter] = 0
+          this.send_i[par_key_inter] = 0
+          this.inter[par_key_inter] = setInterval(function () {
+            const par_key = dir_webcam.replace('_', '').replace('_', '')
+            const par_frames = durationWebcam * 25
+            that.i[par_key] += 1
+            that.sendSnapshot(that.i[par_key], par_key, par_frames)
+          }, 40)
+          setTimeout(function () {
+            const par_key = dir_webcam.replace('_', '').replace('_', '')
+            const par_frames = durationWebcam * 25
+            that.send_i[par_key] += 1
+            that.sendFrame(that.send_i[par_key], par_key, par_frames)
+          }, 1000)
       })
     }
     this.setState({ isLoading: false })
@@ -1501,8 +1597,8 @@ class SubmitFile extends Component {
               //const w = { alignSelf: 'flex-start', width: ele.porc ? ele.porc : '0%', marginLeft: '5px', marginTop: '5px' }
               const w = { alignSelf: 'flex-start', width: ele.porc ? Number(ele.porc.toFixed(2)).toString() + '%' : '0%', marginTop: '5px' }
               const c = { color: ele.log === 'waiting' || (ele.log === 'end' && ele.info === 'error') ? 'red' : ele.log === 'end' ? 'green' : 'black' }
-              const url_iframe = process.env.REACT_APP_FLASK_API + '/' + ele.api + '?url_input_video=' + process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + ele.dir_webcam + '/' + ele.name + '&model=' + 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + ele.model.split('#')[0] +  '&width_cms=' + ele.width_cms + '&width_pxs_x_cm=' + ele.width_pxs_x_cm + '&deviceid=' + ele.deviceId + '&duration=' + ele.durationWebcam + '&width=' + ele.width + '&height=' + ele.height + '&url_callback=' + process.env.REACT_APP_URL_CALLBACK
-              const iframe = ele.iframe || false
+              //const url_iframe = process.env.REACT_APP_FLASK_API + '/' + ele.api + '?url_input_video=' + process.env.REACT_APP_AWS_Uploaded_FIle_URL_Link + 'submits/' + ele.dir_webcam + '/' + ele.name + '&model=' + 's3://' + process.env.REACT_APP_AWS_BUCKET + '/models/' + ele.model.split('#')[0] +  '&width_cms=' + ele.width_cms + '&width_pxs_x_cm=' + ele.width_pxs_x_cm + '&deviceid=' + ele.deviceId + '&duration=' + ele.durationWebcam + '&width=' + ele.width + '&height=' + ele.height + '&url_callback=' + process.env.REACT_APP_URL_CALLBACK
+              //const iframe = ele.iframe || false
               //console.log('url webcam', url_iframe)
               return (<>
                 <div className="submitfile__col">
@@ -1516,9 +1612,9 @@ class SubmitFile extends Component {
                   {ele.log === 'end' && ele.info !== 'error' ? this.colaFileData(ele) : ''}
                 </div>
 
-                {(ele.log !== 'end' && ele.name && iframe === true) && (
+                {/*(ele.log !== 'end' && ele.name && iframe === true) && (
                   <iframe style={{ display: 'none' }} src={url_iframe} height="500" width="100%" title="webcam python" allow="camera; microphone;"></iframe>
-                )}
+                )*/}
 
                 {/* <div className="submitfile__row"> */}
                   {/* <div style={{ fontSize: '10px' }}>{ele.porc}</div> */}
@@ -1791,7 +1887,7 @@ class SubmitFile extends Component {
                       ref={this.processVideoRoiButtonRef}
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoRoiButtonRef, 'processVideoRoiButton')}
-                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcamIframe : null}
+                      onClick={optUpload ? this.handleVideoRoiProcess : optWebcam ? this.handleVideoRoiProcessWebcam : null}
                       disabled={isLoading || webcamRecording || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_roi_video']}
@@ -1803,7 +1899,7 @@ class SubmitFile extends Component {
                       ref={this.processVideoButtonRef}
                       onMouseOver={() => this.handleOnMouseOver(this.processVideoButtonRef, 'processVideoButton')}
                       onMouseOut={() => this.handleOnMouseOut(this.processVideoButtonRef, 'processVideoButton')}
-                      onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcamIframe : null}
+                      onClick={optUpload ? this.handleVideoProcess : optWebcam ? this.handleVideoProcessWebcam : null}
                       disabled={isLoading || webcamRecording || !model || total_fish !== null || (type === 'image' && optUpload) ? true : (uploadedFile && optUpload) || (selectedWebcam && optWebcam) ? false : true}
                     >
                       {this.state.labels['tit_video']}

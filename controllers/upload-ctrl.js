@@ -297,6 +297,13 @@ module.exports = function(io) {
 
   }
 
+  queueing = async (req, res) => {
+
+    io.sockets.emit("queueing", req.body)
+    return res.status(201).json({ success: true, error: 'image queued!', })
+
+  }
+
   return {
     createUploadFileLocaly,
     createUploadFileAwsS3,
@@ -311,6 +318,7 @@ module.exports = function(io) {
     fileExitsAwsS3,
     fileExitsFilterAwsS3,
     logging,
+    queueing,
   }
 
 }

@@ -11,7 +11,7 @@ const flask_api = axios.create({
   timeout: 29000,
 })
 
-const url_callback = process.env.REACT_APP_URL_CALLBACK
+const url_callback = process.env.REACT_APP_URL_CALLBACK_LOG
 
 export const createSubmit = payload => api.post(`/submit`, payload)
 export const updateSubmit = (_id, payload) => api.put(`/submit/${_id}`, payload)
@@ -35,9 +35,9 @@ export const videoRoiCountFishAwsS3 = (url_input_video, model, width_cms, width_
 
 export const videoCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm) => flask_api.post(`/videocountfishawss3`, { url_input_video, model, width_cms, width_pxs_x_cm, url_callback })
 
-export const webcamVideoRoiCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm, device, duration, width, height) => flask_api.post(`/webcamvideoroicountfishawss3`, { url_input_video, model, width_cms, width_pxs_x_cm, device, duration, width, height, url_callback })
+export const webcamVideoRoiCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm, device, duration, width, height) => flask_api.post(`/webcamvideoroicountfishawss3react`, { url_input_video, model, width_cms, width_pxs_x_cm, device, duration, width, height, url_callback })
 
-export const webcamVideoCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm, device, duration, width, height) => flask_api.post(`/webcamvideocountfishawss3`, { url_input_video, model, width_cms, width_pxs_x_cm, device, duration, width, height, url_callback })
+export const webcamVideoCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm, device, duration, width, height) => flask_api.post(`/webcamvideocountfishawss3react`, { url_input_video, model, width_cms, width_pxs_x_cm, device, duration, width, height, url_callback })
 
 export const pictureCountFishAwsS3 = (url_input_video, model, width_cms, width_pxs_x_cm) => flask_api.post(`/picturecountfishawss3`, { url_input_video, model, width_cms, width_pxs_x_cm, url_callback })
 
