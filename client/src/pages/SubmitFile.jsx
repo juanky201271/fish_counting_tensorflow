@@ -244,6 +244,7 @@ class SubmitFile extends Component {
         selectedWebcam: false,
         webcamRecording: false
       })
+      console.log('save all frames', par_frames)
       return
     }
 
@@ -260,6 +261,7 @@ class SubmitFile extends Component {
 
   sendFrame = (send_iii, par_key, par_frames) => {
     if (send_iii > par_frames) {
+      console.log('sent all frames', par_frames)
       return
     }
     let frame = this.frames[par_key][send_iii] || null
