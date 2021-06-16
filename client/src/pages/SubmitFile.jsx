@@ -120,7 +120,7 @@ class SubmitFile extends Component {
                   if (params.uploadedFile === nameState) {
                     this.sendWebcamFrames(nameState, cola[i].durationWebcam)
                   }*/
-                } else if (params.action === 'cameraoff') {
+                /*} else if (params.action === 'cameraoff') {
                   this.setState({
                     label: null,
                     deviceId: null,
@@ -136,16 +136,9 @@ class SubmitFile extends Component {
                     durationWebcam: '',
                     selectedWebcam: false,
                     webcamRecording: false
-                  })
+                  })*/
                 } else if (params.action === 'end') {
                   cola[i].porc = 100
-                  this.setState({
-                    label: null,
-                    deviceId: null,
-                    durationWebcam: '',
-                    selectedWebcam: false,
-                    webcamRecording: false
-                  })
                 } else if (params.action === 'detecting' || params.action === 'tracking' || params.action === 'drawing' || params.action === 'writing') {
                   //const n_frames = parseInt(params.info.split('/')[0])
                   const t_frames = parseInt(params.info.split('/')[1])
@@ -190,10 +183,10 @@ class SubmitFile extends Component {
                 }
               }
 
-              if (params.action !== 'cameraoff' && params.action !== 'iframeoff') {
+              //if (params.action !== 'cameraoff' && params.action !== 'iframeoff') {
                 cola[i].log = params.action
                 cola[i].info = params.info === 'error' ? params.info : params.info ? ' {' + params.info + '}' : ''
-              }
+              //}
 
               this.setState(
                 { cola: cola },
@@ -229,12 +222,10 @@ class SubmitFile extends Component {
             const par_key = cola[i].dir_webcam ? cola[i].dir_webcam.replace('_', '').replace('_', '') : ''
             if (par.key === par_key) {
               console.log('imagen encolada de vuelta', par.contador)
-              // mando 2 frames
-              const par_frames = this.state.durationWebcam * 25
+              // mando 1 frames
+              const par_frames = cola[i].durationWebcam * 25
               this.send_i[par_key] += 1
               this.sendFrame(this.send_i[par_key], par_key, par_frames)
-              //send_i += 1
-              //sendFrame(send_i)
             }
           }
         }
@@ -256,10 +247,15 @@ class SubmitFile extends Component {
       return
     }
 
-    let dataURL = this.webcamRef.current.getScreenshot()
-    this.frames[par_key][iii] =  { key: par_key, image: dataURL, url_callback: process.env.REACT_APP_URL_CALLBACK_QUEUE }
+    if (this.webcamRef.current) {
+      let dataURL = this.webcamRef.current.getScreenshot()
+      this.frames[par_key][iii] =  { key: par_key, image: dataURL, url_callback: process.env.REACT_APP_URL_CALLBACK_QUEUE }
+      console.log('saving frame num:', iii, 'of', par_frames)
+    } else {
+      this.i[par_key] -= 1
+      console.log('NO ACCESS CAMERA frame num:', iii, 'of', par_frames)
+    }
 
-    console.log('saving frame num:', iii, 'of', par_frames)
   }
 
   sendFrame = (send_iii, par_key, par_frames) => {
@@ -907,6 +903,9 @@ class SubmitFile extends Component {
           let that = this
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
           const par_key_inter = dir_webcam.replace('_', '').replace('_', '')
+          this.frames[par_key_inter] = []
+          this.i[par_key_inter] = 0
+          this.send_i[par_key_inter] = 0
           this.inter[par_key_inter] = setInterval(function () {
             const par_key = dir_webcam.replace('_', '').replace('_', '')
             const par_frames = durationWebcam * 25
@@ -1063,6 +1062,9 @@ class SubmitFile extends Component {
           let that = this
           setTimeout(() => { this.setState({ errorWebcam: null }) }, 5000)
           const par_key_inter = dir_webcam.replace('_', '').replace('_', '')
+          this.frames[par_key_inter] = []
+          this.i[par_key_inter] = 0
+          this.send_i[par_key_inter] = 0
           this.inter[par_key_inter] = setInterval(function () {
             const par_key = dir_webcam.replace('_', '').replace('_', '')
             const par_frames = durationWebcam * 25
