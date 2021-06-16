@@ -215,13 +215,13 @@ class SubmitFile extends Component {
       socket.on('queueing', par => {
         const cola = this.state.cola || []
 
-        console.log('socket queue', par)
+        //console.log('socket queue', par)
 
         if (cola.length > 0) {
           for (let i = 0; i < cola.length; i++) {
             const par_key = cola[i].dir_webcam ? cola[i].dir_webcam.replace('_', '').replace('_', '') : ''
             if (par.key === par_key) {
-              console.log('imagen encolada de vuelta', par.contador)
+              //console.log('imagen encolada de vuelta', par.contador)
               // mando 1 frames
               const par_frames = cola[i].durationWebcam * 25
               this.send_i[par_key] += 1
@@ -250,7 +250,7 @@ class SubmitFile extends Component {
     if (this.webcamRef.current) {
       let dataURL = this.webcamRef.current.getScreenshot()
       this.frames[par_key][iii] =  { key: par_key, image: dataURL, url_callback: process.env.REACT_APP_URL_CALLBACK_QUEUE }
-      console.log('saving frame num:', iii, 'of', par_frames)
+      //console.log('saving frame num:', iii, 'of', par_frames)
     } else {
       this.i[par_key] -= 1
       console.log('NO ACCESS CAMERA frame num:', iii, 'of', par_frames)
@@ -266,7 +266,7 @@ class SubmitFile extends Component {
     if (frame !== null) {
       socketPy.emit('input image', frame)
       this.frames[par_key][send_iii] = null
-      console.log('frame num:', send_iii, 'of', par_frames)
+      //console.log('frame num:', send_iii, 'of', par_frames)
     } else {
       console.log('...NO frame num:', send_iii, 'of', par_frames)
       let that = this
