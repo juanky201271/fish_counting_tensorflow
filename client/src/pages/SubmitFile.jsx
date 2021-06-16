@@ -258,7 +258,7 @@ class SubmitFile extends Component {
     let dataURL = this.webcamRef.current.getScreenshot()
     this.frames[iii] =  { key: par_key, image: dataURL, url_callback: process.env.REACT_APP_URL_CALLBACK_QUEUE }
 
-    console.log('saving frame num:', iii)
+    console.log('saving frame num:', iii, 'of', par_frames)
   }
 
   sendFrame = (send_iii, par_frames) => {
@@ -269,9 +269,9 @@ class SubmitFile extends Component {
     if (frame !== null) {
       socketPy.emit('input image', frame)
       this.frames[send_iii] = null
-      console.log('frame num:', send_iii)
+      console.log('frame num:', send_iii, 'of', par_frames)
     } else {
-      console.log('...NO frame num:', send_iii)
+      console.log('...NO frame num:', send_iii, 'of', par_frames)
       let that = this
       setTimeout(function () {
         that.sendFrame(that.send_i, par_frames)
