@@ -45,7 +45,7 @@ const labels = {
   tit_minutes: '<segundos>',
   tit_inches: '<centímetros>',
   tit_typ_process: 'Defina o tipo de processo',
-  tit_roi_video: 'Vídeo horizontal esteira transportadora',
+  tit_roi_hor_video: 'Vídeo horizontal esteira transportadora',
   tit_roi_ver_video: 'Vídeo vertical esteira transportadora',
   tit_web_cam: 'Webcam',
   tit_video: 'Vídeo padrão',
