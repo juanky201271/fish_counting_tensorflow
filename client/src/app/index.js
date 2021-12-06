@@ -79,8 +79,8 @@ class App extends Component {
                     language={language}
                   />
                   <Switch>
-                    <Route path="/" exact render={() => <SubmitFile parentState={{ authenticated, twitterId, ip, user, language }} />} />
-                    <Route path="/aboutus" exact render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                    <Route path="/" exact render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                    <Route path="/submitfile" exact render={() => <SubmitFile parentState={{ authenticated, twitterId, ip, user, language }} />} />
                     <Route path="/terms" exact render={() => <Terms parentState={{ authenticated, twitterId, ip, user, language }} />} />
                     <Route path="/privacy" exact render={() => <Privacy parentState={{ authenticated, twitterId, ip, user, language }} />} />
                   </Switch>

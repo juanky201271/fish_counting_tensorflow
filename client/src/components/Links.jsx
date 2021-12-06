@@ -63,13 +63,15 @@ class Links extends Component {
     const { authenticated, } = this.state
     return (
       <div className="links">
-        <Link to={{ pathname: "/" }}
+        {/*
+        <Link to={{ pathname: "/submitfile" }}
           className="navbar-brand"
         >
           <div className="links__log navbar__log navbar-brand">{this.state.labels['tit_det_tool']}</div>
         </Link>
+        */}
 
-        <Link to={{ pathname: "/aboutus" }}
+        <Link to={{ pathname: "/" }}
           className="navbar-brand"
         >
           <div className="links__log navbar__log navbar-brand">{this.state.labels['tit_about_us']}</div>
