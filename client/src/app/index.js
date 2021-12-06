@@ -93,7 +93,7 @@ class App extends Component {
                       <div className="app__footer--right-left">
 
                         <div className="app__footer--right-left-link-green">
-                          <Link to={{ pathname: "/aboutus" }}>
+                          <Link to={{ pathname: "/" }}>
                             {this.state.labels['tit_abo_us']}
                           </Link>
                         </div>
