@@ -83,6 +83,7 @@ class App extends Component {
                     <Route path="/submitfile" exact render={() => <SubmitFile parentState={{ authenticated, twitterId, ip, user, language }} />} />
                     <Route path="/terms" exact render={() => <Terms parentState={{ authenticated, twitterId, ip, user, language }} />} />
                     <Route path="/privacy" exact render={() => <Privacy parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                    <Route render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
                   </Switch>
                   <div className="app__footer">
                     <div className="app__footer--left">
