@@ -19,6 +19,7 @@ const labels_lang = {
 class Privacy extends Component {
     constructor(props) {
         super(props)
+        console.log(this.props)
         this.state = {
             isLoading: false,
             authenticated: '',
