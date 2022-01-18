@@ -1,12 +1,12 @@
 // juanky201271 - AIPeces - 2021
 
 import React, { Component } from 'react'
-import { Route, Switch, Link } from 'react-router-dom'
+import { Route, Switch, Link, Redirect } from 'react-router-dom'
 import detectBrowserLanguage from 'detect-browser-language'
 import { withRouter } from 'react-router'
 
 import { NavBar, Logo } from '../components'
-import { SubmitFile, AboutUs, Terms, Privacy } from '../pages'
+import { AboutUs, Terms, Privacy } from '../pages'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './normalize.css'
@@ -28,6 +28,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     let lang = detectBrowserLanguage()
+    const q = new URLSearchParams(this.props.location.search)
     this.state = {
       authenticated: false,
       twitterId: '',
@@ -36,6 +37,7 @@ class App extends Component {
       isLoading: false,
       language: lang ? lang.split('-')[0] : 'es',
       labels: labels_lang[lang ? lang.split('-')[0] : 'es'],
+      page: q.has("page") ? q.get("page") : '',
     }
   }
 
@@ -64,78 +66,92 @@ class App extends Component {
   render() {
     console.log('app state', this.state)
     console.log('app props', this.props)
-    const { authenticated, twitterId, ip, user, isLoading, language, } = this.state
-    return (
-      <div className="app">
+    const { authenticated, twitterId, ip, user, isLoading, language, page } = this.state
 
-            {!isLoading ?
-               (
-                 <>
-                  <NavBar
-                    authenticated={authenticated}
-                    twitterId={twitterId}
-                    ip={ip}
-                    user={user}
-                    language={language}
-                  />
-                  <Switch>
-                    <Route path="/" exact render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
-                    <Route path="/submitfile" exact render={() => <SubmitFile parentState={{ authenticated, twitterId, ip, user, language }} />} />
-                    <Route path="/terms" exact render={() => <Terms parentState={{ authenticated, twitterId, ip, user, language }} />} />
-                    <Route path="/privacy" exact render={() => <Privacy parentState={{ authenticated, twitterId, ip, user, language }} />} />
-                    <Route render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
-                  </Switch>
-                  <div className="app__footer">
-                    <div className="app__footer--left">
-                      <Logo />
-                      <p>{this.state.labels['tit_copy']}</p>
-                    </div>
-                    <div className="app__footer--right">
-                      <div className="app__footer--right-left">
+    if (this.state.page === 'privacy' || this.state.page === 'terms') {
+      return (
+        <>
+          <Switch>
+            <Route path="/" exact render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
+            <Route path="/terms" exact render={() => <Terms parentState={{ authenticated, twitterId, ip, user, language }} />} />
+            <Route path="/privacy" exact render={() => <Privacy parentState={{ authenticated, twitterId, ip, user, language }} />} />
+            <Route render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
+          </Switch>
+          <Redirect to={{ pathname: '/' + this.state.page }} />
+        </>
+      )
+    } else {
+      return (
+        <div className="app">
 
-                        <div className="app__footer--right-left-link-green">
-                          <Link to={{ pathname: "/" }}>
-                            {this.state.labels['tit_abo_us']}
-                          </Link>
-                        </div>
-                        <div className="app__footer--right-left-link-white">
-                          <Link to={{ pathname: "/terms" }}>
-                            {this.state.labels['tit_ter_conditions']}
-                          </Link>
-                        </div>
-                        <div className="app__footer--right-left-link-white">
-                          <Link to={{ pathname: "/privacy" }}>
-                            {this.state.labels['tit_pri_policy']}
-                          </Link>
-                        </div>
-
+              {!isLoading ?
+                 (
+                   <>
+                    <NavBar
+                      authenticated={authenticated}
+                      twitterId={twitterId}
+                      ip={ip}
+                      user={user}
+                      language={language}
+                    />
+                    <Switch>
+                      <Route path="/" exact render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                      <Route path="/terms" exact render={() => <Terms parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                      <Route path="/privacy" exact render={() => <Privacy parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                      <Route render={() => <AboutUs parentState={{ authenticated, twitterId, ip, user, language }} />} />
+                    </Switch>
+                    <div className="app__footer">
+                      <div className="app__footer--left">
+                        <Logo />
+                        <p>{this.state.labels['tit_copy']}</p>
                       </div>
-                      <div className="app__footer--right-right">
-                        <div className="app__footer--right-right-rect-blue"></div>
-                        <div>
-                          <p>
-                            {this.state.labels['tit_email']}<br />
-                            <a href="mailto:info@aipeces.io">info@aipeces.io</a>
-                          </p>
+                      <div className="app__footer--right">
+                        <div className="app__footer--right-left">
+
+                          <div className="app__footer--right-left-link-green">
+                            <Link to={{ pathname: "/" }}>
+                              {this.state.labels['tit_abo_us']}
+                            </Link>
+                          </div>
+                          <div className="app__footer--right-left-link-white">
+                            <Link to={{ pathname: "/terms" }}>
+                              {this.state.labels['tit_ter_conditions']}
+                            </Link>
+                          </div>
+                          <div className="app__footer--right-left-link-white">
+                            <Link to={{ pathname: "/privacy" }}>
+                              {this.state.labels['tit_pri_policy']}
+                            </Link>
+                          </div>
+
+                        </div>
+                        <div className="app__footer--right-right">
+                          <div className="app__footer--right-right-rect-blue"></div>
+                          <div>
+                            <p>
+                              {this.state.labels['tit_email']}<br />
+                              <a href="mailto:info@aipeces.io">info@aipeces.io</a>
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  {/* <div className="app__footer">
-                    <div className="app__footer--text">
-                      {this.state.labels['tit_inspired']}
-                    </div>
-                  </div> */}
-                </>
-               )
-               :
-               (
-                 <div>{this.state.labels['tit_loading']}</div>
-               )
-            }
+                    {/* <div className="app__footer">
+                      <div className="app__footer--text">
+                        {this.state.labels['tit_inspired']}
+                      </div>
+                    </div> */}
+                  </>
+                 )
+                 :
+                 (
+                   <div>{this.state.labels['tit_loading']}</div>
+                 )
+              }
 
-      </div>
-    )
+        </div>
+      )
+    }
   }
 }
 

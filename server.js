@@ -14,16 +14,16 @@ const bodyParser = require('body-parser')
 const mongoose = require("mongoose")
 const cors = require("cors")
 const http = require("http").createServer(app)
-const socketIo = require("socket.io")
+//const socketIo = require("socket.io")
 
-const io = socketIo(http)
+//const io = socketIo(http)
 
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
 const { expressCspHeader, INLINE, NONE, SELF } = require('express-csp-header');
 
-const submitRouter = require('./routes/submit-router')
-const uploadRouter = require('./routes/upload-router')(io)
+//const submitRouter = require('./routes/submit-router')
+//const uploadRouter = require('./routes/upload-router')(io)
 const db = require('./db')
 const AWS = require("aws-sdk")
 
@@ -71,8 +71,8 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.use('/api', submitRouter)
-app.use('/api', uploadRouter)
+//app.use('/api', submitRouter)
+//app.use('/api', uploadRouter)
 
 if (process.env.NODE_ENV == "production") {
   app.use(express.static(path.join(__dirname, "client/build")))
