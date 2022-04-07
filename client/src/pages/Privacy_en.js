@@ -1,11 +1,17 @@
 const labels = {
   privacy_title: 'PRIVACY POLICY',
   privacy_text: <div>
+<p><strong>AIpeces App fisherman </strong></p>
+
 <p><strong>GDPR </strong><br />
 Personal data collected
 <li>Username of your choice: this is how you are identified on the website.</li>
 <li>Password: this is how we confirm that it really is you.</li>
 <li>Email: this is how you can recover your account. We do not require email validation, you can make it up if you want, just know that you cannot get your account back if so.</li></p>
+
+<p><strong>Location Data </strong><br />
+Location data collected: The application is responsible for collecting and storing location data on catches and transects of fishermen. The application is also responsible for colecting the location data in background, during all the fishing journey.
+</p>
 
 <p><strong>How long is your data kept</strong><br />
 All the above data is kept indefinitely, unless otherwise requested in writing.</p>
